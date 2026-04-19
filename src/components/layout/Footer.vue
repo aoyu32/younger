@@ -93,7 +93,7 @@ const year = computed(() => new Date().getFullYear())
   width: 100%;
   height: auto;
   margin-top: 30px;
-  background-color: var(--app-bg-color-light);
+  background-color: var(--app-border-color);
   border-top: 1px solid var(--app-border-color); 
 }
 
