@@ -1,4 +1,5 @@
 const ICONS = [
+  // '@/assets/aoyukmt.icon'
   'https://picsum.photos/60/60?random=1',
   'https://picsum.photos/60/60?random=2',
   'https://picsum.photos/60/60?random=3',
@@ -28,6 +29,14 @@ const ICONS = [
 const pickIcon = (id) => ICONS[(id - 1) % ICONS.length]
 
 export const appData = [
+  {
+    icon: pickIcon(0),
+    id: 0,
+    name: 'AOYUKMT',
+    description: '一个实用的按键映射工具',
+    category: '系统工具',
+    size: 23.5 * 1024 * 1024
+  },
   {
     icon: pickIcon(1),
     id: 1,
