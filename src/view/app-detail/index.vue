@@ -26,6 +26,14 @@
       <h2>{{ data.banner.desc }}</h2>
       <DetailSwiper></DetailSwiper>
     </div>
+    <div class="app-pictorial">
+      <div class="pictorial-item" v-for="(item, index) in data.pictorial" :key="index">
+        <h2>{{ item.text }}</h2>
+        <div class="pictorial-img" v-for="(img, index) in item.images" :key="index">
+          <img :src="img" alt="" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -43,9 +51,30 @@ const data = ref({
   desc: '一个轻量实用的键盘按钮重映射工具',
   icon: '',
   sub: '快速、易用的按键映射工具',
-  banner:{
+  banner: {
     desc: '超多实用、快速、便携的功能'
-  }
+  },
+  pictorial: [
+    {
+      text: '简单配置，快速上手使用',
+      images: ['https://swiperjs.com/demos/images/abstract-1.jpg']
+    },
+    {
+      text: '丰富实用的便捷功能集合',
+      images: ['https://swiperjs.com/demos/images/abstract-3.jpg']
+    },
+    {
+      text: '灵活的个性化定制选项',
+      images: ['https://swiperjs.com/demos/images/abstract-4.jpg']
+    },
+    {
+      text: '大幅提升日常工作效率',
+      images: [
+        'https://swiperjs.com/demos/images/abstract-1.jpg',
+        'https://swiperjs.com/demos/images/abstract-5.jpg'
+      ]
+    }
+  ]
 })
 
 const generateFromVibrant = async () => {
@@ -60,8 +89,7 @@ const generateFromVibrant = async () => {
     const lightVibrant = palette.LightVibrant
 
     primaryColor.value = `rgb(${vibrant?.rgb.join(',')})`
-    console.log(primaryColor.value);
-    
+    console.log(primaryColor.value)
 
     console.log('颜色：', vibrant, muted, darkVibrant, lightVibrant)
 
