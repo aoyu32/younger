@@ -22,12 +22,16 @@
         </div>
       </div>
     </div>
-    <div class="app-intro"></div>
+    <div class="app-swiper">
+      <h2>{{ data.banner.desc }}</h2>
+      <DetailSwiper></DetailSwiper>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Vibrant } from 'node-vibrant/browser'
+import DetailSwiper from './components/DetailSwiper.vue'
 
 const gradientStyle = ref('')
 const iconRef = ref<HTMLImageElement>()
@@ -38,7 +42,10 @@ const data = ref({
   name: 'AOYUKMT',
   desc: '一个轻量实用的键盘按钮重映射工具',
   icon: '',
-  sub: '快速、易用的按键映射工具'
+  sub: '快速、易用的按键映射工具',
+  banner:{
+    desc: '超多实用、快速、便携的功能'
+  }
 })
 
 const generateFromVibrant = async () => {
