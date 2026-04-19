@@ -257,7 +257,7 @@ watch(carouselList, (newList) => {
       justify-content: center;
 
       .iconfont {
-        color: #1a1e21;
+        color: var(--app-text-color-dark);
         opacity: 0.3;
         font-size: 20px;
       }
@@ -283,8 +283,8 @@ watch(carouselList, (newList) => {
         height: 30px;
         border-radius: 50%;
         z-index: 0;
-        background-color: #6c757d; /* light theme c-g5 */
-        opacity: 0.2; /* color(c-g5, 0.2) */
+        background-color: var(--app-bg-color-dark);
+        opacity: 0.2; 
         position: absolute;
         top: 50%;
         left: 50%;
@@ -303,7 +303,7 @@ watch(carouselList, (newList) => {
         height: 30px;
         border-radius: 50%;
         z-index: 0;
-        background-color: #6c757d; /* light theme c-g5 */
+        background-color: var(--app-bg-color-dark); /* light theme c-g5 */
         opacity: 0.2; /* color(c-g5, 0.2) */
         position: absolute;
         top: 50%;
@@ -335,17 +335,17 @@ watch(carouselList, (newList) => {
         display: inline-block;
         cursor: pointer;
         transition: all 0.3s ease;
-        background-color: #ffffff; /* light theme c-g */
+        background-color: var(--app-bg-color-light); /* light theme c-g */
         opacity: 0.5; /* color(c-g, 0.5) */
 
         &.active {
-          background-color: #ffffff; /* light theme c-g */
+          background-color: var(--app-bg-color-light); /* light theme c-g */
           transform: scale(1.2);
         }
 
         &:hover {
           transform: scale(1.1);
-          background-color: #ffffff; /* light theme c-g */
+          background-color: var(--app-bg-color-light); /* light theme c-g */
         }
       }
     }

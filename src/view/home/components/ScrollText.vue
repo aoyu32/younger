@@ -46,7 +46,7 @@ defineProps({
     width: 100%;
     height: 100%;
     border-radius: 5px;
-    background-color: #edecec;
+    background-color: var(--scroll-text-bg-color);
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -55,8 +55,8 @@ defineProps({
       flex-shrink: 0;
       padding: 0 12px;
       font-weight: 600;
-      color: #fff;
-      background-color: #6c757d;
+      color: var(--app-bg-color-light);
+      background-color: var(--scroll-text-label-bg-color);
       height: 100%;
       display: flex;
       align-items: center;
@@ -82,10 +82,10 @@ defineProps({
         align-items: center;
         white-space: nowrap;
         animation: scroll-left-to-right 15s linear infinite;
-        
+
         .text-item {
           display: inline-block;
-          color: #333;
+          color: var(--app-text-color-dark);
           font-weight: 500;
           padding: 0 10px;
         }

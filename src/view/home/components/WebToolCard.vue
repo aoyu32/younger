@@ -30,9 +30,9 @@ defineProps({
 .web-tool-card {
   width: 100%;
   height: 105px;
-  background-color: #f8f9fa; /* light theme c-g0 */
+  background-color: var(--app-bg-color-light);
   border-radius: 10px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15); /* small shadow */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,7 +43,7 @@ defineProps({
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15); /* medium shadow */
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
   }
 
   .card_icon {
@@ -64,7 +64,7 @@ defineProps({
     .icon_placeholder {
       width: 40px;
       height: 40px;
-      background-color: #dee2e6; /* light theme c-g2 */
+      background-color: var(--app-border-color);
     }
   }
 
@@ -75,11 +75,11 @@ defineProps({
     font-weight: 600;
     text-align: center;
     line-height: 1.2;
-    color: #1a1e21; /* light theme c-g9 */
-    opacity: 0.8; /* color(c-g9, 0.8) */
+    color: var(--app-text-color-dark);
+    opacity: 0.8;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* t-e mixin */
+    text-overflow: ellipsis;
   }
 }
 </style>

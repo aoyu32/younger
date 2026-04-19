@@ -63,17 +63,17 @@ const handleImgError = (e) => {
 .video-card {
   display: flex;
   flex-direction: column;
-  height: 100%; // 确保卡片填满 grid item
+  height: 100%;
   border-radius: 12px;
   overflow: hidden;
-  background-color: #f8f9fa; /* light theme c-g0 */
-  border: 1px solid #dee2e6; /* light theme c-g2 */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15); /* small shadow */
+  background-color: var(--app-bg-color-light);
+  border: 1px solid var(--app-border-color);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   transition: 0.18s;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15); /* medium shadow */
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
   }
 
   .card_cover {
@@ -85,7 +85,7 @@ const handleImgError = (e) => {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: 0.25s;
+      transition: 0.2s;
     }
   }
 
@@ -109,10 +109,9 @@ const handleImgError = (e) => {
     flex: 1;
     font-size: 14px;
     line-height: 1.35;
-    color: #1a1e21; /* light theme c-g9 */
-    opacity: 0.85; /* color(c-g9, 0.85) */
+    color: var(--app-text-color-dark);
+    opacity: 0.85;
 
-    // 两行省略
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -126,17 +125,17 @@ const handleImgError = (e) => {
 
     .bottom_play {
       font-size: 12px;
-      color: #1a1e21; /* light theme c-g9 */
-      opacity: 0.45; /* color(c-g9, 0.45) */
+      color: var(--app-text-color-dark);
+      opacity: 0.45;
     }
 
     .bottom_date {
       font-size: 12px;
       padding: 2px 8px;
       border-radius: 999px;
-      background-color: #dee2e6; /* light theme c-g2 */
-      color: #495057; /* light theme c-g6 */
-      opacity: 0.5; /* color(c-g6, 0.5) */
+      background-color: var(--app-border-color);
+      color: var(--app-text-color-light);
+      opacity: 0.5;
     }
   }
 }

@@ -87,7 +87,7 @@ $card_height: 145px;
   position: relative;
   width: $card_width;
   height: $card_height;
-  background-color: #f8f9fa; 
+  background-color: var(--app-bg-color-light); 
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15); 
   overflow: hidden;
   border-radius: 10px;
@@ -160,18 +160,18 @@ $card_height: 145px;
     flex-direction: column;
     gap: 5px;
     width: $card_width;
-    height: $card_height / 2; /* half of card height */
+    height: $card_height / 2;
     text-align: center;
     transition: 0.5s;
     position: absolute;
-    top: $card_height / 2; /* half of card height */
+    top: $card_height / 2;
 
     .bottom_name {
       width: 110px;
       height: auto;
-      color: #1a1e21; /* light theme c-g9 */
-      opacity: 0.5; /* color(c-g9, 0.5) */
-      border-bottom: 1px solid rgba(26, 30, 33, 0.5); /* color(c-g9, 0.5) */
+      color: var(--app-text-color-dark);
+      opacity: 0.5;
+      border-bottom: 1px solid var(--app-border-color);
       padding-bottom: 5px;
       transition: 0.2s;
 
@@ -218,7 +218,7 @@ $card_height: 145px;
       display: flex;
       align-items: normal;
       justify-content: center;
-      color: rgba(26, 30, 33, 0.5); /* color(c-g9, 0.5) */
+      color: var(--app-border-color);
     }
 
     .item_value {
@@ -226,8 +226,8 @@ $card_height: 145px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #1a1e21; /* light theme c-g9 */
-      opacity: 0.7; /* color(c-g9, 0.7) */
+      color: var(--app-text-color-dark);
+      opacity: 0.7;
     }
   }
 }

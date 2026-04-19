@@ -93,8 +93,8 @@ const year = computed(() => new Date().getFullYear())
   width: 100%;
   height: auto;
   margin-top: 30px;
-  background-color: #e9ecef;
-  border-top: 1px solid #dee2e6; 
+  background-color: var(--app-bg-color-light);
+  border-top: 1px solid var(--app-border-color); 
 }
 
 .footer_inner {
@@ -120,14 +120,14 @@ const year = computed(() => new Date().getFullYear())
   .col_title {
     font-size: 14px;
     font-weight: 700;
-    color: #1a1e21; 
+    color: var(--app-text-color-dark); 
     opacity: 0.85;
   }
 
   .col_text {
     font-size: 12px;
     line-height: 1.7;
-    color: #1a1e21;
+    color: var(--app-text-color-dark);
     opacity: 0.55;
   }
 
@@ -142,12 +142,12 @@ const year = computed(() => new Date().getFullYear())
   .link_item {
     font-size: 12px;
     text-decoration: none;
-    color: #1a1e21;
+    color: var(--app-text-color-dark);
     opacity: 0.6;
     transition: 0.18s;
 
     &:hover {
-      color: #00a3a3; 
+      color: var(--app-primary-color); 
     }
   }
 }
@@ -160,17 +160,17 @@ const year = computed(() => new Date().getFullYear())
   gap: 6px;
 
   .label {
-    color: #1a1e21;
+    color: var(--app-text-color-dark);
     opacity: 0.55;
   }
 
   .value {
     text-decoration: none;
-    color: #1a1e21; 
+    color: var(--app-text-color-dark); 
     opacity: 0.7;
 
     &:hover {
-      color: #00a3a3; 
+      color: var(--app-primary-color); 
     }
   }
 }
@@ -192,7 +192,7 @@ const year = computed(() => new Date().getFullYear())
     .qr_title {
       font-size: 12px;
       font-weight: 650;
-      color: #1a1e21; 
+      color: var(--app-text-color-dark); 
       opacity: 0.75;
     }
 
@@ -201,8 +201,8 @@ const year = computed(() => new Date().getFullYear())
       height: 90px;
       padding: 8px;
       border-radius: 12px;
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6; 
+      background-color: var(--app-bg-color-light);
+      border: 1px solid var(--app-border-color); 
 
       img {
         width: 90px;
@@ -214,7 +214,7 @@ const year = computed(() => new Date().getFullYear())
 
     .qr_tip {
       font-size: 12px;
-      color: #1a1e21; 
+      color: var(--app-text-color-dark); 
       opacity: 0.5;
     }
   }
@@ -224,7 +224,7 @@ const year = computed(() => new Date().getFullYear())
   margin: 22px 0;
   width: 100%;
   height: 1px;
-  background-color: #dee2e6;
+  background-color: var(--app-border-color);
 }
 
 .footer_bottom {
@@ -233,7 +233,7 @@ const year = computed(() => new Date().getFullYear())
   justify-content: space-between;
   gap: 12px;
   font-size: 12px;
-  color: #1a1e21; 
+  color: var(--app-text-color-dark); 
   opacity: 0.55;
 
   .bottom_right {
@@ -245,21 +245,21 @@ const year = computed(() => new Date().getFullYear())
 
   .bottom_link {
     text-decoration: none;
-    color: #1a1e21; 
+    color: var(--app-text-color-dark); 
     opacity: 0.55;
 
     &:hover {
-      color: #00a3a3; 
+      color: var(--app-primary-color); 
     }
   }
 
   .dot {
-    color: #1a1e21; 
+    color: var(--app-text-color-dark); 
     opacity: 0.35;
   }
 
   .bottom_text {
-    color: #1a1e21; 
+    color: var(--app-text-color-dark); 
     opacity: 0.45;
   }
 }

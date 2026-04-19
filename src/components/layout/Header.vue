@@ -142,14 +142,14 @@ const handleNavClick = (anchor) => {
     justify-content: space-between;
     font-size: 16px;
     font-weight: 550;
-    color: #00a3a3; /* light theme primary color */
+    color: var(--app-primary-color);
   }
 
   .name_en {
     display: flex;
     justify-content: space-between;
     font-size: 13px;
-    color: #6c757d; /* light theme c-g5 */
+    color: var(--app-bg-color-dark);
     opacity: 0.7;
   }
 
@@ -161,12 +161,12 @@ const handleNavClick = (anchor) => {
 
       a {
         text-decoration: none;
-        color: #1a1e21; /* light theme c-g9 */
+        color: var(--app-text-color-dark);
         opacity: 0.75;
         transition: 0.18s;
 
         &:hover {
-          color: #00a3a3; /* light theme primary color */
+          color: var(--app-primary-color);
         }
       }
     }
@@ -187,13 +187,13 @@ const handleNavClick = (anchor) => {
       font-weight: 600;
       cursor: pointer;
       transition: 0.18s;
-      background-color: rgba(0, 163, 163, 0.12); /* light theme primary color with opacity */
-      color: #00a3a3; /* light theme primary color */
-      border: 1px solid rgba(0, 163, 163, 0.35); /* light theme primary color with opacity */
+      background-color: rgba(0, 163, 163, 0.12);
+      color: var(--app-primary-color);
+      border: 1px solid var(--app-border-color);
 
       &:hover {
-        background-color: rgba(0, 163, 163, 0.18); /* light theme primary color with opacity */
-        border-color: rgba(0, 163, 163, 0.5); /* light theme primary color with opacity */
+        background-color: rgba(0, 163, 163, 0.18);
+        border-color: var(--app-border-color);
       }
 
       &:active {

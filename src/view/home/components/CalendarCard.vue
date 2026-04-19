@@ -75,7 +75,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .calendar-card {
-  background: #f8f9fa;
+  background: var(--app-bg-color-light);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -95,7 +95,7 @@ onBeforeUnmount(() => {
       .current-time {
         font-size: 40px;
         font-weight: 700;
-        color: #495057;
+        color: var(--app-text-color-light);
         letter-spacing: 2px;
         line-height: 1.2;
         margin-bottom: 8px;
@@ -103,7 +103,7 @@ onBeforeUnmount(() => {
 
       .current-date {
         font-size: 16px;
-        color: #6c757d;
+        color: var(--app-bg-color-dark);
         font-weight: 500;
       }
     }
@@ -117,8 +117,8 @@ onBeforeUnmount(() => {
       .tag {
         display: inline-block;
         padding: 4px 12px;
-        background: #6c757d;
-        color: #fff;
+        background: var(--calendar-card-tag-bg-color);
+        color: var(--app-bg-color-light);
         border-radius: 4px;
         font-size: 12px;
         font-weight: 500;
@@ -131,12 +131,12 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     align-items: center;
     padding-top: 10px;
-    border-top: 2px solid #e9ecef;
+    border-top: 2px solid var(--app-border-color);
 
     .info-item {
       .label {
         font-size: 14px;
-        color: #495057;
+        color: var(--app-text-color-light);
         font-weight: 600;
       }
     }

@@ -40,7 +40,7 @@ const formatViews = (views) => {
 
 <style lang="scss" scoped>
 .news-card {
-  background: #fff;
+  background: var(--app-bg-color-light);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -53,13 +53,13 @@ const formatViews = (views) => {
     align-items: center;
     margin-bottom: 5px;
     padding-bottom: 8px;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid var(--app-border-color);
 
     h3 {
       margin: 0;
       font-size: 18px;
       font-weight: 600;
-      color: #333;
+      color: var(--app-text-color-dark);
     }
 
     .icon {
@@ -82,12 +82,12 @@ const formatViews = (views) => {
       justify-content: space-between;
       align-items: center;
       padding: 10px 5px;
-      border-bottom: 1px solid #f5f5f5;
+      border-bottom: 1px solid var(--app-border-color);
       cursor: pointer;
       transition: background-color 0.2s;
 
       &:hover {
-        background-color: #f9f9f9;
+        background-color: var(--app-bg-color-light);
         border-radius: 6px;
       }
 
@@ -98,7 +98,7 @@ const formatViews = (views) => {
       .news-title {
         flex: 1;
         font-size: 14px;
-        color: #555;
+        color: var(--app-text-color-light);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -108,7 +108,7 @@ const formatViews = (views) => {
       .news-views {
         flex-shrink: 0;
         font-size: 12px;
-        color: #999;
+        color: var(--app-text-color-light);
         font-weight: 500;
       }
     }
