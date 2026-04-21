@@ -12,7 +12,7 @@
         depth: 100,
         modifier: 1,
         slideShadows: false,
-        scale: 0.9    
+        scale: 0.9
       }"
       :pagination="{
         el: '.custom-pagination',
@@ -21,21 +21,20 @@
       :modules="modules"
       class="mySwiper"
     >
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-1.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-2.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-3.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-4.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-5.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-6.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-7.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-8.jpg" /></swiper-slide>
-      <swiper-slide><img src="https://swiperjs.com/demos/images/abstract-9.jpg" /></swiper-slide>
+      <swiper-slide><img :src="img1" /></swiper-slide>
+      <swiper-slide><img :src="img2" /></swiper-slide>
+      <swiper-slide><img :src="img3" /></swiper-slide>
+      <swiper-slide><img :src="img4" /></swiper-slide>
     </swiper>
     <div class="custom-pagination"></div>
   </div>
 </template>
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
+import img1 from '@/assets/1.png'
+import img2 from '@/assets/2.png'
+import img3 from '@/assets/3.png'
+import img4 from '@/assets/4.png'
 import 'swiper/css'
 import 'swiper/css/effect-coverflow'
 import 'swiper/css/pagination'
@@ -56,10 +55,10 @@ const modules = [EffectCoverflow, Pagination]
 }
 
 .custom-pagination {
-    padding: 30px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  padding: 30px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .swiper-slide img {
