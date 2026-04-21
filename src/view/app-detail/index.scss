@@ -5,7 +5,7 @@
 
 .app-info {
     justify-content: start;
-    margin: 70px 0; 
+    margin: 70px 0;
 }
 
 .app-icon {
@@ -21,7 +21,7 @@
         position: absolute;
         inset: 0; // 铺满父容器
         border-radius: 50%;
-       filter: blur(15px);
+        filter: blur(15px);
         z-index: 1;
     }
 
@@ -81,44 +81,97 @@
     }
 }
 
-.app-swiper{
+.app-swiper {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     padding: 0 50px;
-    h2{
+
+    h2 {
         font-size: 30px;
         padding: 50px;
         font-weight: 300;
     }
 }
 
-.app-pictorial{
-margin-top: 50px;
-padding: 0 100px;
+.app-pictorial {
+    margin-top: 50px;
+    padding: 0 100px;
 
-.pictorial-item{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    margin-top: 130px;
+    .pictorial-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+        margin-top: 130px;
 
-    &:last-child{
-        margin-bottom: 100px;
+        &:last-child {
+            margin-bottom: 100px;
+        }
+
+        h2 {
+            font-size: 32px;
+            font-weight: 300;
+        }
+
+        p {
+            font-size: 20px;
+            color: #7a7373;
+            font-family: 'PingFang SC';
+        }
+
+        img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
     }
-
-    h2{
-        font-size: 32px;
-        font-weight: 300;
-    }
-
-    img{
-        width: 100%;
-        object-fit: cover;
-        border-radius: 20px;
-    }
-
 }
+
+.app-download{
+    padding: 50px 0;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 100px rgba(222, 30, 30, 0.1);
+    .download-wrapper{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .app-down-icon{
+        img{
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+        }
+    }
+
+    .desc{
+        h1{
+            font-size: 32px;
+            text-align: center;
+            padding: 10px;
+            color: rgb(74, 74, 74);
+        }
+
+        p{
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #bababa;
+        }
+    }
+
+    .download-btn{
+        button{
+            padding: 10px 50px;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            background-color: var(--app-primary-color);
+        }
+    }
 }
