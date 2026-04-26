@@ -1,17 +1,18 @@
 :root {
-    --app-primary-color: #00a3a3;
-    --app-header-height: 72px;
-    --app-header-width: 1200px;
-    --app-text-color-dark: #212121;
-    --app-text-color-light: #757575;
-    --app-bg-color-dark: #3a3838;
-    --app-bg-color-light: #ffffff;
-    --app-border-color: #e0e0e0;
+  --app-primary-color: #00a3a3;
+  --app-header-height: 72px;
+  --app-header-width: 1200px;
+  --app-text-color-dark: #212121;
+  --app-text-color-light: #757575;
+  --app-bg-color-dark: #3a3838;
+  --app-bg-color-light: #ffffff;
+  --app-border-color: #e0e0e0;
 
-    // 走马灯组件颜色
-    --scroll-text-bg-color: rgba(203, 203, 203, 0.418);
-    --scroll-text-label-bg-color: #929090;
+  // 走马灯组件颜色
+  --scroll-text-bg-color: rgba(203, 203, 203, 0.418);
+  --scroll-text-label-bg-color: #929090;
 
-    --calendar-card-tag-bg-color: #9b9b9b;
+  --calendar-card-tag-bg-color: #9b9b9b;
 
+  --app-base-px: 8px;
 }

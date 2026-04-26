@@ -128,6 +128,12 @@ h5 {
   max-width: 350px;
 }
 
+.icon-size-16 {
+  width: 16px;
+  height: 16px;
+  object-fit: cover;
+}
+
 .mt-4 {
   margin-top: calc(var(--app-base-px) - 4px);
 }
@@ -231,6 +237,11 @@ h5 {
 
 .flex {
   display: flex;
+}
+
+.flex-x {
+  display: flex;
+  align-items: center;
 }
 
 .flex-center {
@@ -436,14 +447,14 @@ h5 {
   color: #e54c56;
   border-color: #ef949a;
 }
-.gray-tag{
+.gray-tag {
   background-color: #f2f5f7;
-	border-color: #e2e5eb;
- 	color: #555555; 
+  border-color: #e2e5eb;
+  color: #555555;
 }
-.yellow-tag{
+.yellow-tag {
   background-color: #fef6e5;
-	border-color: #f7cc66;
+  border-color: #f7cc66;
   color: #f1aa00;
 }
 
@@ -850,6 +861,6 @@ h5 {
   }
 }
 
-.el-message .el-message__badge{
+.el-message .el-message__badge {
   display: none;
 }

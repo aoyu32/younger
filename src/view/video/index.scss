@@ -1,0 +1,53 @@
+.video-container {
+  min-height: 100vh;
+  display: flex;
+  padding: 10px 0;
+}
+
+.video-left {
+  width: 70%;
+
+  h3 {
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: 3px;
+    line-height: 34px;
+    flex-shrink: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 20px 0;
+    gap: 20px;
+    color: #9499A0;
+    font-size: 13px;
+  }
+}
+
+.video-player {
+  aspect-ratio: 16 / 9;
+}
+
+.video-skin {
+  aspect-ratio: 16 / 9;
+}
+
+/* src/assets/custom-videojs.css */
+video-skin {
+  /* 主题色 */
+  --media-primary-color: #ff5722;
+  /* 主色调：播放按钮、进度条等 */
+  --media-secondary-color: #2c3e50;
+  /* 次要色：控制栏背景等 */
+
+  /* 控制栏背景 */
+  --media-controls-background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  --media-controls-background: transparent;
+
+  --media-controls-height: 20px;
+  --media-border-radius: 8px;
+}

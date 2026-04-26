@@ -1,0 +1,43 @@
+<template>
+  <div class="video-container">
+    <div class="video-left">
+      <div class="video-info">
+        <div class="title">
+          <h3>前端开发最强简历攻略，专治找不到工作</h3>
+        </div>
+        <div class="meta">
+          <div class="play-count flex-x">
+            <img src="@/assets/video/icon_play_count.svg" alt="" class="icon-size-16 mr-4" />
+            <span>2000万</span>
+          </div>
+          <div class="date flex-x">
+            <img src="@/assets/video/icon_publish_time.svg" alt="" class="icon-size-16 mr-4" />
+            <span>2026-4-10 20:21:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="player-wrapper">
+        <video-player class="video-player">
+          <video-skin class="video-skin">
+            <hls-video :src="videoSource" playsinline :poster="videoSource"></hls-video>
+          </video-skin>
+        </video-player>
+      </div>
+    </div>
+    <div class="video-right"></div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import '@videojs/html/video/player'
+import '@videojs/html/video/skin'
+import '@videojs/html/media/hls-video'
+import '@videojs/html/background/player'
+import '@videojs/html/background/skin'
+import '@videojs/html/background/video'
+const videoSource = ref('https://vjs.zencdn.net/v/oceans.mp4')
+</script>
+<style lang="scss" scoped>
+@use './index.scss' as *;
+</style>
