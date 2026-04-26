@@ -1,11 +1,6 @@
 <template>
   <div class="app-card">
-    <div
-      class="card_top"
-      :style="{
-        '--card-top-color': cardTopBgColor
-      }"
-    >
+    <div class="card_top">
       <div class="card_image">
         <img :src="app.icon" alt="" />
       </div>
@@ -70,33 +65,42 @@ const props = defineProps({
   }
 })
 
-const randomBackground = () => {
-  const r = Math.floor(Math.random() * 60) + 90
-  const g = Math.floor(Math.random() * 35) + 170
-  const b = Math.floor(Math.random() * 50) + 50
-  return `rgb(${r}, ${g}, ${b})`
-}
+const randomHue = () => Math.floor(Math.random() * 80) + 100 // 100~180 绿色系
+const hue = randomHue()
 
-const cardTopBgColor = computed(() => randomBackground())
+const cardTopBgColor = computed(() => {
+  const h1 = hue
+  const h2 = (hue + 25) % 360
+  const h3 = (hue + 50) % 360
+  return `linear-gradient(135deg, hsla(${h1}, 70%, 55%, 0.9) 0%, hsla(${h2}, 75%, 50%, 0.9) 50%, hsla(${h3}, 65%, 45%, 0.9) 100%)`
+})
+
+const cardTopArrowColor = computed(() => {
+  return `hsla(${(hue + 25) % 360}, 75%, 50%, 0.9)`
+})
 </script>
 
 <style scoped lang="scss">
 $card_width: 180px;
 $card_height: 145px;
+
 .app-card {
   position: relative;
   width: $card_width;
   height: $card_height;
-  background-color: var(--app-bg-color-light); 
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15); 
+  background-color: var(--app-bg-color-light);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
   overflow: hidden;
   border-radius: 10px;
 
   .card_top {
     position: relative;
     width: $card_width;
-    height: $card_height / 2; 
-    background-color: var(--card-top-color);
+    height: calc($card_height / 2);
+    background: v-bind(cardTopBgColor);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -106,7 +110,7 @@ $card_height: 145px;
       content: '';
       width: 16px;
       height: 16px;
-      background-color: var(--card-top-color);
+      background: v-bind(cardTopArrowColor);
       position: absolute;
       clip-path: polygon(50% 50%, 0 0, 100% 0);
       left: 50%;
@@ -134,7 +138,7 @@ $card_height: 145px;
     .card_bottom_2 {
       top: 38px;
       width: $card_width;
-      height: $card_height - 38px; 
+      height: calc($card_height - 38px);
     }
   }
 
@@ -146,6 +150,8 @@ $card_height: 145px;
     align-items: center;
     justify-content: center;
     transition: 0.5s;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+
     img {
       width: 100%;
       height: 100%;
@@ -160,11 +166,11 @@ $card_height: 145px;
     flex-direction: column;
     gap: 5px;
     width: $card_width;
-    height: $card_height / 2;
+    height: calc($card_height / 2);
     text-align: center;
     transition: 0.5s;
     position: absolute;
-    top: $card_height / 2;
+    top: calc($card_height / 2);
 
     .bottom_name {
       width: 110px;
