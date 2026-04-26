@@ -69,7 +69,9 @@
       </div>
       <div class="video_list">
         <div class="video_item" v-for="item in videos" :key="item.id">
-          <VideoCard :video="item" />
+          <router-link to="/video">
+            <VideoCard :video="item" />
+          </router-link>
         </div>
       </div>
     </div>
@@ -88,6 +90,7 @@ import { videoData } from '@/mock/videoData'
 import ScrollText from './components/ScrollText.vue'
 import CalendarCard from './components/CalendarCard.vue'
 import NewsCard from './components/NewsCard.vue'
+import router from '@/router'
 
 defineOptions({
   name: 'Home'

@@ -3,7 +3,7 @@
     <header>
       <LayoutHeader />
     </header>
-    <main>
+    <main :style="{ width: $route.path === '/video' ? '90%' : '1200px' }">
       <router-view />
     </main>
     <footer>

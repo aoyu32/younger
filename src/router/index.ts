@@ -17,6 +17,11 @@ const routes = [
         name: 'detail',
         path: '/app/detail',
         component: () => import('@/view/app-detail/index.vue')
+      },
+      {
+        name: 'video',
+        path: '/video',
+        component: () => import('@/view/video/index.vue')
       }
     ]
   }
@@ -24,7 +29,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes
 })
 
 export default router

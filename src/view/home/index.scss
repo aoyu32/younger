@@ -129,6 +129,10 @@
       }
     }
 
+      .content-wrapper{
+        overflow-y: auto;
+      }
+
     .apps_grid {
       width: 100%;
       height: auto;
@@ -151,7 +155,7 @@
 
     .webs_grid {
       width: 100%;
-      height: auto;
+      overflow-y: auto;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 14px;

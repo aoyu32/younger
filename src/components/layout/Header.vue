@@ -1,5 +1,8 @@
 <template>
-  <div class="header">
+  <div
+    class="header"
+    :style="{ width: $route.path === '/video' ? '90%' : '1200px' }"
+  >
     <div class="header_left">
       <div class="left_logo">
         <div class="logo_img">
@@ -21,7 +24,9 @@
       <div class="left_nav">
         <ul>
           <li v-for="(item, index) in navItems" :key="index">
-            <a href="javascript:;" @click="handleNavClick(item.anchor)">{{ item.name }}</a>
+            <a href="javascript:;" @click="handleNavClick(item.anchor)">{{
+              item.name
+            }}</a>
           </li>
         </ul>
       </div>
@@ -41,61 +46,61 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 // 组件名称
 defineOptions({
-  name: 'LayoutHeader'
-})
+  name: 'LayoutHeader',
+});
 
 // 响应式数据
-const chLogoName = ref(['洋', '果', '教', '育'])
-const enLogoName = ref(['Y', 'O', 'U', 'N', 'G', 'E', 'R'])
+const chLogoName = ref(['洋', '果', '教', '育']);
+const enLogoName = ref(['Y', 'O', 'U', 'N', 'G', 'E', 'R']);
 const navItems = ref([
   {
     icon: '',
     name: '软件工具',
     route: '',
-    anchor: 'tools'
+    anchor: 'tools',
   },
   {
     icon: '',
     name: '教育视频',
     route: '',
-    anchor: 'videos'
-  }
-])
+    anchor: 'videos',
+  },
+]);
 
 // 平滑滚动函数
 const smoothScrollTo = (to, duration = 450) => {
-  const start = window.pageYOffset
-  const distance = to - start
-  const startTime = performance.now()
+  const start = window.pageYOffset;
+  const distance = to - start;
+  const startTime = performance.now();
 
   const easeInOutCubic = (t) => {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-  }
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  };
 
   const step = (now) => {
-    const elapsed = now - startTime
-    const progress = Math.min(1, elapsed / duration)
-    const eased = easeInOutCubic(progress)
-    window.scrollTo(0, start + distance * eased)
-    if (progress < 1) requestAnimationFrame(step)
-  }
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / duration);
+    const eased = easeInOutCubic(progress);
+    window.scrollTo(0, start + distance * eased);
+    if (progress < 1) requestAnimationFrame(step);
+  };
 
-  requestAnimationFrame(step)
-}
+  requestAnimationFrame(step);
+};
 
 // 导航点击处理
 const handleNavClick = (anchor) => {
-  const el = document.getElementById(anchor)
-  if (!el) return
-  const header = document.querySelector('header')
-  const offset = header ? header.getBoundingClientRect().height : 0
-  const to = el.getBoundingClientRect().top + window.pageYOffset - offset - 10
-  smoothScrollTo(to, 450)
-}
+  const el = document.getElementById(anchor);
+  if (!el) return;
+  const header = document.querySelector('header');
+  const offset = header ? header.getBoundingClientRect().height : 0;
+  const to = el.getBoundingClientRect().top + window.pageYOffset - offset - 10;
+  smoothScrollTo(to, 450);
+};
 </script>
 
 <style lang="scss" scoped>
