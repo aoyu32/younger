@@ -1,32 +1,22 @@
 const ICONS = [
-  // '@/assets/aoyukmt.icon'
-  'https://picsum.photos/60/60?random=1',
-  'https://picsum.photos/60/60?random=2',
-  'https://picsum.photos/60/60?random=3',
-  'https://picsum.photos/60/60?random=4',
-  'https://picsum.photos/60/60?random=5',
-  'https://picsum.photos/60/60?random=6',
-  'https://picsum.photos/60/60?random=7',
-  'https://picsum.photos/60/60?random=8',
-  'https://picsum.photos/60/60?random=9',
-  'https://picsum.photos/60/60?random=10',
-  'https://picsum.photos/60/60?random=11',
-  'https://picsum.photos/60/60?random=12',
-  'https://picsum.photos/60/60?random=13',
-  'https://picsum.photos/60/60?random=14',
-  'https://picsum.photos/60/60?random=15',
-  'https://picsum.photos/60/60?random=16',
-  'https://picsum.photos/60/60?random=17',
-  'https://picsum.photos/60/60?random=18',
-  'https://picsum.photos/60/60?random=19',
-  'https://picsum.photos/60/60?random=20',
-  'https://picsum.photos/60/60?random=21',
-  'https://picsum.photos/60/60?random=22',
-  'https://picsum.photos/60/60?random=23',
-  'https://picsum.photos/60/60?random=24'
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/facebook.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/whatsapp.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/telegram.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/youtube.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/tiktok.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/snapchat.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/github.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/figma.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/notion.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/discord.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/spotify.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/apple.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/android.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/firefox.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/react.svg',
+  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/docker.svg',
 ]
-
-const pickIcon = (id) => ICONS[(id - 1) % ICONS.length]
+const pickIcon = (id) => ICONS[(id) % ICONS.length]
 
 export const appData = [
   {
