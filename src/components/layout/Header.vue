@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="header"
-    :style="{ width: $route.path === '/video' ? '90%' : '1200px' }"
-  >
+  <div class="header">
     <div class="header_left">
       <div class="left_logo">
         <div class="logo_img">
