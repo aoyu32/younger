@@ -8,7 +8,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted } from 'vue';
 import '@videojs/html/video/player';
 import '@videojs/html/video/skin';
 import '@videojs/html/media/hls-video';
@@ -25,6 +25,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+});
+
+onMounted(() => {
+  console.log(props.src, props.poster);
 });
 </script>
 <style lang="scss" scoped>
