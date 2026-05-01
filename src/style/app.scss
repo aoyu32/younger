@@ -128,11 +128,6 @@ h5 {
   max-width: 350px;
 }
 
-.icon-size-16 {
-  width: 16px;
-  height: 16px;
-  object-fit: cover;
-}
 
 .mt-4 {
   margin-top: calc(var(--app-base-px) - 4px);
@@ -244,6 +239,11 @@ h5 {
   align-items: center;
 }
 
+.flex-column{
+  display: flex;
+  flex-direction: column;
+}
+
 .flex-center {
   display: flex;
   align-items: center;
@@ -260,18 +260,6 @@ h5 {
   display: flex;
   flex-wrap: wrap;
   align-content: space-between;
-}
-
-.align-center {
-  align-items: center;
-}
-
-.align-baseline {
-  align-items: baseline;
-}
-
-.justify-center {
-  justify-content: center;
 }
 
 .text-left {
