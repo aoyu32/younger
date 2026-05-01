@@ -1,0 +1,214 @@
+.comment-input-wrapper {
+  display: flex;
+  gap: 12px;
+  border-radius: 12px;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  .avatar-slot {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+
+    .default-avatar {
+      width: 100%;
+      height: 100%;
+      background-color: #e1e4e8;
+      border-radius: 50%;
+    }
+
+    :slotted(img) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  .comment-main {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+
+    .image-preview-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .preview-item {
+        position: relative;
+        width: 56px;
+        height: 56px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+        background-color: #f8f9fa;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        &:hover {
+          .remove-btn {
+            display: flex;
+          }
+        }
+
+        .remove-btn {
+          display: none;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+          backdrop-filter: blur(4px);
+          cursor: pointer;
+          transition: background-color 0.2s ease-in-out;
+          img{
+            width: 20px;
+            height: 20px;
+          }
+
+          &:hover {
+            background-color: rgba(39, 36, 36, 0.35);
+          }
+        }
+
+        .uploading-mask {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 20px;
+        }
+      }
+    }
+
+    .textarea-wrapper {
+      border: 1px solid #e9ecef;
+      padding: 12px;
+      background-color: #fafbfc;
+      border-radius: 8px;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+
+      &:focus-within {
+        border-color: #3b82f6;
+      }
+    }
+
+    .comment-textarea {
+      width: 100%;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      background-color: #fafbfc;
+      box-sizing: border-box;
+      min-height: 36px;
+      max-height: 120px;
+      overflow-y: auto;
+
+      &:focus {
+        .textarea-wrapper {
+          border: 1px solid #3b82f6;
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+      }
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+
+      .toolbar-left {
+        display: flex;
+        gap: 8px;
+
+        .tool-btn {
+          background: none;
+          border: none;
+          font-size: 22px;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 8px;
+          transition: background-color 0.2s;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 26px;
+          height: 26px;
+
+          img {
+            width: 16px;
+            height: 16px;
+            object-fit: cover;
+          }
+
+          &:hover {
+            background-color: #f0f2f5;
+          }
+        }
+      }
+
+      .toolbar-right {
+        .send-btn {
+          background-color: #3b82f6;
+          color: white;
+          border: none;
+          padding: 5px 16px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition:
+            background-color 0.2s,
+            opacity 0.2s;
+
+          &:hover:not(:disabled) {
+            background-color: #2563eb;
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+}
