@@ -1,11 +1,15 @@
 <template>
   <div class="video-card">
     <div class="card_cover">
-      <img :src="video.cover" :alt="video.title" @error="handleImgError" />
+      <img
+        :src="props.data.video.cover"
+        :alt="props.data.title"
+        @error="handleImgError"
+      />
     </div>
     <div class="card_info">
       <div class="info_title">
-        <span>{{ video.title }}</span>
+        <span>{{ props.data.title }}</span>
       </div>
       <div class="info_bottom">
         <div class="bottom_play">
@@ -19,44 +23,63 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue';
+import type { Video } from '@/api/type/video';
 
 const FALLBACK_COVER =
-  'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60'
+  'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60';
 
 defineOptions({
-  name: 'VideoCard'
-})
+  name: 'VideoCard',
+});
 
-const props = defineProps({
-  video: {
-    type: Object,
-    default: () => ({
+const props = withDefaults(
+  defineProps<{
+    data: Video;
+  }>(),
+  {
+    data: () => ({
       id: 0,
       title: '',
-      cover: '',
-      playCount: 0,
-      date: ''
-    })
-  }
-})
-
+      description: '',
+      tags: [],
+      authorRequire: false,
+      publishTime: '',
+      isHot: false,
+      isRecommended: false,
+      isNew: false,
+      author: { id: 0, name: '' },
+      meta: {
+        playCount: 0,
+        likeCount: 0,
+        favoriteCount: 0,
+        commentCount: 0,
+        shareCount: 0,
+      },
+      video: {
+        cover: '',
+        url: '',
+        duration: 0,
+      },
+    }),
+  },
+);
 const playText = computed(() => {
-  const num = Number(props.video.playCount || 0)
-  if (num >= 10000) return `${(num / 10000).toFixed(1)}万播放`
-  return `${num}播放`
-})
+  const num = Number(props.data.meta.playCount || 0);
+  if (num >= 10000) return `${(num / 10000).toFixed(1)}万播放`;
+  return `${num}播放`;
+});
 
 const dateText = computed(() => {
-  return props.video.date || ''
-})
+  return props.data.publishTime || '';
+});
 
-const handleImgError = (e) => {
-  if (!e || !e.target) return
-  if (e.target.src === FALLBACK_COVER) return
-  e.target.src = FALLBACK_COVER
-}
+const handleImgError = (e: any) => {
+  if (!e || !e.target) return;
+  if (e.target.src === FALLBACK_COVER) return;
+  e.target.src = FALLBACK_COVER;
+};
 </script>
 
 <style scoped lang="scss">
@@ -133,7 +156,6 @@ const handleImgError = (e) => {
       font-size: 12px;
       padding: 2px 8px;
       border-radius: 999px;
-      background-color: var(--app-border-color);
       color: var(--app-text-color-light);
       opacity: 0.5;
     }
