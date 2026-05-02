@@ -1,0 +1,61 @@
+.video-recommend {
+  width: 100%;
+  padding: 20px 0;
+  background-color: var(--app-bg-color);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .recommend-item {
+    display: flex;
+    cursor: pointer;
+
+    .cover {
+      width: 180px;
+      aspect-ratio: 16 / 9;
+      background-color: #e1e4e8;
+      margin-right: 12px;
+      flex-shrink: 0;
+
+      :deep(.ao-image img) {
+        border-radius: 5px;
+      }
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .title {
+    font-weight: 500;
+    font-size: 15px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+  }
+
+  .author {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    font-size: 14px;
+    color: #9499a0;
+  }
+
+  .meta {
+    gap: 10px;
+
+    .meta-item {
+      gap: 5px;
+      font-size: 13px;
+      color: #9499a0;
+    }
+  }
+}
