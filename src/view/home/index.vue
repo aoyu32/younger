@@ -69,7 +69,7 @@
       </div>
       <div class="video_list">
         <div class="video_item" v-for="item in videos" :key="item.id">
-          <router-link to="/video">
+          <router-link :to="`/video/${item.id}`">
             <VideoCard :data="item" />
           </router-link>
         </div>
