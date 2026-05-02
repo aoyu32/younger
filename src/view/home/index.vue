@@ -79,22 +79,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import AoBanner from '@/components/banner/AoBanner.vue'
-import AppCard from '@/view/home/components/AppCard.vue'
-import WebToolCard from '@/view/home/components/WebToolCard.vue'
-import VideoCard from '@/view/home/components/VideoCard.vue'
-import { appData } from '@/mock/appData'
-import { webTools } from '@/mock/webTools'
-import { videoData } from '@/mock/videoData'
-import ScrollText from './components/ScrollText.vue'
-import CalendarCard from './components/CalendarCard.vue'
-import NewsCard from './components/NewsCard.vue'
-import router from '@/router'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import AoBanner from '@/components/ao-banner/index.vue';
+import AppCard from '@/view/home/components/AppCard.vue';
+import WebToolCard from '@/view/home/components/WebToolCard.vue';
+import VideoCard from '@/view/home/components/VideoCard.vue';
+import { appData } from '@/mock/appData';
+import { webTools } from '@/mock/webTools';
+import { videoData } from '@/mock/videoData';
+import ScrollText from './components/ScrollText.vue';
+import CalendarCard from './components/CalendarCard.vue';
+import NewsCard from './components/NewsCard.vue';
+import router from '@/router';
 
 defineOptions({
-  name: 'Home'
-})
+  name: 'Home',
+});
 
 // 响应式数据
 const bannerImage = ref([
@@ -103,73 +103,73 @@ const bannerImage = ref([
   'https://picsum.photos/800/450?random=3',
   'https://picsum.photos/800/450?random=4',
   'https://picsum.photos/800/450?random=5',
-  'https://picsum.photos/800/450?random=6'
-])
-const apps = ref(appData)
-const videos = ref(videoData)
+  'https://picsum.photos/800/450?random=6',
+]);
+const apps = ref(appData);
+const videos = ref(videoData);
 
 // 计算属性
 const appList = computed(() => {
   return apps.value.map((app) => ({
     ...app,
-    size: Math.floor(app.size / 1024 / 1024)
-  }))
-})
+    size: Math.floor(app.size / 1024 / 1024),
+  }));
+});
 
 // DOM 引用
-const leftWrapperRef = ref(null)
-const rightWrapperRef = ref(null)
+const leftWrapperRef = ref(null);
+const rightWrapperRef = ref(null);
 
 // MutationObserver 实例
-let heightObserver = null
+let heightObserver = null;
 
 // 同步左右高度的方法
 const syncHeights = () => {
   nextTick(() => {
-    const leftWrapper = leftWrapperRef.value
-    const rightWrapper = rightWrapperRef.value
-    if (!leftWrapper || !rightWrapper) return
+    const leftWrapper = leftWrapperRef.value;
+    const rightWrapper = rightWrapperRef.value;
+    if (!leftWrapper || !rightWrapper) return;
 
-    rightWrapper.style.height = 'auto'
-    const h = leftWrapper.getBoundingClientRect().height
-    const target = Math.max(420, Math.ceil(h || 0))
-    rightWrapper.style.height = `${target}px`
-  })
-}
+    rightWrapper.style.height = 'auto';
+    const h = leftWrapper.getBoundingClientRect().height;
+    const target = Math.max(420, Math.ceil(h || 0));
+    rightWrapper.style.height = `${target}px`;
+  });
+};
 
 // 数据获取（模拟）
 const getData = () => {
-  console.log(apps.value)
-}
+  console.log(apps.value);
+};
 
 // 生命周期
 onMounted(() => {
-  getData()
+  getData();
   nextTick(() => {
-    syncHeights()
-    window.addEventListener('resize', syncHeights)
+    syncHeights();
+    window.addEventListener('resize', syncHeights);
 
-    const leftWrapper = leftWrapperRef.value
+    const leftWrapper = leftWrapperRef.value;
     if (leftWrapper && typeof MutationObserver !== 'undefined') {
       heightObserver = new MutationObserver(() => {
-        syncHeights()
-      })
+        syncHeights();
+      });
       heightObserver.observe(leftWrapper, {
         childList: true,
         subtree: true,
-        attributes: true
-      })
+        attributes: true,
+      });
     }
-  })
-})
+  });
+});
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', syncHeights)
+  window.removeEventListener('resize', syncHeights);
   if (heightObserver) {
-    heightObserver.disconnect()
-    heightObserver = null
+    heightObserver.disconnect();
+    heightObserver = null;
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>
