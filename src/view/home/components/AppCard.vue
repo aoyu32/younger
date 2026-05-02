@@ -16,40 +16,33 @@
     <div class="card_bottom_2">
       <div class="card_info">
         <div class="info_item">
-          <div class="item_label">
-            <span>名称</span>
-          </div>
-          <div class="item_value">
+          <div
+            class="item_value name"
+            :style="{ background: cardTagBgColor1 }"
+          >
             <span>{{ app.name }}</span>
           </div>
         </div>
-        <div class="info_item">
-          <div class="item_label">
-            <span>分类</span>
-          </div>
-          <div class="item_value">
+        <div class="info_item flex">
+          <div class="item_value" :style="{ background: cardTagBgColor2 }">
             <span>{{ app.category }}</span>
           </div>
-        </div>
-        <div class="info_item">
-          <div class="item_label">
-            <span>大小</span>
-          </div>
-          <div class="item_value">
-            <span>{{ app.size }}</span>
+          <div class="item_value" :style="{ background: cardTagBgColor3 }">
+            <span>{{ app.size }}MB</span>
           </div>
         </div>
+        <div class="info_item"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 defineOptions({
-  name: 'AppCard'
-})
+  name: 'AppCard',
+});
 
 const props = defineProps({
   app: {
@@ -60,24 +53,36 @@ const props = defineProps({
       description: '',
       category: '',
       tag: [],
-      size: 0
-    })
-  }
-})
+      size: 0,
+    }),
+  },
+});
 
-const randomHue = () => Math.floor(Math.random() * 80) + 100 // 100~180 绿色系
-const hue = randomHue()
+const randomHue = () => Math.floor(Math.random() * 80) + 100; // 100~180 绿色系
+const hue = randomHue();
 
 const cardTopBgColor = computed(() => {
-  const h1 = hue
-  const h2 = (hue + 25) % 360
-  const h3 = (hue + 50) % 360
-  return `linear-gradient(135deg, hsla(${h1}, 70%, 55%, 0.9) 0%, hsla(${h2}, 75%, 50%, 0.9) 50%, hsla(${h3}, 65%, 45%, 0.9) 100%)`
-})
+  const h1 = hue;
+  const h2 = (hue + 25) % 360;
+  const h3 = (hue + 50) % 360;
+  return `linear-gradient(135deg, hsla(${h1}, 70%, 55%, 0.7) 0%, hsla(${h2}, 75%, 50%, 0.6) 50%, hsla(${h3}, 65%, 45%, 0.5) 100%)`;
+});
+
+const cardTagBgColor1 = computed(() => {
+    return `hsla(${(hue + 25) % 360}, 75%, 50%, 0.6)`;
+});
+
+const cardTagBgColor2 = computed(() => {
+    return `hsla(${(hue + 45) % 360}, 75%, 50%, 0.5)`;
+});
+
+const cardTagBgColor3 = computed(() => {
+    return `hsla(${(hue + 65) % 360}, 75%, 50%, 0.4)`;
+});
 
 const cardTopArrowColor = computed(() => {
-  return `hsla(${(hue + 25) % 360}, 75%, 50%, 0.9)`
-})
+  return `hsla(${(hue + 25) % 360}, 75%, 50%, 0.6)`;
+});
 </script>
 
 <style scoped lang="scss">
@@ -98,7 +103,7 @@ $card_height: 145px;
     width: $card_width;
     height: calc($card_height / 2);
     background: v-bind(cardTopBgColor);
-    backdrop-filter: blur(12px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     display: flex;
@@ -106,18 +111,18 @@ $card_height: 145px;
     justify-content: center;
     transition: 0.5s;
 
-    &::after {
-      content: '';
-      width: 16px;
-      height: 16px;
-      background: v-bind(cardTopArrowColor);
-      position: absolute;
-      clip-path: polygon(50% 50%, 0 0, 100% 0);
-      left: 50%;
-      bottom: -15px;
-      z-index: 1000;
-      transform: translate(-50%);
-    }
+    // &::after {
+    //   content: '';
+    //   width: 16px;
+    //   height: 16px;
+    //   background: v-bind(cardTopArrowColor);
+    //   position: absolute;
+    //   clip-path: polygon(50% 50%, 0 0, 100% 0);
+    //   left: 50%;
+    //   bottom: -15px;
+    //   z-index: 1000;
+    //   transform: translate(-50%);
+    // }
   }
 
   &:hover {
@@ -176,7 +181,6 @@ $card_height: 145px;
       width: 110px;
       height: auto;
       color: var(--app-text-color-dark);
-      opacity: 0.5;
       border-bottom: 1px solid var(--app-border-color);
       padding-bottom: 5px;
       transition: 0.2s;
@@ -188,9 +192,10 @@ $card_height: 145px;
     }
 
     .bottom_category {
-      font-size: 11px;
+      font-size: 12px;
       transition: 0.2s;
       padding: 0 5px;
+      color: #808080;
     }
   }
 
@@ -204,36 +209,26 @@ $card_height: 145px;
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: column;
-    gap: 3px;
+    justify-content: center;
+    gap: 8px;
 
     .info_item {
-      width: 100px;
-      height: auto;
-      display: flex;
-      align-items: normal;
-      justify-content: flex-start;
-      gap: 8px;
       transition: 0.2s;
-    }
-
-    .item_label {
-      font-size: 12px;
-      font-weight: 550;
-      display: flex;
-      align-items: normal;
-      justify-content: center;
-      color: var(--app-border-color);
+      gap: 8px;
     }
 
     .item_value {
       font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 3px 5px;
+      border-radius: 5px;
       color: var(--app-text-color-dark);
       opacity: 0.7;
+    }
+
+    .name {
+      font-size: 14px;
+      font-weight: 550;
     }
   }
 }
