@@ -1,0 +1,50 @@
+.ao-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.3s;
+  font-family: inherit;
+  -webkit-user-select: none;
+  user-select: none;
+
+  // 尺寸变体
+  &--small {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  &--normal {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  &--large {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  // 填充类型交互
+  &--fill {
+    &:hover {
+      filter: brightness(1.1);
+    }
+    &:active {
+      filter: brightness(0.9);
+    }
+  }
+
+  // 文本类型交互
+  &--text {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    &:active {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+}

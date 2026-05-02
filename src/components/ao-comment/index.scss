@@ -1,0 +1,59 @@
+.ao-comment {
+  width: 100%;
+  height: 100%;
+  margin: 20px 0;
+
+  .user-avatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e1e4e8;
+    margin-right: 10px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+
+    .label {
+        span{
+            font-weight: 500;
+            font-size: 13px;
+            color: #c0bcbc;
+            margin-left: 10px;
+        }
+    }
+
+    .sort {
+      display: flex;
+    }
+
+    .new {
+      padding: 0 10px;
+      border-right: 1px solid #eaeaea;
+    }
+
+    .hot {
+      padding: 0 10px;
+    }
+
+    button {
+      font-size: 15px;
+      border: none;
+      background-color: transparent;
+      color: #1abbf6;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      &:hover{
+        color: #1abbf6af;
+      }
+    }
+  }
+
+  .content{
+    min-height: 500px;
+  }
+}
