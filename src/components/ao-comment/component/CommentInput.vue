@@ -19,14 +19,12 @@
           @input="handleInput"
         ></textarea>
         <!-- 图片预览区域 -->
-        <div v-if="images?.length" class="image-preview-list">
-          <div v-for="img in images" :key="img.id" class="preview-item">
+        <div v-if="imgList?.length" class="image-preview-list">
+          <div v-for="img in imgList" :key="img.id" class="preview-item">
             <img :src="img.url" alt="预览" />
             <div class="remove-btn" @click="removeImage(img.id)">
               <img src="../img/icon_remove.svg" alt="" />
             </div>
-            <!-- 可选的加载状态 -->
-            <div v-if="img.status === 'uploading'" class="uploading-mask"></div>
           </div>
         </div>
       </div>
@@ -43,6 +41,7 @@
           <button
             type="button"
             class="tool-btn image-btn"
+            v-if="showUploadBtn"
             @click="triggerFileInput"
           >
             <img src="../img/icon_upload_img.svg" alt="" />️
@@ -53,7 +52,7 @@
             accept="image/*"
             multiple
             style="display: none"
-            @change="handleFileSelect"
+            @change="handleFileChange"
           />
         </div>
         <div class="toolbar-right">
@@ -79,27 +78,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, nextTick, inject, onBeforeUnmount } from 'vue';
 import EmojiPicker from './EmojiPicker.vue';
+import type { UploadFn, ImageItem } from '../index';
 
-// 定义图片项类型
-export interface ImageItem {
-  id: number | string;
-  url: string; // 预览 URL
-  file?: File; // 原始文件
-  status?: 'uploading' | 'done' | 'error';
-}
+const handleUpload = inject<UploadFn>('on-upload');
 
 // 组件 props
 const props = defineProps<{
   modelValue: string;
-  images?: ImageItem[];
 }>();
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
-  (e: 'update:images', images: ImageItem[]): void;
-  (e: 'images-added', addedItems: ImageItem[]): void; // 新增文件事件，供父组件上传
   (e: 'send', data: { text: string; images: ImageItem[] }): void;
 }>();
 
@@ -108,13 +99,14 @@ const text = ref(props.modelValue || '');
 const showEmojiPicker = ref(false);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
-
+// 上传按钮是否显示
+const showUploadBtn = computed(() => handleUpload);
 // 当前图片列表
-const currentImages = computed(() => props.images || []);
+const imgList = ref<ImageItem[]>([]);
 
 // 是否可发送
 const canSend = computed(() => {
-  return text.value.trim().length > 0 || currentImages.value.length > 0;
+  return text.value.trim().length > 0 || imgList.value.length > 0;
 });
 
 // 同步外部 modelValue
@@ -152,52 +144,44 @@ const triggerFileInput = () => {
   fileInputRef.value?.click();
 };
 
-// 处理文件选择（生成临时预览，通知父组件）
-const handleFileSelect = (e: Event) => {
+// 处理文件选择
+const handleFileChange = async (e: Event) => {
   const input = e.target as HTMLInputElement;
   const files = Array.from(input.files || []);
   if (files.length === 0) return;
+  console.log('上传了文件：', input.files);
 
-  const remainingSlots = 9 - currentImages.value.length;
+  const remainingSlots = 9 - imgList.value.length;
   if (remainingSlots <= 0) {
     alert('最多只能上传9张图片');
     return;
   }
 
-  const validFiles = files.slice(0, remainingSlots);
-  const addedItems: ImageItem[] = [];
-
-  for (const file of validFiles) {
-    if (!file.type.startsWith('image/')) continue;
-    const blobUrl = URL.createObjectURL(file);
-    const newId = Date.now() + Math.random().toString(36).slice(2, 8);
-    const newItem: ImageItem = {
-      id: newId,
-      url: blobUrl,
-      file: file,
-      status: 'uploading', // 标记为上传中
-    };
-    addedItems.push(newItem);
+  if (!handleUpload) {
+    console.error('未开启上传图片');
+    return;
   }
-
-  if (addedItems.length === 0) return;
-
-  // 合并新图片到现有列表
-  const newImages = [...currentImages.value, ...addedItems];
-  emit('update:images', newImages);
-
-  emit('images-added', addedItems);
-  input.value = '';
+  for (const file of files) {
+    try {
+      const res = await handleUpload(file);
+      if (res.success) {
+        imgList.value.push({
+          url: res.url,
+          id: res.id,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 };
 
 // 删除图片
 const removeImage = (id: number | string) => {
-  const removed = currentImages.value.find((img) => img.id === id);
-  const newImages = currentImages.value.filter((img) => img.id !== id);
-  emit('update:images', newImages);
-  // 如果是本地 blob URL，主动释放内存
-  if (removed?.url && removed.url.startsWith('blob:')) {
-    URL.revokeObjectURL(removed.url);
+  imgList.value = imgList.value.filter((img) => img.id !== id);
+  // 清空文件选择器的值，避免同一文件无法再次选择
+  if (fileInputRef.value) {
+    fileInputRef.value.value = '';
   }
 };
 
@@ -232,18 +216,13 @@ const handleSend = () => {
   if (!canSend.value) return;
   emit('send', {
     text: text.value,
-    images: currentImages.value,
+    images: imgList.value,
   });
   // 清空内容和图片
   text.value = '';
   emit('update:modelValue', '');
-  emit('update:images', []);
   // 释放所有 blob URL
-  currentImages.value.forEach((img) => {
-    if (img.url && img.url.startsWith('blob:')) {
-      URL.revokeObjectURL(img.url);
-    }
-  });
+  imgList.value = [];
   nextTick(() => adjustTextareaHeight());
 };
 
@@ -265,12 +244,6 @@ watch(showEmojiPicker, (visible) => {
 });
 
 onBeforeUnmount(() => {
-  // 清理所有 blob URL
-  currentImages.value.forEach((img) => {
-    if (img.url && img.url.startsWith('blob:')) {
-      URL.revokeObjectURL(img.url);
-    }
-  });
   document.removeEventListener('click', handleClickOutside);
 });
 </script>
