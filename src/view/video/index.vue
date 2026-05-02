@@ -22,7 +22,7 @@
               width="16px"
               height="16px"
             />
-            <span>{{ data.meta.publishTime }}</span>
+            <span>{{ data.publishTime }}</span>
           </div>
           <div class="meta-item flex-x">
             <AoImage
@@ -30,7 +30,7 @@
               width="16px"
               height="16px"
             />
-            <span>作者：{{ data.meta.author }}</span>
+            <span>作者：{{ data.author.name }}</span>
           </div>
           <div class="meta-item flex-x" v-if="data.meta.authRequire">
             <AoImage
@@ -45,11 +45,14 @@
 
       <!-- 视频区域 -->
       <div class="player-wrapper">
-        <VideoPlayer :src="data.video.src" :poster="data.video.poster" />
+        <VideoPlayer :src="data.video.url" :poster="data.video.cover" />
       </div>
 
       <div class="video-footer flex">
-        <div class="comment">
+        <div
+          class="comment"
+          :style="{ width: filterRecommendVideo.length > 0 ? '70%' : '100%' }"
+        >
           <AoComment
             :comments="commentsList"
             :on-upload="handleUpload"
@@ -57,33 +60,36 @@
             @reply="handleCommentReplySend"
           />
         </div>
-        <div class="recommand"></div>
+        <div class="recommand" v-if="filterRecommendVideo.length > 0">
+          <VideoRecommend :data="filterRecommendVideo" />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import VideoPlayer from '@/components/video-player/index.vue';
 import AoImage from '@/components/ao-image/index.vue';
 import AoComment from '@/components/ao-comment/index.vue';
 import { mockComments } from '@/mock/comment.js';
+import VideoRecommend from './components/VideoRecommend.vue';
+import { videoData } from '@/mock/videoData.js';
+
+const route = useRoute();
+
+const data = computed(() => {
+  const id = Number(route.params.id);
+  return videoData.find((item) => item.id === id) || {};
+});
 
 const commentsList = ref(mockComments);
 
-const data = ref({
-  title: 'claude code桌面版终于可以第三方模型了',
-  meta: {
-    playCount: 2000,
-    publishTime: '2026-4-10 20:21:00',
-    author: '梁其洋',
-    authRequire: true,
-  },
-  video: {
-    poster: 'https://picsum.photos/1280/720?random=1',
-    src: 'https://vjs.zencdn.net/v/oceans.mp4',
-  },
+const filterRecommendVideo = computed(() => {
+  return videoData.filter((item) => item.isRecommended);
+  // return []
 });
 
 // 模拟上传图片

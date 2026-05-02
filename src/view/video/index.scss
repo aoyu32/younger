@@ -34,10 +34,11 @@
 }
 
 .video-footer {
-  gap: 10px;
+  gap: 30px;
   padding-top: 30px;
+  justify-content: space-between;
 
-  .comment {
-    width: 60%;
+  .recommend {
+    flex: 1;
   }
 }
