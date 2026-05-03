@@ -32,7 +32,7 @@
             />
             <span>作者：{{ data.author.name }}</span>
           </div>
-          <div class="meta-item flex-x" v-if="data.meta.authRequire">
+          <div class="meta-item flex-x" v-if="data.repostAllow">
             <AoImage
               src="@/assets/video/icon_prohibit.svg"
               width="16px"
@@ -68,7 +68,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import VideoPlayer from '@/components/video-player/index.vue';
@@ -77,12 +77,14 @@ import AoComment from '@/components/ao-comment/index.vue';
 import { mockComments } from '@/mock/comment.js';
 import VideoRecommend from './components/VideoRecommend.vue';
 import { videoData } from '@/mock/videoData.js';
+import type { Video } from '@/api/type/video';
+import type { UploadFn } from '@/components/ao-comment';
 
 const route = useRoute();
 
 const data = computed(() => {
   const id = Number(route.params.id);
-  return videoData.find((item) => item.id === id) || {};
+  return videoData.find((item) => item.id === id) as Video;
 });
 
 const commentsList = ref(mockComments);
@@ -93,13 +95,13 @@ const filterRecommendVideo = computed(() => {
 });
 
 // 模拟上传图片
-const handleUpload = async (images) => {
+const handleUpload: UploadFn = async (images: any) => {
   console.log('上传图片：', images);
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
         success: true,
-        id: Date.now(),
+        id: String(Date.now()),
         url: 'https://picsum.photos/1280/720?random=1',
       });
     }, 1000);
@@ -107,7 +109,7 @@ const handleUpload = async (images) => {
 };
 
 // 递归查找指定 id 的评论（包括嵌套回复）
-function findCommentById(list, id) {
+function findCommentById(list: any, id: any): any {
   for (const item of list) {
     if (item.id === id) return item;
     if (item.replies && item.replies.length > 0) {
@@ -119,7 +121,7 @@ function findCommentById(list, id) {
 }
 
 // 发送新评论
-const handleCommentSend = (data) => {
+const handleCommentSend = (data: any) => {
   console.log('发送评论：', data.text, data.images);
   commentsList.value.push({
     id: Date.now(),
@@ -130,11 +132,11 @@ const handleCommentSend = (data) => {
     content: data.text,
     images: data.images,
     createdAt: new Date().toISOString(),
-  });
+  } as any);
 };
 
 // 回复评论（支持嵌套）
-const handleCommentReplySend = (data) => {
+const handleCommentReplySend = (data: any) => {
   console.log('回复评论：', data.commentId, data.text, data.images);
 
   const targetComment = findCommentById(commentsList.value, data.commentId);

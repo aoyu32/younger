@@ -15,7 +15,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 defineOptions({
@@ -30,7 +30,7 @@ const newsList = ref([
   { title: '百度文心一言4.0正式上线，支持多模态', views: 65000 }
 ])
 
-const formatViews = (views) => {
+const formatViews = (views:number) => {
   if (views >= 10000) {
     return (views / 10000).toFixed(1) + 'w'
   }

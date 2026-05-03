@@ -12,8 +12,7 @@
     </footer>
   </div>
 </template>
-
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import LayoutHeader from '@/components/layout/Header.vue'
 import LayoutFooter from '@/components/layout/Footer.vue'

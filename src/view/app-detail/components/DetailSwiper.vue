@@ -29,7 +29,7 @@
     <div class="custom-pagination"></div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import img1 from '@/assets/1.png'
 import img2 from '@/assets/2.png'

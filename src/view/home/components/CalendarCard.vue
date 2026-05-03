@@ -22,55 +22,55 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 defineOptions({
-  name: 'CalendarCard'
-})
+  name: 'CalendarCard',
+});
 
-const currentTime = ref('')
-const currentDate = ref('')
-const weekDay = ref('')
-const daysToYearEnd = ref(0)
-let timer = null
+const currentTime = ref('');
+const currentDate = ref('');
+const weekDay = ref('');
+const daysToYearEnd = ref(0);
+let timer: any = null;
 
 const updateTime = () => {
-  const now = new Date()
-  
+  const now = new Date();
+
   // 格式化时间 HH:MM:SS
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  const seconds = String(now.getSeconds()).padStart(2, '0')
-  currentTime.value = `${hours}:${minutes}:${seconds}`
-  
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  currentTime.value = `${hours}:${minutes}:${seconds}`;
+
   // 格式化日期 YYYY年MM月DD日
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  currentDate.value = `${year}年${month}月${day}日`
-  
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  currentDate.value = `${year}年${month}月${day}日`;
+
   // 星期几
-  const weekDays = ['日', '一', '二', '三', '四', '五', '六']
-  weekDay.value = weekDays[now.getDay()]
-  
+  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+  weekDay.value = weekDays[now.getDay()];
+
   // 计算距离年底天数
-  const yearEnd = new Date(year, 11, 31, 23, 59, 59)
-  const diff = yearEnd - now
-  daysToYearEnd.value = Math.ceil(diff / (1000 * 60 * 60 * 24))
-}
+  const yearEnd = new Date(year, 11, 31, 23, 59, 59);
+  const diff = yearEnd.getTime() - now.getTime();
+  daysToYearEnd.value = Math.ceil(diff / (1000 * 60 * 60 * 24));
+};
 
 onMounted(() => {
-  updateTime()
-  timer = setInterval(updateTime, 1000)
-})
+  updateTime();
+  timer = setInterval(updateTime, 1000);
+});
 
 onBeforeUnmount(() => {
   if (timer) {
-    clearInterval(timer)
-    timer = null
+    clearInterval(timer);
+    timer = null;
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>

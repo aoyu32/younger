@@ -78,7 +78,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import AoBanner from '@/components/ao-banner/index.vue';
 import AppCard from '@/view/home/components/AppCard.vue';
@@ -90,7 +90,6 @@ import { videoData } from '@/mock/videoData';
 import ScrollText from './components/ScrollText.vue';
 import CalendarCard from './components/CalendarCard.vue';
 import NewsCard from './components/NewsCard.vue';
-import router from '@/router';
 
 defineOptions({
   name: 'Home',
@@ -117,11 +116,11 @@ const appList = computed(() => {
 });
 
 // DOM 引用
-const leftWrapperRef = ref(null);
-const rightWrapperRef = ref(null);
+const leftWrapperRef = ref<HTMLElement | null>(null);
+const rightWrapperRef = ref<HTMLElement | null>(null);
 
 // MutationObserver 实例
-let heightObserver = null;
+let heightObserver: MutationObserver | null = null;
 
 // 同步左右高度的方法
 const syncHeights = () => {

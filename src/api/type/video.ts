@@ -22,7 +22,7 @@ export interface Video {
   title: string;
   description: string;
   tags: string[];
-  authorRequire: boolean;
+  repostAllow: boolean;
   publishTime: string; // 格式: YYYY-MM-DD
   isHot: boolean;
   isRecommended: boolean;

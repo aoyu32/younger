@@ -44,7 +44,7 @@ const props = withDefaults(
       title: '',
       description: '',
       tags: [],
-      authorRequire: false,
+      repostAllow: false,
       publishTime: '',
       isHot: false,
       isRecommended: false,
