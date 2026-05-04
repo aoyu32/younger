@@ -27,10 +27,9 @@
           <div class="content_label">
             <h3>实用工具</h3>
             <div class="label_text">
-              <span>值得放入收藏夹的实用利器</span>
+              <span>超级实用工具</span>
             </div>
           </div>
-
           <div class="apps_grid">
             <div class="apps_item" v-for="item in appList" :key="item.id">
               <router-link to="/app/detail">
@@ -45,12 +44,29 @@
         <div class="content-wrapper" ref="rightWrapperRef">
           <div class="content_label">
             <h3>网页工具</h3>
-            <div class="label_text">
+            <div class="label_text flex-x">
+              <div
+                class="pre-btn"
+                @click="handlePageChange('pre')"
+                :class="{ disabled: isPreDisabled }"
+              >
+                <AoImage src="@/assets/home/icon_pre.svg" />
+              </div>
               <span>常用在线工具与站点</span>
+              <div
+                class="next-btn"
+                @click="handlePageChange('next')"
+                :class="{ disabled: isNextDisabled }"
+              >
+                <AoImage src="@/assets/home/icon_next.svg" />
+              </div>
             </div>
           </div>
-
-          <div class="webs_grid" @mouseleave="showPointer = false">
+          <div
+            class="webs_grid"
+            @mouseleave="showPointer = false"
+            ref="websGridRef"
+          >
             <div
               class="pointer"
               ref="webToolPointerRef"
@@ -58,7 +74,7 @@
             ></div>
             <div
               class="webs_item"
-              v-for="tool in webToolList"
+              v-for="tool in displayedTools"
               :key="tool.id"
               @mouseenter="handleMouseEnterWebTool"
             >
@@ -100,6 +116,8 @@ import { videoData } from '@/mock/videoData';
 import ScrollText from './components/ScrollText.vue';
 import CalendarCard from './components/CalendarCard.vue';
 import NewsCard from './components/NewsCard.vue';
+import AoImage from '@/components/ao-image/index.vue';
+import gsap from 'gsap';
 
 defineOptions({
   name: 'Home',
@@ -119,6 +137,7 @@ const tools = ref(webTools);
 const videos = ref(videoData);
 const webToolPointerRef = ref<HTMLElement>();
 const showPointer = ref<boolean>(false);
+const websGridRef = ref<HTMLElement>();
 
 // 计算属性
 const appList = computed(() => {
@@ -128,10 +147,6 @@ const appList = computed(() => {
       size: Math.floor(app.size / 1024 / 1024),
     }))
     .slice(0, 8);
-});
-
-const webToolList = computed(() => {
-  return tools.value.slice(0, 20);
 });
 
 // DOM 引用
@@ -158,6 +173,48 @@ const syncHeights = () => {
 // 数据获取（模拟）
 const getData = () => {
   console.log(apps.value);
+};
+
+// 分页参数
+const pageSize = 20;
+const currentPage = ref(1);
+
+// 当前页显示的工具
+const displayedTools = computed(() => {
+  const start = (currentPage.value - 1) * pageSize;
+  console.log('分页数据：', tools.value.slice(start, start + pageSize));
+
+  return tools.value.slice(start, start + pageSize);
+});
+
+// 总页数
+const totalPages = computed(() => Math.ceil(tools.value.length / pageSize));
+
+// 按钮禁用状态
+const isPreDisabled = computed(() => currentPage.value <= 1);
+const isNextDisabled = computed(() => currentPage.value >= totalPages.value);
+
+const handlePageChange = (dir: 'pre' | 'next') => {
+  const grid = websGridRef.value;
+  if (!grid) return;
+  const distance = grid.offsetWidth;
+  const direction = dir === 'next' ? -1 : 1;
+  if (dir === 'pre' && !isPreDisabled.value) {
+    currentPage.value--;
+    gsap
+      .timeline()
+      .to(grid, { x: distance * direction, duration: 0.15 })
+      .set(grid, { x: -direction * distance })
+      .to(grid, { x: 0, duration: 0.15 });
+  } else if (dir === 'next' && !isNextDisabled.value) {
+    currentPage.value++;
+    gsap
+      .timeline()
+      .to(grid, { x: distance * direction, duration: 0.15 })
+      .set(grid, { x: -direction * distance })
+      .to(grid, { x: 0, duration: 0.15 });
+  }
+  showPointer.value = false;
 };
 
 const handleMouseEnterWebTool = (event: MouseEvent) => {

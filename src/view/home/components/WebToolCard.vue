@@ -35,6 +35,7 @@ defineProps({
 .web-tool-card {
   width: 100%;
   height: 100%;
+   min-height: 111px;
   background-color: var(--app-bg-color-light);
   border-radius: 10px;
   display: flex;

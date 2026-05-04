@@ -82,7 +82,30 @@
       }
 
       .label_text {
+        gap: 10px;
         color: #999999;
+        span {
+          line-height: 19px;
+        }
+        .pre-btn,
+        .next-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 19px;
+          height: 19px;
+          border-radius: 4px;
+          background-color: #acacac3e;
+          cursor: pointer;
+          transition: all 0.3s ease-in-out;
+          &:hover {
+            background-color: #acacac96;
+          }
+          &.disabled {
+            background-color: rgba(225, 224, 224, 0.185);
+            cursor: not-allowed;
+          }
+        }
       }
     }
 
@@ -110,6 +133,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 15px;
+        align-content: start;
       }
 
       .webs_item {
