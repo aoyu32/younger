@@ -50,8 +50,18 @@
             </div>
           </div>
 
-          <div class="webs_grid">
-            <div class="webs_item" v-for="tool in webTools" :key="tool.id">
+          <div class="webs_grid" @mouseleave="showPointer = false">
+            <div
+              class="pointer"
+              ref="webToolPointerRef"
+              v-show="showPointer"
+            ></div>
+            <div
+              class="webs_item"
+              v-for="tool in webToolList"
+              :key="tool.id"
+              @mouseenter="handleMouseEnterWebTool"
+            >
               <WebToolCard :tool="tool" />
             </div>
           </div>
@@ -105,14 +115,23 @@ const bannerImage = ref([
   'https://picsum.photos/800/450?random=6',
 ]);
 const apps = ref(appData);
+const tools = ref(webTools);
 const videos = ref(videoData);
+const webToolPointerRef = ref<HTMLElement>();
+const showPointer = ref<boolean>(false);
 
 // 计算属性
 const appList = computed(() => {
-  return apps.value.map((app) => ({
-    ...app,
-    size: Math.floor(app.size / 1024 / 1024),
-  }));
+  return apps.value
+    .map((app) => ({
+      ...app,
+      size: Math.floor(app.size / 1024 / 1024),
+    }))
+    .slice(0, 8);
+});
+
+const webToolList = computed(() => {
+  return tools.value.slice(0, 20);
 });
 
 // DOM 引用
@@ -141,6 +160,31 @@ const getData = () => {
   console.log(apps.value);
 };
 
+const handleMouseEnterWebTool = (event: MouseEvent) => {
+  const targetEl = event.currentTarget as HTMLElement;
+  showPointer.value = true;
+  console.log(targetEl.offsetWidth, targetEl.offsetHeight);
+
+  if (webToolPointerRef.value) {
+    webToolPointerRef.value.style.setProperty(
+      '--pointer-width',
+      targetEl?.offsetWidth + 'px',
+    );
+    webToolPointerRef.value.style.setProperty(
+      '--pointer-height',
+      targetEl.offsetHeight + 'px',
+    );
+    webToolPointerRef.value.style.setProperty(
+      '--pointer-x',
+      targetEl.offsetLeft + 'px',
+    );
+    webToolPointerRef.value.style.setProperty(
+      '--pointer-y',
+      targetEl.offsetTop + 'px',
+    );
+  }
+};
+
 // 生命周期
 onMounted(() => {
   getData();
@@ -163,7 +207,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', syncHeights);
+  // window.removeEventListener('resize', syncHeights);
   if (heightObserver) {
     heightObserver.disconnect();
     heightObserver = null;

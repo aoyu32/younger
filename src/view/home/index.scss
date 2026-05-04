@@ -34,12 +34,100 @@
     }
   }
 
+  .pointer {
+    --pointer-line: 30px; // 线框宽度
+    --pointer-thick: 1.5px; //线宽粗细
+    --pointer-gap: 8px; // 间隔
+    --pointer-width: 0px; // 元素宽
+    --pointer-height: 0px; // 元素高
+    --pointer-color: var(--app-primary-color);
+    --pointer-x: 0px; // 元素左上角横坐标
+    --pointer-y: 0px; // 元素左上角纵坐标
+    position: absolute;
+    width: calc(var(--pointer-width) + var(--pointer-gap) * 2);
+    height: calc(var(--pointer-height) + var(--pointer-gap) * 2);
+    border: var(--pointer-thick) solid var(--pointer-color);
+    left: calc(var(--pointer-x) - var(--pointer-gap));
+    top: calc(var(--pointer-y) - var(--pointer-gap));
+    transition: all 0.1s ease;
+    box-sizing: border-box;
+    border-radius: 8px;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.06))
+      drop-shadow(0 6px 14px rgba(0, 20, 40, 0.04));
+    mask: conic-gradient(
+        at var(--pointer-line) var(--pointer-line),
+        #0000 75%,
+        blue 75%
+      )
+      left top/calc(100% - var(--pointer-line)) calc(100% - var(--pointer-line));
+    cursor: pointer;
+    z-index: -1;
+  }
+
   .home_content {
     height: auto;
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 20px;
+    display: flex;
     margin-top: 20px;
+    gap: 20px;
+
+    .content-wrapper {
+      border: 1px solid rgb(230, 230, 230);
+      padding: 20px;
+      border-radius: 8px;
+      .content_label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .label_text {
+        color: #999999;
+      }
+    }
+
+    .content_left {
+      flex: 1;
+      .apps_grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+    }
+
+    .content_right {
+      flex: 2;
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .webs_grid {
+        flex: 1;
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+      }
+
+      .webs_item {
+        border-radius: 8px;
+        box-shadow:
+          0 1px 2px rgba(0, 0, 0, 0.04),
+          0 2px 4px rgba(0, 0, 0, 0.04);
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease;
+        &:hover {
+          box-shadow:
+            0 3px 6px rgba(0, 0, 0, 0.07),
+            0 12px 24px rgba(0, 0, 0, 0.06);
+          transform: translateY(-2px);
+        }
+      }
+    }
   }
 
   .video_content {
@@ -77,90 +165,6 @@
       grid-auto-rows: 1fr;
 
       .video_item {
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-
-  .home_content {
-    .content_left {
-      width: 420px;
-    }
-
-    .content_right {
-      width: 100%;
-      min-width: 0;
-    }
-
-    .content_label {
-      width: 100%;
-      height: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 0 0 14px;
-
-      .label_text {
-        font-size: 14px;
-        color: var(--app-text-color-dark); 
-        opacity: 0.4;
-      }
-    }
-
-    .content_left,
-    .content_right {
-      display: flex;
-      flex-direction: column;
-      align-items: normal;
-      justify-content: center;
-      min-width: 0;
-
-      .content-wrapper {
-        width: 100%;
-        height: auto;
-        min-height: 420px;
-        background-color: var(--app-bg-color-light);
-        border: 1px solid var(--app-border-color);
-        border-radius: 12px;
-        padding: 18px;
-        box-sizing: border-box;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15); 
-      }
-    }
-
-      .content-wrapper{
-        overflow-y: auto;
-      }
-
-    .apps_grid {
-      width: 100%;
-      height: auto;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-
-      .apps_item {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      a {
-        text-decoration: none;
-      }
-    }
-
-    .webs_grid {
-      width: 100%;
-      overflow-y: auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-
-      .webs_item {
         width: 100%;
         height: 100%;
       }
