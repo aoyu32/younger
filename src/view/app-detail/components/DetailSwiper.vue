@@ -12,11 +12,11 @@
         depth: 100,
         modifier: 1,
         slideShadows: false,
-        scale: 0.9
+        scale: 0.9,
       }"
       :pagination="{
         el: '.custom-pagination',
-        clickable: true
+        clickable: true,
       }"
       :modules="modules"
       class="mySwiper"
@@ -30,28 +30,32 @@
   </div>
 </template>
 <script setup lang="ts">
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import img1 from '@/assets/1.png'
-import img2 from '@/assets/2.png'
-import img3 from '@/assets/3.png'
-import img4 from '@/assets/4.png'
-import 'swiper/css'
-import 'swiper/css/effect-coverflow'
-import 'swiper/css/pagination'
-import { EffectCoverflow, Pagination } from 'swiper/modules'
-const modules = [EffectCoverflow, Pagination]
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import img1 from '@/assets/1.png';
+import img2 from '@/assets/2.png';
+import img3 from '@/assets/3.png';
+import img4 from '@/assets/4.png';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import { EffectCoverflow, Pagination } from 'swiper/modules';
+const modules = [EffectCoverflow, Pagination];
 </script>
 <style lang="scss" scoped>
 .swiper-container {
   width: 100%;
+  filter: drop-shadow(0px 0px 5px rgba(48, 44, 44, 0.275));
 }
 .swiper-slide {
   background-position: center;
   background-size: cover;
   border: 1px solid var(--app-border-color);
   border-radius: 10px;
-  width: 700px;
+  width: 800px;
   height: 500px;
+  box-shadow:
+    5px 0 5px -5px rgba(0, 0, 0, 0.3),
+    -5px 0 5px -5px rgba(0, 0, 0, 0.3);
 }
 
 .custom-pagination {
@@ -67,6 +71,5 @@ const modules = [EffectCoverflow, Pagination]
   width: 100%;
   height: 100%;
   object-fit: cover;
-  box-shadow: 0 0 10px rgba(79, 79, 79, 0.477);
 }
 </style>
