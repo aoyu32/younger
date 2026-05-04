@@ -1,5 +1,10 @@
 <template>
-  <a class="web-tool-card" :href="tool.url" target="_blank" rel="noopener noreferrer">
+  <a
+    class="web-tool-card"
+    :href="tool.url"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
     <div class="card_icon">
       <img v-if="tool.icon" :src="tool.icon" :alt="tool.name" />
       <div v-else class="icon_placeholder"></div>
@@ -10,8 +15,8 @@
 
 <script setup lang="ts">
 defineOptions({
-  name: 'WebToolCard'
-})
+  name: 'WebToolCard',
+});
 
 defineProps({
   tool: {
@@ -20,31 +25,26 @@ defineProps({
       id: 0,
       name: '',
       url: '',
-      icon: ''
-    })
-  }
-})
+      icon: '',
+    }),
+  },
+});
 </script>
 
 <style scoped lang="scss">
 .web-tool-card {
   width: 100%;
-  height: 105px;
+  height: 100%;
   background-color: var(--app-bg-color-light);
   border-radius: 10px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 8px;
   text-decoration: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
-  }
+  border: 1px solid var(--app-border-color);
+  box-sizing: border-box;
 
   .card_icon {
     width: 40px;
@@ -70,7 +70,6 @@ defineProps({
 
   .card_name {
     width: 100%;
-    padding: 0 10px;
     font-size: 14px;
     font-weight: 600;
     text-align: center;
