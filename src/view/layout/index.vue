@@ -3,7 +3,6 @@
     <header>
       <LayoutHeader />
     </header>
-    <!-- <main :style="{ width: $route.path === '/video' ? '90%' : '1200px' }"> -->
     <main>
       <router-view />
     </main>
@@ -13,27 +12,27 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import LayoutHeader from '@/components/layout/Header.vue'
-import LayoutFooter from '@/components/layout/Footer.vue'
+import { ref, onMounted } from 'vue';
+import LayoutHeader from '@/view/layout/components/Header.vue';
+import LayoutFooter from '@/view/layout/components/Footer.vue';
 
 // 组件名称
 defineOptions({
-  name: 'Layout'
-})
+  name: 'Layout',
+});
 
 // 响应式主题状态
-const currentTheme = ref('light')
+const currentTheme = ref('light');
 
 // 设置主题
 const setTheme = () => {
-  document.documentElement.setAttribute('data-theme', currentTheme.value)
-}
+  document.documentElement.setAttribute('data-theme', currentTheme.value);
+};
 
 // 生命周期：挂载后设置主题
 onMounted(() => {
-  setTheme()
-})
+  setTheme();
+});
 </script>
 
 <style lang="scss" scoped>

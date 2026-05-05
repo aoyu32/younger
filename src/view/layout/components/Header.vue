@@ -30,8 +30,10 @@
     </div>
     <div class="header_right">
       <div class="tool_collect">
-        <button>工具收藏</button>
+        <!-- <button>工具收藏</button> -->
+        <div class="theme-icon" v-html="themeIconSvg"></div>
       </div>
+      <div class="theme-btn"></div>
       <div class="right_user">
         <div class="user_avatar">
           <img src="@/assets/avatar.png" alt="" />
@@ -43,7 +45,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import themeIconSvg from '@/assets/images/icon_change_theme.svg?raw';
 
 // 组件名称
 defineOptions({
@@ -65,6 +68,12 @@ const navItems = ref([
     name: '教育视频',
     route: '',
     anchor: 'videos',
+  },
+  {
+    icon: '',
+    name: 'AI资讯',
+    route: '',
+    anchor: 'news',
   },
 ]);
 
@@ -173,6 +182,9 @@ const handleNavClick = (anchor) => {
       }
     }
   }
+}
+.theme-icon {
+  fill: #805ad5;
 }
 
 .header_right {
