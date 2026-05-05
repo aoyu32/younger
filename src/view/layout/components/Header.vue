@@ -31,7 +31,6 @@
     <div class="header_right">
       <div class="tool_collect">
         <!-- <button>工具收藏</button> -->
-        <div class="theme-icon" v-html="themeIconSvg"></div>
       </div>
       <div class="theme-btn"></div>
       <div class="right_user">
@@ -46,8 +45,6 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import themeIconSvg from '@/assets/images/icon_change_theme.svg?raw';
-
 // 组件名称
 defineOptions({
   name: 'LayoutHeader',
@@ -68,13 +65,7 @@ const navItems = ref([
     name: '教育视频',
     route: '',
     anchor: 'videos',
-  },
-  {
-    icon: '',
-    name: 'AI资讯',
-    route: '',
-    anchor: 'news',
-  },
+  }
 ]);
 
 // 平滑滚动函数
@@ -182,9 +173,6 @@ const handleNavClick = (anchor) => {
       }
     }
   }
-}
-.theme-icon {
-  fill: #805ad5;
 }
 
 .header_right {
