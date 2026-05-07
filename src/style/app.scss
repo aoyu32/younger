@@ -6,12 +6,14 @@
 html {
   height: 100%;
   box-sizing: border-box;
+  scrollbar-width: none;
 }
 
 body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  font-family: sybold, AlibabaPuHuiTi, FangZhengHeiTi, VideoJs, BlinkMacSystemFont !important;
+  font-family:
+    sybold, AlibabaPuHuiTi, FangZhengHeiTi, VideoJs, BlinkMacSystemFont !important;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -20,7 +22,11 @@ body {
   padding: 0;
   color: var(--app-text-color);
 }
-
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  background: transparent;
+}
 #app {
   height: 100%;
 }
@@ -127,7 +133,6 @@ h5 {
 .max-w-350 {
   max-width: 350px;
 }
-
 
 .mt-4 {
   margin-top: calc(var(--app-base-px) - 4px);
@@ -239,7 +244,7 @@ h5 {
   align-items: center;
 }
 
-.flex-column{
+.flex-column {
   display: flex;
   flex-direction: column;
 }
