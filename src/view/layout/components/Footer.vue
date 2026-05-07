@@ -98,7 +98,7 @@ const year = computed(() => new Date().getFullYear())
 }
 
 .footer_inner {
-  width: 1200px;
+  width: var(--app-header-width);
   height: auto;
   margin: 0 auto;
   padding: 26px 0;

@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" style="padding: 0 20px;">
     <div class="header_left">
       <div class="left_logo">
         <div class="logo_img">
@@ -105,7 +105,7 @@ const handleNavClick = (anchor) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 1200px;
+  width: var(--app-header-width);
   height: 72px;
   img {
     width: 40px;
