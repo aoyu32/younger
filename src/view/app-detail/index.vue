@@ -63,91 +63,76 @@
     </div>
 
     <div class="svg-path flex-center" ref="svgPathRef">
-      <!-- <div class="svg-icon" ref="planeIconRef">
-        <img
-          src="@/assets/app-detail/icon_plane.svg"
-          alt=""
-          style="transform: rotate(0deg)"
-        />
-      </div> -->
-      <!-- <svg
-        ref="svgRef"
-        width="262"
-        height="926"
-        viewBox="0 0 262 926"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          ref="motionPathRef"
-          d="M78.3135 0.055687C91.3135 116.056 -144.686 363.056 147.314 445.056C439.314 527.056 78.3135 817.056 83.3135 925.056"
-          :stroke="primaryColor"
-          stroke-width="2"
+      <div class="svg-wrapper">
+        <div class="svg-label-1" :style="{ color: primaryColor }">
+          <p>向下滚动，立马快速上手APP</p>
+        </div>
+        <div class="svg-label-2" :style="{ color: primaryColor }">
+          <p>查看{{ data.name }}文档，了解更多</p>
+        </div>
+        <svg
+          width="318"
+          height="1042"
+          viewBox="0 0 318 1042"
           fill="none"
-        />
-      </svg> -->
-      <svg
-        width="318"
-        height="1042"
-        viewBox="0 0 318 1042"
-        fill="none"
-        ref="svgRef"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M160.064 2.80384C144.145 124.195 517.624 404.65 160.064 490.461C-197.496 576.272 166.187 878.179 160.064 991.199"
-          :stroke="primaryColor"
-          ref="motionPathRef"
-          stroke-width="5"
-          stroke-linecap="square"
-          stroke-linejoin="bevel"
-        />
-      </svg>
-      <svg
-        width="61"
-        height="78"
-        viewBox="0 0 61 78"
-        xmlns="http://www.w3.org/2000/svg"
-        ref="arrowRef"
-        :fill="primaryColor"
-      >
-        <path
-          d="M30.4121 77.4385L60.8242 0L30.4121 26.6592L0.000976562 0H0L30.4121 77.4385Z"
-        />
-      </svg>
+          ref="svgRef"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M160.064 2.80384C144.145 124.195 517.624 404.65 160.064 490.461C-197.496 576.272 166.187 878.179 160.064 991.199"
+            :stroke="primaryColor"
+            ref="motionPathRef"
+            stroke-width="5"
+            stroke-linecap="square"
+            stroke-linejoin="bevel"
+          />
+        </svg>
+        <svg
+          width="61"
+          height="78"
+          viewBox="0 0 61 78"
+          xmlns="http://www.w3.org/2000/svg"
+          ref="arrowRef"
+          :fill="primaryColor"
+        >
+          <path
+            d="M30.4121 77.4385L60.8242 0L30.4121 26.6592L0.000976562 0H0L30.4121 77.4385Z"
+          />
+        </svg>
+      </div>
     </div>
 
     <div class="intro-section">
       <div class="intro-wrapper flex-center" ref="introWrapperRef">
-        <!-- <div
-          class="app-intro-card"
-          :style="{ backgroundColor: toRGBA(primaryColor, 0.1) }"
-        >
-          <div class="icon">
-            <img :src="data.icon" alt="" />
-          </div>
-          <div class="name">
-            <h2>{{ data.name }}</h2>
-          </div>
-          <div class="desc">
-            <p>{{ data.desc }}</p>
-          </div>
-          <div class="tags">
-            <div
-              class="tag-item"
-              v-for="(item, index) in data.tags"
-              :key="index"
-            >
-              {{ item }}
-            </div>
-          </div>
-          <div class="download-btn">
-            <button>立即使用</button>
-          </div>
-        </div> -->
+        <div class="intro-card">
+          <div class="name">{{ data.name }}文档</div>
+        </div>
         <div class="app-intro-md">
           <div class="md-scroll-inner" ref="mdScrollInnerRef">
             <MdPreview :id="id" :modelValue="data.content" />
+          </div>
+        </div>
+        <div class="intro-btns">
+          <div class="download btn-item">
+            <AoImage
+              src="@/assets/app-detail/icon_download.svg"
+              width="24px"
+              height="24px"
+            />
+          </div>
+          <div class="share btn-item">
+            <AoImage
+              src="@/assets/app-detail/icon_share.svg"
+              width="24px"
+              height="24px"
+            />
+          </div>
+          <div class="github btn-item">
+            <AoImage
+              src="@/assets/app-detail/icon_github.svg"
+              width="24px"
+              height="24px"
+            />
           </div>
         </div>
       </div>
@@ -173,10 +158,9 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { Flip } from 'gsap/Flip';
 import { MdPreview } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
+import AoImage from '@/components/ao-image/index.vue';
 let lenis: Lenis | null = null;
-const router = useRouter();
 const id = 'preview-only';
-const text = ref('# Hello Editor');
 const data = ref(appDetail);
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 gsap.registerPlugin(SplitText);
@@ -209,8 +193,8 @@ const setupPathScrollAnimation = () => {
   const arrow = arrowRef.value;
   const pathLength = path.getTotalLength();
   const startPoint = path.getPointAtLength(0);
+  const svgLabel1 = document.querySelector('.svg-label-1') as HTMLElement;
 
-  // 初始化：线索隐藏，箭头放到路径起点并隐藏
   gsap.set(path, {
     strokeDasharray: pathLength,
     strokeDashoffset: pathLength,
@@ -223,7 +207,6 @@ const setupPathScrollAnimation = () => {
     transformOrigin: 'center center',
   });
 
-  // 滚动驱动的同步动画
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: svgPathRef.value,
@@ -233,7 +216,6 @@ const setupPathScrollAnimation = () => {
     },
   });
 
-  // 描边生长
   tl.to(
     path,
     {
@@ -241,21 +223,44 @@ const setupPathScrollAnimation = () => {
       ease: 'none',
     },
     0,
-  )
-    // 箭头沿路径移动 + 自动旋转
-    .fromTo(
-      arrow,
-      { opacity: 1 },
-      {
-        motionPath: {
-          path: path,
-          align: path,
-          alignOrigin: [0.5, 0.5],
-          autoRotate: 270,
-        },
-        ease: 'none',
+  ).fromTo(
+    arrow,
+    { opacity: 1 },
+    {
+      motionPath: {
+        path: path,
+        align: path,
+        alignOrigin: [0.5, 0.5],
+        autoRotate: 270,
       },
-      0,
+      ease: 'none',
+    },
+    0,
+  );
+
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: '.svg-wrapper',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1,
+      },
+    })
+    .fromTo(
+      '.svg-label-1',
+      { opacity: 0, x: -800, y: 0 },
+      {
+        opacity: 1,
+        x: -(svgPathRef.value.offsetWidth / 2 - svgLabel1.offsetWidth - 100),
+        y: 300,
+      },
+    )
+    .fromTo(
+      '.svg-label-2',
+      { opacity: 0, x: 600, y: 400 },
+      { opacity: 1, x: 250, y: 1000 },
+      0.5,
     );
 };
 
@@ -491,28 +496,24 @@ const setupDownloadPin = () => {
   const innerWrapperEl = document.querySelector('.intro-wrapper');
   const headerEl = document.querySelector('.header');
   const mdEl = document.querySelector('.app-intro-md') as HTMLElement;
-  const mdInner = mdScrollInnerRef.value;
+  const mdInner = mdScrollInnerRef.value as HTMLElement;
+  const introBtns = document.querySelector('.intro-btns') as HTMLElement;
+  const introCard = document.querySelector('.intro-card') as HTMLElement;
 
   if (!introSectionEl || !innerWrapperEl || !headerEl || !mdEl || !mdInner) {
     console.warn('setupDownloadPin: 缺少必要元素，跳过');
     return;
   }
-
-  // 计算内部可滚动距离（若内容高度小于容器高度，则为 0）
   const maxScroll = getMaxScroll();
 
-  // 重置内部偏移
   gsap.set(mdInner, { y: 0 });
   gsap.set(innerWrapperEl, {
     position: 'relative',
     left: '50%',
     xPercent: -50,
   });
-
-  // 1. 先创建时间线，链式调用到 addLabel('scrollStart', 2) 停止
   const tl = gsap
     .timeline()
-    // 阶段1：宽度扩展（进度 0 → 1）
     .fromTo(
       headerEl,
       { width: '1200px' },
@@ -525,41 +526,77 @@ const setupDownloadPin = () => {
       { width: '100vw', borderRadius: 0, duration: 1, ease: 'power2.inOut' },
       0,
     )
-    // 阶段2：md 从右侧滑入（进度 1 → 2）
     .addLabel('enter', 1)
+    .to(
+      introCard,
+      {
+        scale: 0.5,
+        x: () =>
+          -(
+            innerWrapperEl.getBoundingClientRect().width -
+            mdInner.getBoundingClientRect().width
+          ),
+        y: () =>
+          -(
+            innerWrapperEl.getBoundingClientRect().height -
+            introCard.getBoundingClientRect().height +
+            20
+          ) / 2,
+        duration: 1,
+        ease: 'power2.out',
+      },
+      'enter',
+    )
     .fromTo(
       mdEl,
       { x: '150%' },
       { x: '0%', duration: 1, ease: 'power2.out' },
       'enter',
     )
+    .to(
+      introBtns,
+      {
+        x: '0',
+        y: '0',
+        opacity: 1,
+        duration: 0.5,
+        delay: 0.5,
+        ease: 'power2.out',
+      },
+      '<',
+    )
     .addLabel('scrollStart', 2);
-
-  // 2. 根据内容是否溢出，添加内部滚动动画
   if (maxScroll > 0) {
     tl.to(
       mdInner,
       {
         y: -maxScroll,
         ease: 'none',
-        duration: 2, // 内容滚动用时 2 秒（即滚动距离）
+        duration: 2,
       },
       'scrollStart',
     ).addLabel('scrollEnd', 'scrollStart+=2');
   } else {
-    // 无溢出则直接将 scrollEnd 对齐到 scrollStart
     tl.addLabel('scrollEnd', 'scrollStart');
   }
 
-  // 3. 继续链式添加后续动画
   tl.addLabel('leave', 'scrollEnd')
-    // 阶段4：md 向左滑出
     .to(mdEl, { x: '-150%', duration: 1, ease: 'power2.in' }, 'leave')
-    // 阶段5：宽度收回（leave 结束后开始）
     .addLabel('shrink', 'leave+=1')
     .to(
       headerEl,
       { width: '1200px', duration: 1, ease: 'power2.inOut' },
+      'shrink',
+    )
+    .to(
+      '.intro-card',
+      {
+        x: '0',
+        y: '0',
+        scale: '1',
+        duration: 1,
+        ease: 'power2.out',
+      },
       'shrink',
     )
     .to(
@@ -573,14 +610,14 @@ const setupDownloadPin = () => {
       'shrink',
     );
 
-  // 4. 创建 ScrollTrigger
   const st = ScrollTrigger.create({
     trigger: introSectionEl,
-    start: 'top top+=72px', // 根据你的头部高度调整
-    end: '+=6000', // 数值需匹配时间线总时长（约6秒），可适当增减
+    start: 'top top+=72px',
+    end: '+=6000',
     scrub: 1,
     pin: true,
     animation: tl,
+    invalidateOnRefresh: true,
   });
 
   scrollTriggers.push(st);
@@ -703,20 +740,17 @@ const initLenis = () => {
     duration: 0.3,
     easing: (t) => 1 - Math.pow(1 - t, 2),
     smoothWheel: true,
-    // 以下为新增
     infinite: false,
     orientation: 'vertical',
     gestureOrientation: 'vertical',
   });
 
-  // 将 Lenis 回调改为 requestAnimationFrame 方式，更稳定
   function raf(time: number) {
     lenis?.raf(time);
     requestAnimationFrame(raf);
   }
   requestAnimationFrame(raf);
 
-  // 同步 ScrollTrigger 更新
   lenis.on('scroll', ScrollTrigger.update);
 };
 
@@ -738,7 +772,6 @@ onMounted(async () => {
     iconRef.value?.addEventListener('load', generateFromVibrant);
   }
 
-  // 添加键盘事件监听
   document.addEventListener('keydown', handleKeydown);
 });
 
@@ -746,10 +779,8 @@ onBeforeUnmount(() => {
   lenis?.destroy();
   scrollTriggers.forEach((trigger) => trigger.kill());
 
-  // 移除键盘事件监听
   document.removeEventListener('keydown', handleKeydown);
 
-  // 确保恢复滚动
   document.body.style.overflow = '';
 });
 </script>

@@ -119,6 +119,7 @@
     align-items: center;
     gap: 33px;
     margin-top: 108px;
+    font-family: 'ZCOOL XiaoWei', sans-serif;
 
     h2 {
       font-size: 27px;
@@ -128,7 +129,6 @@
     p {
       font-size: 17px;
       color: #7a7373;
-      font-family: 'PingFang SC';
     }
 
     img {
@@ -139,95 +139,52 @@
   }
 }
 
-.app-intro-card {
-  padding: 40px 20px;
-  background: rgba(255, 255, 255, 0.436);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.04),
-    0 0 0 0.5px rgba(0, 0, 0, 0.04);
-  border-radius: 12px;
+.svg-path {
+  position: relative;
+  .svg-wrapper {
+    font-size: 24px;
+    font-family: 'ZCOOL XiaoWei', sans-serif;
+  }
+  .svg-label-1,
+  .svg-label-2 {
+    position: absolute;
+    p {
+      max-width: 350px;
+    }
+  }
+}
+
+.intro-card {
+  border-radius: 20px;
+  padding: 20px 50px;
+  position: absolute;
+  background-color: #ffffff38;
+  transform: translate(0, 0);
+  .name {
+    font-size: 56px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+  }
+}
+
+.intro-btns {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  .icon {
-    width: 64px;
-    height: 64px;
-    background: rgba(0, 0, 0, 0.02);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-  }
-
-  .name h2 {
-    font-size: 24px;
-    font-weight: 550;
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-    text-align: center;
-    color: #ffffff;
-    margin-bottom: 8px;
-  }
-
-  .desc p {
-    font-size: 13px;
-    color: #ffffff;
-    text-align: center;
-    line-height: 1.6;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ffffff38;
-  }
-
-  .tags {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-    font-size: 13px;
-    .tag-item {
-      padding: 3px 5px;
-      color: #fff;
-      border-radius: 5px;
-      background-color: #ffffff3b;
-    }
-  }
-
-  .download-btn {
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  .download-btn button {
-    width: 100%;
-    background-color: transparent;
-    color: #fff;
-    border: 1px solid #fff;
-    padding: 6px 0;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
+  gap: 30px;
+  border-radius: 20px;
+  padding: 20px 30px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  transform: translateX(120%);
+  background-color: #ffffff38;
+  .btn-item {
     cursor: pointer;
-    transition:
-      background 0.2s,
-      transform 0.2s;
-
+    transition: all 0.3s ease-out;
     &:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.623);
-    }
-
-    &:active {
-      transform: scale(0.98);
+      transform: scale(1.2);
     }
   }
 }
@@ -262,7 +219,9 @@
   border-radius: 16px;
   position: relative;
   overflow: hidden;
-  gap: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: calc(100vh - var(--app-header-height) - 40px);
 }
 
