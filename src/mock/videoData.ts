@@ -10,10 +10,7 @@ export const videoData = [
     isHot: true,
     isRecommended: true,
     isNew: true,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 16842,
       likeCount: 842,
@@ -24,7 +21,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://stream.mux.com/BV3YZtogl89mg9VcNBhhnHm02Y34zI1nlMuMQfAbl3dM/highest.mp4',
       duration: 300,
     },
   },
@@ -39,10 +36,7 @@ export const videoData = [
     isHot: true,
     isRecommended: false,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 24561,
       likeCount: 1228,
@@ -53,7 +47,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 420,
     },
   },
@@ -68,10 +62,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 9821,
       likeCount: 491,
@@ -97,10 +88,7 @@ export const videoData = [
     isHot: true,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 30211,
       likeCount: 1510,
@@ -111,7 +99,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 480,
     },
   },
@@ -126,10 +114,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 15432,
       likeCount: 771,
@@ -155,10 +140,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 11890,
       likeCount: 594,
@@ -169,7 +151,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1554475901-4538ddfbccc2?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 600,
     },
   },
@@ -184,10 +166,7 @@ export const videoData = [
     isHot: true,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 27110,
       likeCount: 1355,
@@ -213,10 +192,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 8901,
       likeCount: 445,
@@ -227,7 +203,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 380,
     },
   },
@@ -242,10 +218,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 12944,
       likeCount: 647,
@@ -271,10 +244,7 @@ export const videoData = [
     isHot: true,
     isRecommended: false,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 22317,
       likeCount: 1115,
@@ -285,7 +255,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 360,
     },
   },
@@ -300,10 +270,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 8012,
       likeCount: 400,
@@ -329,10 +296,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 17662,
       likeCount: 883,
@@ -343,7 +307,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 520,
     },
   },
@@ -358,10 +322,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 9640,
       likeCount: 482,
@@ -387,10 +348,7 @@ export const videoData = [
     isHot: true,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 31550,
       likeCount: 1577,
@@ -401,7 +359,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 490,
     },
   },
@@ -416,10 +374,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 7123,
       likeCount: 356,
@@ -445,10 +400,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: {
-      id: 1,
-      name: 'AI 助手',
-    },
+    author: { id: 1, name: 'AI 助手' },
     meta: {
       playCount: 18801,
       likeCount: 940,
@@ -459,7 +411,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      url: 'https://www.w3schools.com/html/movie.mp4',
       duration: 530,
     },
   },

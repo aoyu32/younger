@@ -135,7 +135,7 @@ const handleCommentSend = (data: any) => {
   } as any);
 };
 
-// 回复评论（支持嵌套）
+// 回复评论
 const handleCommentReplySend = (data: any) => {
   console.log('回复评论：', data.commentId, data.text, data.images);
 

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@videojs/html':
-        specifier: 10.0.0-beta.22
-        version: 10.0.0-beta.22(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)
+        specifier: 10.0.0-beta.23
+        version: 10.0.0-beta.23(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)
       axios:
         specifier: ^1.15.0
         version: 1.15.0
@@ -826,14 +826,14 @@ packages:
   '@vibrant/worker@4.0.4':
     resolution: {integrity: sha512-Q/R6PYhSMWCXEk/IcXbWIzIu7Z4b58ABkGvcdF8Y+q/7g+KnpxKW5x/jfQ/6ciyYSby13wZZoEdNr3QQVgsdBQ==}
 
-  '@videojs/core@10.0.0-beta.22':
-    resolution: {integrity: sha512-JMXSRyAZbgSpMbCkGgaJlJGBjg5MsoEdpG//uXyCHMuHYCjxvan4WUK80Tm0W5Xz0UsI8gi6IR2+dtuqDfCgTg==}
+  '@videojs/core@10.0.0-beta.23':
+    resolution: {integrity: sha512-skod5ZtEMwm9nCH/1lNlXPoSbqV+Q1INDB5x+cDxvGNPQ622LnEsS40jSzaS5+nHoNSowjoJdLYc9MjaBaoz0w==}
 
-  '@videojs/element@10.0.0-beta.22':
-    resolution: {integrity: sha512-YZLMvivQ/ZfjiUvzEF+Oj7A6/JCN4vnHh5jZQgqiLx4OT8Fk5USWnJKK4MFlSs52Gf0cAq5RXGQUw5IOqE38Dg==}
+  '@videojs/element@10.0.0-beta.23':
+    resolution: {integrity: sha512-Po4fn+hGa2Kh6ZK+8XEg9gu5UuB7Y21A2K+mb1w/e8QjCCXqIFNRW809nLhOosjpEelKxyA/tvzquNiJxbzB/g==}
 
-  '@videojs/html@10.0.0-beta.22':
-    resolution: {integrity: sha512-B3bUWBrJO4kWmlZFMEZ0LpxwzTWRNBfqvHOERsMBkmkcGKrKVNKg2ddCHYzLrrjlLphL23UzFsR/WFCQNZKUbg==}
+  '@videojs/html@10.0.0-beta.23':
+    resolution: {integrity: sha512-TthyMitUxYXKnumpqtBVAXs+HvQZG+SPKhkuV6tCUQLS4vy0J54buMXOtvjEiT09rqpQAP4r+MJeZLhV/Abh/Q==}
 
   '@videojs/http-streaming@3.17.4':
     resolution: {integrity: sha512-XAvdG2dolBuV2Fx8bu1kjmQ2D4TonGzZH68Pgv/O9xMSFWdZtITSMFismeQLEAtMmGwze8qNJp3RgV+jStrJqg==}
@@ -841,13 +841,13 @@ packages:
     peerDependencies:
       video.js: ^8.19.0
 
-  '@videojs/spf@10.0.0-beta.22':
-    resolution: {integrity: sha512-doojb+SVgqjgYN4+b3eK6y4dwol4KPEuUKT/O8A1XZGLau3c9fo6O3v7xIPR5vJbnjcvPLj80epNiZD4q1DeAg==}
+  '@videojs/spf@10.0.0-beta.23':
+    resolution: {integrity: sha512-2D92vBeDwfeCk1Wj8HgVrBHMmiW4uzKu6cKz7kv1SR+aDPT4FFQM9bqNgEyadZUU0QB5L1iuBvPF0fwv3/boNA==}
 
-  '@videojs/store@10.0.0-beta.22':
-    resolution: {integrity: sha512-Fwbwnbhjp/BJa4Id55ufu34Eqhg01FRuAg+z4+abz2ZyMg8/QATqCO9M6ki0DmJsNSLZ1/Q+2rlWoRXEmVA0xQ==}
+  '@videojs/store@10.0.0-beta.23':
+    resolution: {integrity: sha512-g9mmqgTuiVzesgL1OZB9UEoJlqltlOzpl/Ckvtj5anpuouGqf4Itfwh0NKLcnspRcS2Xz6KrOAtGEGpjsev97g==}
     peerDependencies:
-      '@videojs/element': 10.0.0-beta.22
+      '@videojs/element': 10.0.0-beta.23
       react: ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@videojs/element':
@@ -855,8 +855,8 @@ packages:
       react:
         optional: true
 
-  '@videojs/utils@10.0.0-beta.22':
-    resolution: {integrity: sha512-FVX5rIkyXcPRJH4lQF75uolmVe27XFD44pLXgtTTDUbNo7HdK/8yejE7fqNc/jTY4p7xjWa7gDVaiAn1/DfT8Q==}
+  '@videojs/utils@10.0.0-beta.23':
+    resolution: {integrity: sha512-3frIhyOSIT2jGy5sAyLoeg5SMI39ixqguapgQxA9PbDCvRaCZX2YPD2ZyeNppx6KstweX/foiF/YAbEba9xgig==}
 
   '@videojs/vhs-utils@4.1.1':
     resolution: {integrity: sha512-5iLX6sR2ownbv4Mtejw6Ax+naosGvoT9kY+gcuHzANyUZZ+4NpeNdKMUhb6ag0acYej1Y7cmr/F2+4PrggMiVA==}
@@ -1387,8 +1387,8 @@ packages:
   muggle-string@0.4.1:
     resolution: {integrity: sha512-VNTrAak/KhO2i8dqqnqnAHOa3cYBwXEZe9h+D5h/1ZqFSTEFHdM65lR7RoIqq3tBBYavsOXV84NoHXZ0AkPyqQ==}
 
-  mux-embed@5.18.0:
-    resolution: {integrity: sha512-y/iRQIUIyRUL+5zUHynrMMMpRlWVXfEFvSwTx7h//qIguQ4BQdQtc3qhKEdGaSikTeVuDeVC5IwP4aDuHUpjIA==}
+  mux-embed@5.18.1:
+    resolution: {integrity: sha512-ePsHjiEKY+FgrSBiMmaF+LOtTQSSBWv/1zqpREQFN96JE93xlsArT/MEi30yKOE06MgjOlL70YI750molu3y7g==}
 
   mux.js@7.1.0:
     resolution: {integrity: sha512-NTxawK/BBELJrYsZThEulyUMDVlLizKdxyAsMuzoCD1eFj97BVaA8D/CvKsKu6FOLYkFojN5CbM9h++ZTZtknA==}
@@ -2541,14 +2541,14 @@ snapshots:
     dependencies:
       '@vibrant/types': 4.0.4
 
-  '@videojs/core@10.0.0-beta.22(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)(@videojs/element@10.0.0-beta.22)':
+  '@videojs/core@10.0.0-beta.23(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)(@videojs/element@10.0.0-beta.23)':
     dependencies:
-      '@videojs/spf': 10.0.0-beta.22
-      '@videojs/store': 10.0.0-beta.22(@videojs/element@10.0.0-beta.22)
-      '@videojs/utils': 10.0.0-beta.22
+      '@videojs/spf': 10.0.0-beta.23
+      '@videojs/store': 10.0.0-beta.23(@videojs/element@10.0.0-beta.23)
+      '@videojs/utils': 10.0.0-beta.23
       dashjs: 5.1.1(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)
       hls.js: 1.6.16
-      mux-embed: 5.18.0
+      mux-embed: 5.18.1
     transitivePeerDependencies:
       - '@svta/cml-cta'
       - '@svta/cml-structured-field-values'
@@ -2556,17 +2556,17 @@ snapshots:
       - '@videojs/element'
       - react
 
-  '@videojs/element@10.0.0-beta.22':
+  '@videojs/element@10.0.0-beta.23':
     dependencies:
       '@lit/context': 1.1.6
 
-  '@videojs/html@10.0.0-beta.22(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)':
+  '@videojs/html@10.0.0-beta.23(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)':
     dependencies:
-      '@videojs/core': 10.0.0-beta.22(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)(@videojs/element@10.0.0-beta.22)
-      '@videojs/element': 10.0.0-beta.22
-      '@videojs/spf': 10.0.0-beta.22
-      '@videojs/store': 10.0.0-beta.22(@videojs/element@10.0.0-beta.22)
-      '@videojs/utils': 10.0.0-beta.22
+      '@videojs/core': 10.0.0-beta.23(@svta/cml-cta@1.0.1(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1))(@svta/cml-structured-field-values@1.0.1(@svta/cml-utils@1.0.1))(@svta/cml-utils@1.0.1)(@videojs/element@10.0.0-beta.23)
+      '@videojs/element': 10.0.0-beta.23
+      '@videojs/spf': 10.0.0-beta.23
+      '@videojs/store': 10.0.0-beta.23(@videojs/element@10.0.0-beta.23)
+      '@videojs/utils': 10.0.0-beta.23
     transitivePeerDependencies:
       - '@svta/cml-cta'
       - '@svta/cml-structured-field-values'
@@ -2584,18 +2584,18 @@ snapshots:
       mux.js: 7.1.0
       video.js: 8.23.7
 
-  '@videojs/spf@10.0.0-beta.22':
+  '@videojs/spf@10.0.0-beta.23':
     dependencies:
-      '@videojs/utils': 10.0.0-beta.22
+      '@videojs/utils': 10.0.0-beta.23
       signal-polyfill: 0.2.2
 
-  '@videojs/store@10.0.0-beta.22(@videojs/element@10.0.0-beta.22)':
+  '@videojs/store@10.0.0-beta.23(@videojs/element@10.0.0-beta.23)':
     dependencies:
-      '@videojs/utils': 10.0.0-beta.22
+      '@videojs/utils': 10.0.0-beta.23
     optionalDependencies:
-      '@videojs/element': 10.0.0-beta.22
+      '@videojs/element': 10.0.0-beta.23
 
-  '@videojs/utils@10.0.0-beta.22': {}
+  '@videojs/utils@10.0.0-beta.23': {}
 
   '@videojs/vhs-utils@4.1.1':
     dependencies:
@@ -3206,7 +3206,7 @@ snapshots:
 
   muggle-string@0.4.1: {}
 
-  mux-embed@5.18.0: {}
+  mux-embed@5.18.1: {}
 
   mux.js@7.1.0:
     dependencies:

@@ -1,0 +1,581 @@
+.video-player video {
+  width: 100%;
+  cursor: pointer;
+}
+
+.pause-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.pause-overlay.visible {
+  opacity: 1;
+}
+
+.pause-overlay img {
+  width: 26px;
+  height: 26px;
+  opacity: 0.9;
+}
+
+.pause-overlay-wrapper {
+  padding: 10px 20px;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== 媒体控制栏容器 ========== */
+.media-controls {
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.35) 30%,
+    transparent 55%
+  );
+  transition: opacity 0.3s ease;
+}
+
+.media-controls:not([data-visible]) {
+  opacity: 0;
+}
+
+/* ========== 进度条行 ========== */
+.progress-row {
+  width: 100%;
+  padding: 0 12px;
+  box-sizing: border-box;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+.media-time-slider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 23px;
+  cursor: pointer;
+  position: relative;
+}
+
+.media-slider-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  transition: height 200ms ease;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.media-time-slider[data-interactive] .media-slider-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.media-slider-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--media-slider-buffer);
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+}
+
+.media-slider-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--media-slider-fill);
+  background: #fff;
+  border-radius: 9999px;
+}
+
+.media-slider-thumb {
+  position: absolute;
+  left: var(--media-slider-fill);
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 13px;
+  height: 13px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 180ms ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.media-time-slider[data-interactive] .media-slider-thumb {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.media-time-slider[data-dragging] .media-slider-thumb {
+  left: var(--media-slider-pointer);
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.media-time-slider[data-dragging] .media-slider-fill {
+  width: var(--media-slider-pointer);
+}
+
+/* 进度条悬停时间预览 */
+.media-slider-value {
+  position: absolute;
+  left: var(--media-slider-pointer);
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.media-time-slider[data-pointing] .media-slider-value {
+  opacity: 1;
+}
+
+/* ========== 按钮行 ========== */
+.controls-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0px 12px 6px;
+  box-sizing: border-box;
+  pointer-events: auto;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ========== 海报 ========== */
+.media-poster {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1001;
+}
+
+.media-poster:not([data-visible]) {
+  display: none;
+}
+
+.media-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.button:hover {
+  transform: scale(1.1);
+}
+
+.button .paused,
+.button .playing {
+  display: none;
+}
+
+.media-play-button[data-paused] .paused {
+  display: flex;
+}
+
+.media-play-button:not([data-paused]) .playing {
+  display: flex;
+}
+
+/* ========== 时间显示 ========== */
+.time-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.separator {
+  color: #fff;
+  padding-bottom: 1px;
+}
+
+.time {
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* ========== 右侧控件容器 ========== */
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ========== 音量滑块 ========== */
+.volume-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.volume-popup {
+  position: absolute;
+  bottom: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.189);
+  backdrop-filter: blur(10px);
+  border-radius: 4px;
+  padding: 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(4px);
+  z-index: 20;
+}
+
+.volume-popup.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.media-volume-slider-vertical {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 20px;
+  height: 80px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.vvs-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  overflow: hidden;
+  transition: width 180ms ease;
+}
+
+.media-volume-slider-vertical[data-interactive] .vvs-track {
+  width: 5px;
+}
+
+.vvs-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--media-slider-fill);
+  background: #fff;
+  border-radius: 9999px;
+}
+
+.vvs-thumb {
+  position: absolute;
+  left: 50%;
+  bottom: var(--media-slider-fill);
+  transform: translate(-50%, 50%) scale(0);
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 180ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.vvs-value {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.85;
+  z-index: 10;
+}
+.media-volume-slider-vertical[data-interactive] .vvs-thumb {
+  transform: translate(-50%, 50%) scale(1);
+}
+
+.media-volume-slider-vertical[data-dragging] .vvs-thumb {
+  transform: translate(-50%, 50%) scale(1.15);
+}
+
+/* 静音按钮 */
+.media-mute-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  font-size: 13px;
+  color: #fff;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.media-mute-button:hover {
+  transform: scale(1.1);
+}
+
+.media-mute-button .muted {
+  display: none;
+}
+.media-mute-button .unmuted {
+  display: none;
+}
+.media-mute-button[data-muted] .muted {
+  display: flex;
+}
+.media-mute-button:not([data-muted]) .unmuted {
+  display: flex;
+}
+
+/* 画中画按钮 */
+.media-pip-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  font-size: 12px;
+  color: #fff;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.media-pip-button:hover {
+  transform: scale(1.1);
+}
+
+.media-pip-button .pip {
+  display: none;
+}
+.media-pip-button .not-pip {
+  display: none;
+}
+.media-pip-button[data-pip] .pip {
+  display: flex;
+}
+.media-pip-button:not([data-pip]) .not-pip {
+  display: flex;
+}
+
+/* ========== 全屏按钮 ========== */
+.media-fullscreen-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  font-size: 12px;
+  color: #fff;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.media-fullscreen-button:hover {
+  transform: scale(1.1);
+}
+
+.media-fullscreen-button .fullscreen {
+  display: none;
+}
+.media-fullscreen-button .not-fullscreen {
+  display: none;
+}
+.media-fullscreen-button[data-fullscreen] .fullscreen {
+  display: flex;
+}
+.media-fullscreen-button:not([data-fullscreen]) .not-fullscreen {
+  display: flex;
+}
+
+/* ========== 倍速选择器 ========== */
+.playback-rate-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.rate-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.rate-btn:hover {
+  opacity: 0.75;
+}
+
+.rate-menu {
+  position: absolute;
+  bottom: calc(100% + 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.189);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px);
+  z-index: 20;
+  min-width: 45px;
+}
+
+.rate-menu.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.rate-item {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  white-space: nowrap;
+}
+
+.rate-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.rate-item.active {
+  color: #fff;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ========== 视频加载状态 ========== */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+}
+
+
+/* ========== 响应式微调 ========== */
+@media (max-width: 640px) {
+  .media-volume-slider {
+    width: 50px;
+  }
+
+  .media-mute-button,
+  .media-pip-button {
+    width: 28px;
+    height: 28px;
+  }
+
+  .button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .time {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .controls-group {
+    padding: 4px 8px 8px;
+    gap: 4px;
+  }
+
+  .progress-row {
+    padding: 0 8px;
+  }
+}
