@@ -169,14 +169,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, onBeforeUnmount, nextTick } from 'vue';
+import {
+  ref,
+  onMounted,
+  computed,
+  onBeforeUnmount,
+  nextTick,
+  watch,
+} from 'vue';
 import { Vibrant } from 'node-vibrant/browser';
 import DetailSwiper from './components/DetailSwiper.vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { appDetail } from '@/mock/app-detail';
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import Lenis from 'lenis';
 import VideoPlayer from '@/components/video-player/index.vue';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
@@ -184,7 +191,10 @@ import { Flip } from 'gsap/Flip';
 import { MdPreview } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import AoImage from '@/components/ao-image/index.vue';
+
 let lenis: Lenis | null = null;
+
+const route = useRoute();
 const id = 'preview-only';
 const data = ref(appDetail);
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
@@ -196,7 +206,6 @@ const primaryColor = ref('');
 const detailSwiperRef = ref();
 const introWrapperRef = ref();
 const svgPathRef = ref<HTMLElement>();
-const planeIconRef = ref<HTMLElement>();
 const motionPathRef = ref<SVGPathElement>();
 const mdScrollInnerRef = ref<HTMLElement>();
 const showVideoModal = ref(false);
@@ -845,6 +854,14 @@ onBeforeUnmount(() => {
 
   document.body.style.overflow = '';
 });
+
+watch(
+  () => route.path,
+  () => {
+    document.title = data.value.name;
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

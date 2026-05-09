@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import VideoPlayer from '@/components/video-player/index.vue';
 import AoImage from '@/components/ao-image/index.vue';
@@ -162,9 +162,13 @@ const handleCommentReplySend = (data: any) => {
   });
 };
 
-onMounted(() => {
-  document.title = data.value.title
-});
+watch(
+  () => route.path,
+  () => {
+    document.title = data.value.title;
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

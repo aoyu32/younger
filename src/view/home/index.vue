@@ -261,6 +261,7 @@ onMounted(() => {
       });
     }
   });
+  document.title = '洋果教育 - 首页';
 });
 
 onBeforeUnmount(() => {

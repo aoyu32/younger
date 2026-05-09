@@ -8,7 +8,12 @@
     >
       <div class="cover">
         <div class="overlay">
-          <AoImage class="play-icon" src="@/assets/video/icon_later_play.svg" width="26px" height="26px" />
+          <AoImage
+            class="play-icon"
+            src="@/assets/video/icon_later_play.svg"
+            width="26px"
+            height="26px"
+          />
         </div>
         <AoImage :src="item.video.cover" />
       </div>
@@ -55,8 +60,7 @@ const props = defineProps<{
 }>();
 
 const handleClick = (id: number) => {
-  const routeUrl = router.resolve({ path: '/video/' + id });
-  window.open(routeUrl.href, '_blank');
+  router.push({ path: '/video/' + id });
 };
 </script>
 <style scoped lang="scss">
