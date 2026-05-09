@@ -7,6 +7,9 @@
       @click="handleClick(item.id)"
     >
       <div class="cover">
+        <div class="overlay">
+          <AoImage class="play-icon" src="@/assets/video/icon_later_play.svg" width="26px" height="26px" />
+        </div>
         <AoImage :src="item.video.cover" />
       </div>
       <div class="info">
