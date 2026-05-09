@@ -15,6 +15,7 @@
           @playing="handlePlaying"
           @pause="handlePause"
           @play="handlePlay"
+          @loadedmetadata="handleLoadedMetadata"
         ></video>
         <div class="pause-overlay" :class="{ visible: showPauseOverlay }">
           <div class="pause-overlay-wrapper">
@@ -355,6 +356,10 @@ const handlePlay = () => {
 
 const handleCanPlay = () => {
   isVideoLoading.value = false;
+  const video = videoRef.value;
+  if (video && video.paused) {
+    showPauseOverlay.value = true;
+  }
 };
 
 const handleWaiting = () => {
@@ -363,6 +368,20 @@ const handleWaiting = () => {
 
 const handlePlaying = () => {
   isVideoLoading.value = false;
+};
+
+const handleLoadedMetadata = async () => {
+  const video = videoRef.value;
+  if (!video) return;
+
+  // 尝试 autoplay，失败则显示暂停遮罩
+  try {
+    await video.play();
+    showPauseOverlay.value = false;
+  } catch (e) {
+    // 浏览器阻止自动播放，显示暂停遮罩提示用户手动点击
+    showPauseOverlay.value = true;
+  }
 };
 
 const onVolumeLeave = () => {
@@ -406,7 +425,7 @@ onBeforeUnmount(() => {
 video {
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  display: block; 
+  display: block;
 }
 
 img {
@@ -420,6 +439,5 @@ img {
   display: block;
   position: relative;
   background-color: black;
-
 }
 </style>
