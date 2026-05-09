@@ -55,7 +55,8 @@ const props = defineProps<{
 }>();
 
 const handleClick = (id: number) => {
-  router.push('/video/' + id);
+  const routeUrl = router.resolve({ path: '/video/' + id });
+  window.open(routeUrl.href, '_blank');
 };
 </script>
 <style scoped lang="scss">
