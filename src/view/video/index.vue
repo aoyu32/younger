@@ -102,7 +102,7 @@ const handleUpload: UploadFn = async (images: any) => {
       resolve({
         success: true,
         id: String(Date.now()),
-        url: 'https://picsum.photos/1280/720?random=1',
+        url: 'https://api.dicebear.com/9.x/avataaars/svg?seed=xiaoming',
       });
     }, 1000);
   });

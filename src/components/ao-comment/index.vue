@@ -3,7 +3,7 @@
     <div class="header">
       <div class="label">
         <h3>
-          评论互动<span>{{ '已有300条评论' }}</span>
+          评论互动<span>{{ comments.length }}条评论</span>
         </h3>
       </div>
       <div class="sort">
@@ -23,7 +23,7 @@
           </template>
         </CommentInput>
       </div>
-      <div class="comment-list">
+      <div class="comment-list" v-if="comments.length > 0">
         <div
           class="comment-item-wrapper"
           v-for="(item, index) in comments"
@@ -31,6 +31,12 @@
         >
           <CommentItem :comment="item" @reply="handleReplySend"></CommentItem>
         </div>
+      </div>
+      <div class="comment-empty" v-else>
+        <div class="empty-icon">
+          <img src="./img/icon_empty_comment.svg" alt="">
+        </div>
+        <p>暂无评论，快来抢沙发吧</p>
       </div>
     </div>
   </div>
