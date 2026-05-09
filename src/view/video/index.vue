@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import VideoPlayer from '@/components/video-player/index.vue';
 import AoImage from '@/components/ao-image/index.vue';
@@ -161,6 +161,10 @@ const handleCommentReplySend = (data: any) => {
     createdAt: new Date().toISOString(),
   });
 };
+
+onMounted(() => {
+  document.title = data.value.title
+});
 </script>
 
 <style lang="scss" scoped>
