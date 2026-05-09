@@ -1,7 +1,7 @@
 <template>
   <div class="header" style="padding: 0 20px;">
     <div class="header_left">
-      <div class="left_logo">
+      <div class="left_logo" @click="handleLogoClick">
         <div class="logo_img">
           <img src="@/assets/logo.png" alt="" />
         </div>
@@ -45,6 +45,8 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 // 组件名称
 defineOptions({
   name: 'LayoutHeader',
@@ -67,6 +69,10 @@ const navItems = ref([
     anchor: 'videos',
   }
 ]);
+
+const handleLogoClick=()=>{
+  router.push('/');
+}
 
 // 平滑滚动函数
 const smoothScrollTo = (to, duration = 450) => {
@@ -121,6 +127,7 @@ const handleNavClick = (anchor) => {
   .left_logo {
     display: flex;
     gap: 10px;
+    cursor: pointer;
   }
 
   .logo_img {
