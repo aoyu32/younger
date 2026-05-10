@@ -1,45 +1,73 @@
 <template>
   <div class="news-card">
-    <div class="card-header">
-      <h3>AI 资讯</h3>
-      <span class="icon">
-        <i class="iconfont icon-right"></i>
-      </span>
-    </div>
-    <div class="news-list">
-      <div class="news-item" v-for="(item, index) in newsList" :key="index">
-        <div class="news-title" :style="{ maxWidth: newsTitleMaxWidth }">
-          {{ item.title }}
+    <AoPage
+      v-model:current="currentPage"
+      :size="newsPageSize"
+      :total="data.length"
+    >
+      <template #controls="{ isNext, isPrev, change }">
+        <div class="card-header">
+          <h3>AI 资讯</h3>
+          <div class="page-btns" v-if="data.length > 5">
+            <div class="prev" @click="change('pre')">
+              <!-- 上一页按钮 -->
+              <AoIcon
+                :icon="prevIcon"
+                :size="16"
+                :color="isPrev ? '#cccccc' : '#8a8a8a'"
+                :hover-color="isPrev ? '#cccccc' : '#262626'"
+              />
+            </div>
+            <div class="next" @click="change('next')">
+              <!-- 下一页按钮 -->
+              <AoIcon
+                :icon="nextIcon"
+                :size="16"
+                :color="isNext ? '#cccccc' : '#8a8a8a'"
+                :hover-color="isNext ? '#cccccc' : '#262626'"
+              />
+            </div>
+          </div>
+          <div class="label" v-else>
+            <div class="label-item">最新</div>
+          </div>
         </div>
-        <div class="news-views">
-          {{ formatViews(item.views) }}
+      </template>
+      <div class="news-list">
+        <div class="news-item" v-for="(item, index) in newsList" :key="index">
+          <div class="news-title" :style="{ maxWidth: newsTitleMaxWidth }">
+            {{ item.title }}
+          </div>
+          <div class="news-views">
+            {{ formatViews(item.views) }}
+          </div>
         </div>
       </div>
-    </div>
+    </AoPage>
   </div>
 </template>
 
 <script setup lang="ts">
-import { on } from 'node:cluster';
 import { computed, onMounted, ref } from 'vue';
+import prevIcon from '@/assets/home/icon_pre.svg';
+import nextIcon from '@/assets/home/icon_next.svg';
 
 defineOptions({
   name: 'NewsCard',
 });
 
+const props = defineProps<{
+  data: any[];
+}>();
+
+const newsPageSize = ref(5);
+const currentPage = ref(1);
 const newsTitleMaxWidth = ref('270px');
 
-const newsList = ref([
-  {
-    title:
-      'OpenAI发布GPT-5模型，性能提升显著,5模型，性能提升显著,5模型，性能提升显著,5模型，性能提升显著',
-    views: 12500000,
-  },
-  { title: '谷歌推出全新AI助手Gemini Ultra版本', views: 980000 },
-  { title: '微软将AI技术深度整合到Office套件', views: 87000 },
-  { title: 'Meta开源最新大语言模型Llama 3', views: 76000 },
-  { title: '百度文心一言4.0正式上线，支持多模态', views: 65000 },
-]);
+const newsList = computed(() => {
+  const start = (currentPage.value - 1) * newsPageSize.value;
+  return props.data.slice(start, start + newsPageSize.value);
+});
 
 const formatViews = (views: number) => {
   if (views >= 10000) {
@@ -68,6 +96,7 @@ onMounted(() => {
   border-radius: 12px;
   padding: 20px;
   // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   border: 1px solid var(--app-border-color);
   display: flex;
   flex-direction: column;
@@ -87,13 +116,20 @@ onMounted(() => {
       color: var(--app-text-color-dark);
     }
 
-    .icon {
+    .page-btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .prev,
+    .next {
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
 
-      .iconfont {
-        font-size: 20px;
+      &:disabled {
       }
     }
   }
