@@ -1,7 +1,7 @@
 <template>
   <div class="video-container">
     <div class="video-wrapper">
-      <div class="video-info flex-column">
+      <div class="video-info flex-col">
         <div class="title">
           <h3>
             {{ data.title }}
