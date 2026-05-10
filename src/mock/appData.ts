@@ -16,6 +16,7 @@ const ICONS = [
   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/react.svg',
   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/docker.svg',
 ];
+
 const pickIcon = (id: number) => ICONS[id % ICONS.length];
 
 export const appData = [
@@ -74,5 +75,45 @@ export const appData = [
     description: '试卷录入、组卷与批改统计',
     category: '学习工具',
     size: 16.4 * 1024 * 1024,
+  },
+  {
+    icon: pickIcon(7),
+    id: 7,
+    name: '资源库管理',
+    description: '教学资源集中存储与分享',
+    category: '资源工具',
+    size: 17.2 * 1024 * 1024,
+  },
+  {
+    icon: pickIcon(8),
+    id: 8,
+    name: '在线考试',
+    description: '支持多种题型的在线考试系统',
+    category: '教学工具',
+    size: 22.5 * 1024 * 1024,
+  },
+  {
+    icon: pickIcon(9),
+    id: 9,
+    name: '学习分析',
+    description: '学情数据可视化与个性化推荐',
+    category: '数据工具',
+    size: 19.6 * 1024 * 1024,
+  },
+  {
+    icon: pickIcon(10),
+    id: 10,
+    name: '视频会议',
+    description: '高清稳定的远程教学会议工具',
+    category: '协作工具',
+    size: 25.1 * 1024 * 1024,
+  },
+  {
+    icon: pickIcon(11),
+    id: 11,
+    name: '课堂反馈',
+    description: '实时收集学生课堂疑问与评分',
+    category: '教学工具',
+    size: 13.8 * 1024 * 1024,
   },
 ];

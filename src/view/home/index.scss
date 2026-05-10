@@ -9,24 +9,19 @@
   }
 
   .home_banner {
-    height: 450px;
     display: flex;
     gap: 20px;
 
     .banner_left {
-      flex-shrink: 0;
+      width: 800px;
     }
 
     .banner_right {
       flex: 1;
       display: flex;
+      height: 100%;
       flex-direction: column;
       gap: 10px;
-      height: 450px;
-
-      .right_top {
-        height: 200px;
-      }
 
       .right_bottom {
         flex: 1;
@@ -49,7 +44,7 @@
     border: var(--pointer-thick) solid var(--pointer-color);
     left: calc(var(--pointer-x) - var(--pointer-gap));
     top: calc(var(--pointer-y) - var(--pointer-gap));
-    transition: all 0.1s ease;
+    transition: all 0.2s ease;
     box-sizing: border-box;
     border-radius: 8px;
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.06))
@@ -109,8 +104,21 @@
       }
     }
 
+    .content-wrapper {
+      height: 100%;
+      border: 1px solid rgb(230, 230, 230);
+      padding: 20px;
+      border-radius: 8px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 696px;
+    }
+
     .content_left {
       flex: 1;
+      min-width: 414px;
       .apps_grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -120,13 +128,6 @@
 
     .content_right {
       flex: 2;
-      .content-wrapper {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        box-sizing: border-box;
-      }
-
       .webs_grid {
         flex: 1;
         position: relative;

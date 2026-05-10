@@ -31,7 +31,6 @@
             <span>{{ app.size }}MB</span>
           </div>
         </div>
-        <div class="info_item"></div>
       </div>
     </div>
   </div>
