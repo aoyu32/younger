@@ -10,14 +10,14 @@
     </div>
     <div class="home_banner">
       <div class="banner_left">
-        <AoBanner :screenshots="bannerImage"/>
+        <AoBanner :screenshots="bannerImage" />
       </div>
       <div class="banner_right">
         <div class="right_top">
           <CalendarCard />
         </div>
         <div class="right_bottom">
-          <NewsCard :data="news" />
+          <NewsCard :data="news" @click="handleNewsItemClick" />
         </div>
       </div>
     </div>
@@ -150,8 +150,7 @@ import { newsData } from '@/mock/news';
 import ScrollText from './components/ScrollText.vue';
 import CalendarCard from './components/CalendarCard.vue';
 import NewsCard from './components/NewsCard.vue';
-import AoImage from '@/components/ao-image/index.vue';
-import AoPage from '@/components/ao-page/index.vue';
+import router from '@/router';
 defineOptions({
   name: 'Home',
 });
@@ -220,6 +219,10 @@ const handleMouseEnterWebTool = (event: MouseEvent) => {
       targetEl.offsetTop + 'px',
     );
   }
+};
+
+const handleNewsItemClick = (id: any) => {
+  window.open(`/news/${id}`, '_blank');
 };
 
 // 生命周期

@@ -34,7 +34,12 @@
         </div>
       </template>
       <div class="news-list">
-        <div class="news-item" v-for="(item, index) in newsList" :key="index">
+        <div
+          class="news-item"
+          v-for="(item, index) in newsList"
+          :key="index"
+          @click="handleItemClick(item.id)"
+        >
           <div class="news-title" :style="{ maxWidth: newsTitleMaxWidth }">
             {{ item.title }}
           </div>
@@ -60,6 +65,10 @@ const props = defineProps<{
   data: any[];
 }>();
 
+const emit = defineEmits<{
+  (event: 'click', id: any): void;
+}>();
+
 const newsPageSize = ref(5);
 const currentPage = ref(1);
 const newsTitleMaxWidth = ref('270px');
@@ -74,6 +83,10 @@ const formatViews = (views: number) => {
     return (views / 10000).toFixed(1) + 'w';
   }
   return views.toString();
+};
+
+const handleItemClick = (id: any) => {
+  emit('click', id);
 };
 
 onMounted(() => {
