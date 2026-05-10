@@ -182,7 +182,7 @@ import DetailSwiper from './components/DetailSwiper.vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
-import { appDetail } from '@/mock/app-detail';
+import { appDetailList } from '@/mock/app-detail';
 import { useRoute } from 'vue-router';
 import Lenis from 'lenis';
 import VideoPlayer from '@/components/video-player/index.vue';
@@ -195,8 +195,14 @@ import AoImage from '@/components/ao-image/index.vue';
 let lenis: Lenis | null = null;
 
 const route = useRoute();
+
+const data = computed(() => {
+  const id = Number(route.params.id);
+  return appDetailList.find((appDetail) => appDetail.id === id);
+  
+});
+
 const id = 'preview-only';
-const data = ref(appDetail);
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 gsap.registerPlugin(SplitText);
 gsap.registerPlugin(Flip);
