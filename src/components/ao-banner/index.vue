@@ -1,5 +1,5 @@
 <template>
-  <div class="ao-banner" :style="{ width: width, height: height }">
+  <div class="ao-banner">
     <div
       class="carousel"
       @mouseenter="handleMouseEnter"
@@ -15,9 +15,7 @@
           v-for="(item, index) in carouselList"
           :key="index"
         >
-          <a>
-            <img :src="item.img" alt="" />
-          </a>
+          <img :src="item.img" alt="" />
         </div>
       </div>
 
@@ -50,14 +48,6 @@ defineOptions({
 
 // 定义props
 const props = defineProps({
-  width: {
-    type: String,
-    default: '500px',
-  },
-  height: {
-    type: String,
-    default: '450px',
-  },
   screenshots: {
     type: Array,
     default: () => [],
@@ -226,25 +216,31 @@ watch(carouselList, (newList) => {
 
 <style scoped lang="scss">
 .ao-banner {
+  width: 100%;
+  height: 100%;
   .carousel {
     position: relative;
     overflow: hidden;
     border-radius: 6px;
+    height: 100%;
+    width: 100%;
+
     .carousel-inner {
+      height: 100%;
       display: flex;
       transition: transform 0.3s ease-in-out;
+      width: 100%; // 确保宽度占满
     }
 
     .carousel-item {
-      flex-shrink: 0;
-
-      a {
-        display: block;
-      }
+      flex: 0 0 100%; // 关键：每个 item 宽度严格等于父容器宽度的 100%
+      width: 100%; // 备用兼容
 
       img {
+        width: 100%; // 图片宽度跟随 item
+        height: 100%;
         object-fit: cover;
-        border-radius: 6px;
+        display: block; // 消除图片底部间隙
       }
 
       &.clone {
@@ -289,7 +285,6 @@ watch(carouselList, (newList) => {
     .carousel-indicator {
       width: 100%;
       height: 50px;
-      padding: 0 20px;
       position: absolute;
       bottom: 0px;
       right: 0px;
@@ -305,17 +300,17 @@ watch(carouselList, (newList) => {
         display: inline-block;
         cursor: pointer;
         transition: all 0.3s ease;
-        background-color: var(--app-bg-color-light); /* light theme c-g */
-        opacity: 0.5; /* color(c-g, 0.5) */
+        background-color: var(--app-bg-color-light);
+        opacity: 0.5;
 
         &.active {
-          background-color: var(--app-bg-color-light); /* light theme c-g */
+          background-color: var(--app-bg-color-light);
           transform: scale(1.2);
         }
 
         &:hover {
           transform: scale(1.1);
-          background-color: var(--app-bg-color-light); /* light theme c-g */
+          background-color: var(--app-bg-color-light);
         }
       }
     }
