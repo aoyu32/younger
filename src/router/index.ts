@@ -15,7 +15,7 @@ const routes = [
       },
       {
         name: 'detail',
-        path: '/app/detail',
+        path: '/app/detail/:id',
         component: () => import('@/view/app-detail/index.vue'),
       },
       {
