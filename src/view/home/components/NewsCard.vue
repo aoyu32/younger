@@ -108,11 +108,12 @@ onMounted(() => {
   background: var(--app-bg-color-light);
   border-radius: 12px;
   padding: 20px;
-  // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   border: 1px solid var(--app-border-color);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  min-height: 280px;
 
   .card-header {
     display: flex;
@@ -141,9 +142,6 @@ onMounted(() => {
       align-items: center;
       justify-content: center;
       cursor: pointer;
-
-      &:disabled {
-      }
     }
   }
 
