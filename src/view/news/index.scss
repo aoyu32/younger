@@ -1,0 +1,158 @@
+.news-detail {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.content-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.content {
+  background-color: #f2f3f5;
+  padding: 30px;
+}
+
+.news-header {
+  gap: 20px;
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .news-meta {
+    gap: 30px;
+    width: 100%;
+    display: flex;
+  }
+
+  .meta-item {
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .date,
+  .views {
+    color: #999999;
+  }
+}
+
+.news-content {
+  margin-top: 30px;
+
+  .md-preview-wrapper {
+    min-height: 200px;
+  }
+
+  .empty-content {
+    min-height: 500px;
+    flex-direction: column;
+    gap: 10px;
+    color: #999999ea;
+  }
+}
+
+.content-footer {
+  padding: 30px 0 10px 0;
+
+  .labels {
+    gap: 10px;
+
+    .label {
+      padding: 5px 0;
+    }
+
+    .label-item {
+      border-radius: 6px;
+      padding: 5px 15px;
+      background-color: #a6a6a62c;
+      max-width: 70px;
+      color: #5e5e5e;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+}
+
+.actions {
+  gap: 15px;
+
+  .action-item {
+    cursor: pointer;
+    gap: 5px;
+
+    .action-text {
+      color: #8a8a8a;
+      transition: color 0.2s;
+      margin-top: 1px;
+    }
+
+    &.like {
+      &.active .action-text {
+        color: #f05050;
+      }
+    }
+
+    &.favorite {
+      &.active .action-text {
+        color: #f0a030;
+      }
+    }
+  }
+}
+
+.news-comment {
+  margin-top: 20px;
+  background-color: #f2f3f5;
+  padding: 10px 30px;
+}
+
+.news-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.sidebar-inner {
+  position: sticky;
+  top: calc(var(--app-header-height, 72px) + 15px);
+  width: 100%;
+  will-change: transform;
+
+  .news-outline {
+    padding: 24px 20px 20px 20px;
+    background-color: #f2f3f5;
+
+    .outline-header {
+      padding-bottom: 15px;
+      border-bottom: 1px solid #9999996a;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 550;
+    }
+
+    .outline-content {
+      padding-top: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  .news-other {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f2f3f5;
+  }
+}

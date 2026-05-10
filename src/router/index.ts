@@ -23,6 +23,11 @@ const routes = [
         path: '/video/:id',
         component: () => import('@/view/video/index.vue'),
       },
+      {
+        name: 'news',
+        path: '/news/:id',
+        component: () => import('@/view/news/index.vue'),
+      },
     ],
   },
 ];
