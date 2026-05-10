@@ -1,8 +1,9 @@
 <template>
   <button
+    ref="buttonRef"
     class="ao-button"
     :class="[`ao-button--${type}`, `ao-button--${size}`]"
-    :style="buttonStyle"
+    :disabled="disabled"
     @click="handleClick"
   >
     <slot></slot>
@@ -10,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 defineOptions({ name: 'AoButton' })
 
@@ -34,30 +35,50 @@ const props = defineProps({
   border: {
     type: Object,
     default: () => ({
-      color: '#ff5722',
+      color: 'none',
       width: '1px'
     })
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits(['click'])
 
-const buttonStyle = computed(() => {
-  const style: Record<string, string> = {}
+const buttonRef = ref<HTMLButtonElement | null>(null)
 
-  if (props.type === 'fill') {
-    style.backgroundColor = props.bg
-    style.color = props.color
-    style.border = `${props.border.width} solid ${props.border.color}`
+/**
+ * 将十六进制颜色转换为 rgba 格式
+ * @param hex - 十六进制颜色（带或不带 #）
+ * @param alpha - 透明度，默认 0.8
+ * @returns rgba 颜色字符串
+ */
+function hexToRgba(hex: string, alpha: number = 0.8): string {
+  const cleanHex = hex.replace('#', '')
+  const r = parseInt(cleanHex.substring(0, 2), 16)
+  const g = parseInt(cleanHex.substring(2, 4), 16)
+  const b = parseInt(cleanHex.substring(4, 6), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+watchEffect(() => {
+  const el = buttonRef.value
+  if (!el) return
+
+  const { type, bg, color, border } = props
+
+  if (type === 'fill') {
+    el.style.setProperty('--btn-bg', bg)
+    el.style.setProperty('--btn-color', color)
+    el.style.setProperty('--btn-border', `${border.width} solid ${border.color}`)
+    el.style.setProperty('--btn-bg-alpha', hexToRgba(bg, 0.8))
   } else {
-    // text 类型
-    style.backgroundColor = 'transparent'
-    style.border = 'none'
-    // 如果未显式覆盖颜色，文字颜色默认使用主色（bg）
-    style.color = props.color === '#fff' ? props.bg : props.color
+    el.style.setProperty('--btn-bg', 'transparent')
+    el.style.setProperty('--btn-border', 'none')
+    el.style.setProperty('--btn-color', color === '#fff' ? bg : color)
   }
-
-  return style
 })
 
 const handleClick = (event: MouseEvent) => {
@@ -67,4 +88,19 @@ const handleClick = (event: MouseEvent) => {
 
 <style scoped lang="scss">
 @use './index.scss' as *;
+
+.ao-button {
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  border: var(--btn-border);
+
+  &:hover:not(:disabled) {
+    background-color: var(--btn-bg-alpha);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
 </style>
