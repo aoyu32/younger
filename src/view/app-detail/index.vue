@@ -3,7 +3,7 @@
     <div class="app-info flex-center">
       <div class="app-icon">
         <div class="icon" @click="triggerRippleAnimation">
-          <img :src="data.icon" alt="" ref="iconRef" :style="iconFilterStyle" />
+          <img :src="data?.icon" alt="" ref="iconRef" :style="iconFilterStyle" />
           <div
             :class="['ripple-bg', `ripple-${index}`]"
             v-for="index in 4"
@@ -14,14 +14,14 @@
       </div>
       <div class="info-content">
         <div class="desc">
-          <h2>{{ data.desc }}</h2>
-          <p>{{ data.sub }}</p>
+          <h2>{{ data?.desc }}</h2>
+          <p>{{ data?.sub }}</p>
         </div>
         <div class="download">
           <button :style="{ backgroundColor: primaryColor }">免费下载</button>
           <a href="javascript:void(0)" @click.prevent="openVideoModal">
             快速了解
-            <span :style="{ color: primaryColor }">{{ data.name }}</span>
+            <span :style="{ color: primaryColor }">{{ data?.name }}</span>
           </a>
         </div>
       </div>
@@ -40,14 +40,14 @@
       </div>
     </div>
     <div class="app-swiper">
-      <h2>{{ data.banner.desc }}</h2>
+      <h2>{{ data?.banner.desc }}</h2>
       <DetailSwiper ref="detailSwiperRef"></DetailSwiper>
     </div>
 
     <div class="app-pictorial">
       <div
         class="pictorial-item"
-        v-for="(item, index) in data.pictorial"
+        v-for="(item, index) in data?.pictorial"
         :key="index"
       >
         <h2 :class="`text-${item.id}`">{{ item.text }}</h2>
@@ -68,7 +68,7 @@
           <p>向下滚动，立马快速上手APP</p>
         </div>
         <div class="svg-label-2" :style="{ color: primaryColor }">
-          <p>查看{{ data.name }}文档，了解更多</p>
+          <p>查看{{ data?.name }}文档，了解更多</p>
         </div>
         <svg
           width="318"
@@ -105,11 +105,11 @@
     <div class="intro-section">
       <div class="intro-wrapper flex-center" ref="introWrapperRef">
         <div class="intro-card">
-          <div class="name">{{ data.name }}文档</div>
+          <div class="name">{{ data?.name }}文档</div>
         </div>
         <div class="app-intro-md">
           <div class="md-scroll-inner" ref="mdScrollInnerRef">
-            <MdPreview :id="id" :modelValue="data.content" />
+            <MdPreview :id="id" :modelValue="data?.content" />
           </div>
         </div>
         <div class="intro-btns">
@@ -198,7 +198,7 @@ const route = useRoute();
 
 const data = computed(() => {
   const id = Number(route.params.id);
-  return appDetailList.find((appDetail) => appDetail.id === id);
+  return appDetailList.find((appDetail) => appDetail.id === id)!;
   
 });
 
