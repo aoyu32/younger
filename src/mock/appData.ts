@@ -1,20 +1,49 @@
+// const ICONS = [
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/facebook.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/whatsapp.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/telegram.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/youtube.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/tiktok.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/snapchat.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/github.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/figma.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/notion.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/discord.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/spotify.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/apple.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/android.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/firefox.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/react.svg',
+//   'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/docker.svg',
+// ];
+
+import logo from '@/assets/logo.png';
+import google from '@/assets/google.png';
+import googledisk from '@/assets/googledisk.png';
+import aoyukmt from '@/assets/bandzip.png';
+import groupy from '@/assets/groupy.png';
+import edge from '@/assets/edge.png';
+import firefox from '@/assets/firefox.png';
+import bitdock from '@/assets/bitdock.png';
+import drawio from '@/assets/draw.io.png';
+import clion from '@/assets/clion.png';
+import idea from '@/assets/idea.png';
+import lively from '@/assets/lively.png';
+
+// ─── Icon 列表（与 appData 保持一致）──────────────────────────────────────────
 const ICONS = [
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/facebook.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/whatsapp.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/telegram.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/youtube.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/tiktok.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/snapchat.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/github.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/figma.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/notion.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/discord.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/spotify.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/apple.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/android.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/firefox.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/react.svg',
-  'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/docker.svg',
+  logo,
+  google,
+  googledisk,
+  aoyukmt,
+  groupy,
+  edge,
+  firefox,
+  bitdock,
+  drawio,
+  clion,
+  idea,
+  lively,
 ];
 
 const pickIcon = (id: number) => ICONS[id % ICONS.length];
