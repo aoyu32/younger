@@ -3,7 +3,12 @@
     <div class="app-info flex-center">
       <div class="app-icon">
         <div class="icon" @click="triggerRippleAnimation">
-          <img :src="data?.icon" alt="" ref="iconRef" :style="iconFilterStyle" />
+          <img
+            :src="data?.icon"
+            alt=""
+            ref="iconRef"
+            :style="iconFilterStyle"
+          />
           <div
             :class="['ripple-bg', `ripple-${index}`]"
             v-for="index in 4"
@@ -104,8 +109,22 @@
 
     <div class="intro-section">
       <div class="intro-wrapper flex-center" ref="introWrapperRef">
+        <div class="intro-docs"></div>
         <div class="intro-card">
           <div class="name">{{ data?.name }}文档</div>
+        </div>
+        <div class="scroll-tip">
+          <div class="line flex-col">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <div class="flex-center">
+              <AoIcon :icon="arrowDownIcon" color="#ffffff5d" />
+            </div>
+          </div>
+          <div class="tip-text">向下滚动</div>
         </div>
         <div class="app-intro-md">
           <div class="md-scroll-inner" ref="mdScrollInnerRef">
@@ -191,7 +210,7 @@ import { Flip } from 'gsap/Flip';
 import { MdPreview } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import AoImage from '@/components/ao-image/index.vue';
-
+import arrowDownIcon from '@/assets/app-detail/icon_arrow_down.svg';
 let lenis: Lenis | null = null;
 
 const route = useRoute();
@@ -199,7 +218,6 @@ const route = useRoute();
 const data = computed(() => {
   const id = Number(route.params.id);
   return appDetailList.find((appDetail) => appDetail.id === id)!;
-  
 });
 
 const id = 'preview-only';
@@ -414,6 +432,29 @@ const generateFromVibrant = async () => {
   }
 };
 
+const setupScrollTipAnimation = () => {
+  const dots = gsap.utils.toArray<HTMLElement>('.scroll-tip .line span');
+  const arrow = document.querySelector('.scroll-tip .ao-icon') as HTMLElement;
+
+  if (!dots.length || !arrow) return;
+
+  const items = [...dots, arrow];
+  const MOVE = 5;
+  const CYCLE = 1.5;
+  const STAGGER = 0.2;
+
+  items.forEach((el, i) => {
+    gsap.to(el, {
+      y: MOVE,
+      duration: CYCLE / 2,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      delay: i * STAGGER,
+    });
+  });
+};
+
 const rippleAnimation = () => {
   const desc = document.querySelector('.desc h2');
   const sub = document.querySelector('.desc p');
@@ -540,10 +581,14 @@ const setupDownloadPin = () => {
   const introBtns = document.querySelector('.intro-btns') as HTMLElement;
   const introCard = document.querySelector('.intro-card') as HTMLElement;
 
+  const scrollTip = document.querySelector('.scroll-tip') as HTMLElement;
+  const svgLabel1 = document.querySelector('.svg-label-1') as HTMLElement;
+
   if (!introSectionEl || !innerWrapperEl || !headerEl || !mdEl || !mdInner) {
     console.warn('setupDownloadPin: 缺少必要元素，跳过');
     return;
   }
+
   const maxScroll = getMaxScroll();
 
   gsap.set(mdInner, { y: 0 });
@@ -552,6 +597,7 @@ const setupDownloadPin = () => {
     left: '50%',
     xPercent: -50,
   });
+
   const tl = gsap
     .timeline()
     .fromTo(
@@ -567,6 +613,7 @@ const setupDownloadPin = () => {
       0,
     )
     .addLabel('enter', 1)
+
     .to(
       introCard,
       {
@@ -587,12 +634,22 @@ const setupDownloadPin = () => {
       },
       'enter',
     )
+    .to(
+      [scrollTip, svgLabel1].filter(Boolean),
+      {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'ease.out',
+      },
+      'enter',
+    )
     .fromTo(
       mdEl,
       { x: '150%' },
       { x: '0%', duration: 1, ease: 'power2.out' },
       'enter',
     )
+
     .to(
       introBtns,
       {
@@ -606,6 +663,7 @@ const setupDownloadPin = () => {
       '<',
     )
     .addLabel('scrollStart', 2);
+
   if (maxScroll > 0) {
     tl.to(
       mdInner,
@@ -839,6 +897,7 @@ onMounted(async () => {
     lineBgAnimation();
     setupPathScrollAnimation();
     setupDownloadPin();
+    setupScrollTipAnimation();
     ScrollTrigger.refresh();
     initLenis();
   }, 300);

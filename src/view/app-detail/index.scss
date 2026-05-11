@@ -168,6 +168,33 @@
   }
 }
 
+.scroll-tip {
+  position: absolute;
+  bottom: 30px;
+  color: #ffffff5d;
+  
+  .line{
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :deep(.ao-icon){
+    background-color: transparent;
+  }
+
+  span {
+    width: 5px;
+    height: 5px;
+    background-color: #ffffff5d;
+    border-radius: 50%;
+  }
+
+  .tip-text{
+    margin-top: 10px;
+  }
+}
+
 .intro-btns {
   display: flex;
   align-items: center;
