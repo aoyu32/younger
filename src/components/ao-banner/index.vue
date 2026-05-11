@@ -9,6 +9,7 @@
         class="carousel-inner"
         ref="carouselInnerRef"
         :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
+        v-if="carouselList.length > 0"
       >
         <div
           class="carousel-item"
@@ -17,6 +18,9 @@
         >
           <img :src="item.img" alt="" />
         </div>
+      </div>
+      <div class="empty-img" v-else>
+        <img :src="emptyIcon" alt="" />
       </div>
 
       <div class="carousel-control prev" @click="handleToPrev">
@@ -40,8 +44,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
-import prevIcon from './img/icon_left.svg?url'
-import nextIcon from './img/icon_right.svg?url'
+import prevIcon from './img/icon_left.svg?url';
+import nextIcon from './img/icon_right.svg?url';
+import emptyIcon from './img/icon_empty.svg?url';
 
 // 定义组件名称
 defineOptions({
@@ -232,6 +237,16 @@ watch(carouselList, (newList) => {
       display: flex;
       transition: transform 0.3s ease-in-out;
       width: 100%;
+    }
+
+    .empty-img{
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      height: 100%;
+      border-radius: 6px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .carousel-item {
