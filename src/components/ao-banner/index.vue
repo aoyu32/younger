@@ -231,18 +231,19 @@ watch(carouselList, (newList) => {
       height: 100%;
       display: flex;
       transition: transform 0.3s ease-in-out;
-      width: 100%; // 确保宽度占满
+      width: 100%;
     }
 
     .carousel-item {
-      flex: 0 0 100%; // 关键：每个 item 宽度严格等于父容器宽度的 100%
-      width: 100%; // 备用兼容
+      flex: 0 0 100%;
+      width: 100%;
 
       img {
-        width: 100%; // 图片宽度跟随 item
+        width: 100%;
         height: 100%;
+        min-height: 450px;
         object-fit: cover;
-        display: block; // 消除图片底部间隙
+        display: block;
       }
 
       &.clone {
