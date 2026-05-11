@@ -309,7 +309,17 @@ let rateHideTimer: ReturnType<typeof setTimeout> | null = null;
 const togglePlay = () => {
   const video = videoRef.value;
   if (!video) return;
-  video.paused ? video.play() : video.pause();
+  if (video.paused) {
+    video.play();
+  } else {
+    video.pause();
+    isVideoLoading.value = false;
+  }
+};
+
+const handlePause = () => {
+  showPauseOverlay.value = true;
+  isVideoLoading.value = false;
 };
 
 const handleVideoSeeked = () => {
@@ -373,10 +383,6 @@ const handleClickOutside = (e: MouseEvent) => {
   if (wrapper && !wrapper.contains(e.target as Node)) {
     showRateMenu.value = false;
   }
-};
-
-const handlePause = () => {
-  showPauseOverlay.value = true;
 };
 
 const handlePlay = () => {
