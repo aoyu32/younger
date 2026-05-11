@@ -73,7 +73,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
-      url: 'http://192.140.185.233:9000/bit-setup/video/172156-846731269.mp4',
+      url: 'http://192.140.185.233:9000/bit-setup/video/37768793798-1-192.mp4',
       duration: 510,
     },
   },
