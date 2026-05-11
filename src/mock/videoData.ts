@@ -21,7 +21,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/32335205/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37721999918-1-192.mp4',
       duration: 300,
     },
   },
@@ -47,7 +47,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/172156-846731269.mp4',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/38130749343-1-192.mp4',
       duration: 420,
     },
   },
@@ -73,7 +73,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
-      url: 'http://192.140.185.233:9000/bit-setup/video/video.mp4',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/172156-846731269.mp4',
       duration: 510,
     },
   },
@@ -99,7 +99,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/32335205/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/38215090891-1-192.mp4',
       duration: 480,
     },
   },
@@ -125,7 +125,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/172156-846731269.mp4',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37768793798-1-192.mp4',
       duration: 540,
     },
   },
@@ -151,7 +151,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1554475901-4538ddfbccc2?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/172156-846731269.mp4',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37478075686-1-192.mp4',
       duration: 600,
     },
   },
@@ -177,7 +177,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/36386914/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37815258037-1-192.mp4',
       duration: 560,
     },
   },
@@ -203,7 +203,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/854236/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37721999918-1-192.mp4',
       duration: 380,
     },
   },
@@ -229,7 +229,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/32555197/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/38130749343-1-192.mp4',
       duration: 470,
     },
   },
@@ -255,7 +255,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/34473448/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/172156-846731269.mp4',
       duration: 360,
     },
   },
@@ -281,7 +281,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/32594928/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/38215090891-1-192.mp4',
       duration: 340,
     },
   },
@@ -307,7 +307,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/6498758/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37768793798-1-192.mp4',
       duration: 520,
     },
   },
@@ -333,7 +333,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/31802320/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37478075686-1-192.mp4',
       duration: 450,
     },
   },
@@ -359,7 +359,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://stream.mux.com/BV3YZtogl89mg9VcNBhhnHm02Y34zI1nlMuMQfAbl3dM/highest.mp4',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37815258037-1-192.mp4',
       duration: 490,
     },
   },
@@ -385,7 +385,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/31802320/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/37721999918-1-192.mp4',
       duration: 400,
     },
   },
@@ -411,7 +411,7 @@ export const videoData = [
     video: {
       cover:
         'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
-      url: 'https://www.pexels.com/zh-cn/download/video/31802320/',
+      url: 'https://gs-back.oss-cn-beijing.aliyuncs.com/video/38130749343-1-192.mp4',
       duration: 530,
     },
   },
