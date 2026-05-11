@@ -23,7 +23,7 @@
           <div v-for="img in imgList" :key="img.id" class="preview-item">
             <img :src="img.url" alt="预览" />
             <div class="remove-btn" @click="removeImage(img.id)">
-              <img src="../img/icon_remove.svg" alt="" />
+              <img :src="iconRemove" alt="" />
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
             class="tool-btn emoji-btn"
             @click="toggleEmojiPicker"
           >
-            <img src="../img/icon_emoji.svg" alt="" />
+            <img :src="iconEmoji" alt="" />
           </button>
           <button
             type="button"
@@ -44,7 +44,7 @@
             v-if="showUploadBtn"
             @click="triggerFileInput"
           >
-            <img src="../img/icon_upload_img.svg" alt="" />️
+            <img :src="iconUploadImg" alt="" />️
           </button>
           <input
             ref="fileInputRef"
@@ -82,9 +82,13 @@ import { ref, computed, watch, nextTick, inject, onBeforeUnmount } from 'vue';
 import EmojiPicker from './EmojiPicker.vue';
 import type { UploadFn, ImageItem } from '../index';
 
+// 图标导入
+import iconRemove from '../img/icon_remove.svg?url';
+import iconEmoji from '../img/icon_emoji.svg?url';
+import iconUploadImg from '../img/icon_upload_img.svg?url';
+
 const handleUpload = inject<UploadFn>('on-upload');
 
-// 组件 props
 const props = defineProps<{
   modelValue: string;
 }>();
@@ -94,22 +98,17 @@ const emit = defineEmits<{
   (e: 'send', data: { text: string; images: ImageItem[] }): void;
 }>();
 
-// 内部状态
 const text = ref(props.modelValue || '');
 const showEmojiPicker = ref(false);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
-// 上传按钮是否显示
 const showUploadBtn = computed(() => handleUpload);
-// 当前图片列表
 const imgList = ref<ImageItem[]>([]);
 
-// 是否可发送
 const canSend = computed(() => {
   return text.value.trim().length > 0 || imgList.value.length > 0;
 });
 
-// 同步外部 modelValue
 watch(
   () => props.modelValue,
   (newVal) => {
@@ -120,7 +119,6 @@ watch(
   },
 );
 
-// 调整 textarea 高度
 const adjustTextareaHeight = () => {
   const el = textareaRef.value;
   if (!el) return;
@@ -139,12 +137,10 @@ const handleInput = (e: Event) => {
   adjustTextareaHeight();
 };
 
-// 触发文件选择
 const triggerFileInput = () => {
   fileInputRef.value?.click();
 };
 
-// 处理文件选择
 const handleFileChange = async (e: Event) => {
   const input = e.target as HTMLInputElement;
   const files = Array.from(input.files || []);
@@ -176,16 +172,13 @@ const handleFileChange = async (e: Event) => {
   }
 };
 
-// 删除图片
 const removeImage = (id: number | string) => {
   imgList.value = imgList.value.filter((img) => img.id !== id);
-  // 清空文件选择器的值，避免同一文件无法再次选择
   if (fileInputRef.value) {
     fileInputRef.value.value = '';
   }
 };
 
-// 表情相关
 const toggleEmojiPicker = () => {
   showEmojiPicker.value = !showEmojiPicker.value;
 };
@@ -211,22 +204,18 @@ const insertEmoji = (emoji: string) => {
   showEmojiPicker.value = false;
 };
 
-// 发送评论
 const handleSend = () => {
   if (!canSend.value) return;
   emit('send', {
     text: text.value,
     images: imgList.value,
   });
-  // 清空内容和图片
   text.value = '';
   emit('update:modelValue', '');
-  // 释放所有 blob URL
   imgList.value = [];
   nextTick(() => adjustTextareaHeight());
 };
 
-// 点击外部关闭表情面板
 const handleClickOutside = (e: MouseEvent) => {
   if (!showEmojiPicker.value) return;
   const target = e.target as HTMLElement;

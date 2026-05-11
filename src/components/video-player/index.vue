@@ -19,7 +19,7 @@
         ></video>
         <div class="pause-overlay" :class="{ visible: showPauseOverlay }">
           <div class="pause-overlay-wrapper">
-            <img src="./icons/icon_play.svg" alt="暂停" />
+            <img :src="iconPlay" alt="暂停" />
           </div>
         </div>
         <div class="loading-overlay" v-if="isVideoLoading">
@@ -161,17 +161,13 @@
             class="controls-group"
             aria-label="Playback controls"
           >
-            <!-- <media-poster class="media-poster">
-              <img :src="poster" alt="Video thumbnail" />
-            </media-poster> -->
-
             <!-- 播放按钮 -->
             <media-play-button class="button media-play-button">
               <div class="paused">
-                <img src="./icons/icon_play.svg" alt="播放" />
+                <img :src="iconPlay" alt="播放" />
               </div>
               <div class="playing">
-                <img src="./icons/icon_pause.svg" alt="暂停" />
+                <img :src="iconPause" alt="暂停" />
               </div>
             </media-play-button>
 
@@ -205,6 +201,7 @@
                   </button>
                 </div>
               </div>
+
               <!-- 静音按钮 -->
               <div
                 class="volume-wrapper"
@@ -229,10 +226,10 @@
                 </div>
                 <media-mute-button class="media-mute-button">
                   <div class="muted">
-                    <img src="./icons/icon_unmute.svg" alt="取消静音" />
+                    <img :src="iconUnmute" alt="取消静音" />
                   </div>
                   <div class="unmuted">
-                    <img src="./icons/icon_mute.svg" alt="静音" />
+                    <img :src="iconMute" alt="静音" />
                   </div>
                 </media-mute-button>
               </div>
@@ -243,10 +240,10 @@
                 commandfor="tooltip-pip"
               >
                 <div class="pip">
-                  <img src="./icons/icon_exit_pip.svg" alt="退出画中画" />
+                  <img :src="iconExitPip" alt="退出画中画" />
                 </div>
                 <div class="not-pip">
-                  <img src="./icons/icon_enter_pip.svg" alt="画中画" />
+                  <img :src="iconEnterPip" alt="画中画" />
                 </div>
               </media-pip-button>
 
@@ -256,10 +253,10 @@
                 commandfor="tooltip-fullscreen"
               >
                 <div class="fullscreen">
-                  <img src="./icons/icon_exit_fullscreen.svg" alt="退出全屏" />
+                  <img :src="iconExitFullscreen" alt="退出全屏" />
                 </div>
                 <div class="not-fullscreen">
-                  <img src="./icons/icon_fullscreen.svg" alt="全屏" />
+                  <img :src="iconFullscreen" alt="全屏" />
                 </div>
               </media-fullscreen-button>
             </div>
@@ -271,7 +268,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, computed, nextTick } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import '@videojs/html/video/player';
 import '@videojs/html/ui/buffering-indicator';
 import '@videojs/html/ui/time-slider';
@@ -281,6 +278,16 @@ import '@videojs/html/ui/tooltip';
 import '@videojs/html/ui/volume-slider';
 import '@videojs/html/ui/popover';
 
+// 图标导入
+import iconPlay from './icons/icon_play.svg?url';
+import iconPause from './icons/icon_pause.svg?url';
+import iconMute from './icons/icon_mute.svg?url';
+import iconUnmute from './icons/icon_unmute.svg?url';
+import iconEnterPip from './icons/icon_enter_pip.svg?url';
+import iconExitPip from './icons/icon_exit_pip.svg?url';
+import iconFullscreen from './icons/icon_fullscreen.svg?url';
+import iconExitFullscreen from './icons/icon_exit_fullscreen.svg?url';
+
 const props = defineProps<{
   src: string;
   poster?: string;
@@ -289,6 +296,7 @@ const props = defineProps<{
 const showPauseOverlay = ref(false);
 const showVolume = ref(false);
 const videoRef = ref<HTMLVideoElement | null>(null);
+const containerRef = ref<HTMLElement | null>(null);
 const volumeDisplay = ref(100);
 const rates = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
 const currentRate = ref(1.0);
@@ -297,6 +305,7 @@ const hasSetRate = ref(false);
 const isVideoLoading = ref(true);
 let hideTimer: ReturnType<typeof setTimeout> | null = null;
 let rateHideTimer: ReturnType<typeof setTimeout> | null = null;
+
 const togglePlay = () => {
   const video = videoRef.value;
   if (!video) return;
@@ -327,6 +336,26 @@ const onVolumeEnter = () => {
     hideTimer = null;
   }
   showVolume.value = true;
+};
+
+const onVolumeLeave = () => {
+  hideTimer = setTimeout(() => {
+    showVolume.value = false;
+  }, 300);
+};
+
+const onRateEnter = () => {
+  if (rateHideTimer) {
+    clearTimeout(rateHideTimer);
+    rateHideTimer = null;
+  }
+  showRateMenu.value = true;
+};
+
+const onRateLeave = () => {
+  rateHideTimer = setTimeout(() => {
+    showRateMenu.value = false;
+  }, 300);
 };
 
 const handleVolumeChange = () => {
@@ -373,44 +402,21 @@ const handlePlaying = () => {
 const handleLoadedMetadata = async () => {
   const video = videoRef.value;
   if (!video) return;
-
-  // 尝试 autoplay，失败则显示暂停遮罩
   try {
     await video.play();
     showPauseOverlay.value = false;
   } catch (e) {
-    // 浏览器阻止自动播放，显示暂停遮罩提示用户手动点击
     showPauseOverlay.value = true;
   }
-};
-
-const onVolumeLeave = () => {
-  hideTimer = setTimeout(() => {
-    showVolume.value = false;
-  }, 300);
-};
-
-const onRateEnter = () => {
-  if (rateHideTimer) {
-    clearTimeout(rateHideTimer);
-    rateHideTimer = null;
-  }
-  showRateMenu.value = true;
-};
-
-const onRateLeave = () => {
-  rateHideTimer = setTimeout(() => {
-    showRateMenu.value = false;
-  }, 300);
 };
 
 onMounted(() => {
   const video = videoRef.value;
   if (!video) return;
   volumeDisplay.value = video.muted ? 0 : Math.round(video.volume * 100);
+  document.addEventListener('click', handleClickOutside);
 });
 
-document.addEventListener('click', handleClickOutside);
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside);
 });
@@ -418,6 +424,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @use './skin/ao-skin.css' as *;
+
 .player-container {
   width: 100%;
 }

@@ -20,10 +20,10 @@
       </div>
 
       <div class="carousel-control prev" @click="handleToPrev">
-        <img src="./img/icon_left.svg" alt="" />
+        <img :src="prevIcon" alt="" />
       </div>
       <div class="carousel-control next" @click="handleToNext">
-        <img src="./img/icon_right.svg" alt="" />
+        <img :src="nextIcon" alt="" />
       </div>
 
       <div class="carousel-indicator">
@@ -40,6 +40,8 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
+import prevIcon from './img/icon_left.svg?url'
+import nextIcon from './img/icon_right.svg?url'
 
 // 定义组件名称
 defineOptions({

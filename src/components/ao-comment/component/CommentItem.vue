@@ -44,8 +44,7 @@
               :class="{ active: liked }"
               @click="handleLike"
             >
-              <img src="../img/icon_like_active.svg" alt="" v-if="liked" />
-              <img src="../img/icon_like.svg" alt="" v-else />
+              <img :src="liked ? iconLikeActive : iconLike" alt="" />
               <span> {{ comment.likes || 0 }}</span>
             </button>
             <button
@@ -53,26 +52,20 @@
               :class="{ active: disliked }"
               @click="handleDislike"
             >
-              <img
-                src="../img/icon_dislike_active.svg"
-                alt=""
-                v-if="disliked"
-              />
-              <img src="../img/icon_dislike.svg" alt="" v-else />
+              <img :src="disliked ? iconDislikeActive : iconDislike" alt="" />
               <span> {{ comment.dislikes || 0 }}</span>
             </button>
             <button class="action-btn reply-btn" @click="toggleReplyInput">
-              <img src="../img/icon_reply.svg" alt="" />
+              <img :src="iconReply" alt="" />
               <span>{{ showReplyInput ? '收起回复' : '回复' }}</span>
             </button>
-
             <button
               class="action-btn arrow-btn"
               @click="toggleExpandReplies"
               v-if="replies.length > 0"
             >
               <img
-                src="../img/icon_arrow_down.svg"
+                :src="iconArrowDown"
                 alt=""
                 :class="{ expanded: isExpanded }"
               />
@@ -114,9 +107,17 @@ import { ref, computed } from 'vue';
 import CommentInput from './CommentInput.vue';
 import type { CommentItemData } from '../index.d.ts';
 
+// 图标导入
+import iconLike from '../img/icon_like.svg?url';
+import iconLikeActive from '../img/icon_like_active.svg?url';
+import iconDislike from '../img/icon_dislike.svg?url';
+import iconDislikeActive from '../img/icon_dislike_active.svg?url';
+import iconReply from '../img/icon_reply.svg?url';
+import iconArrowDown from '../img/icon_arrow_down.svg?url';
+
 const props = defineProps<{
   comment: CommentItemData;
-  depth?: number; // 层级：0 一级评论，1 二级回复，2 三级……
+  depth?: number;
 }>();
 
 const emit = defineEmits<{
@@ -130,20 +131,15 @@ const emit = defineEmits<{
   (e: 'replyDislike', replyId: string | number): void;
 }>();
 
-// UI 状态
 const liked = ref(false);
 const disliked = ref(false);
 const showReplyInput = ref(false);
 const replyText = ref('');
 const replyImages = ref<any[]>([]);
-
-// 回复列表的展开/收起状态
 const isExpanded = ref(false);
 
-// 实际回复列表
 const replies = computed(() => props.comment.replies || []);
 
-// 格式化日期
 const formattedDate = computed(() => {
   const date = new Date(props.comment.createdAt);
   return date.toLocaleDateString('zh-CN', {
@@ -153,12 +149,10 @@ const formattedDate = computed(() => {
   });
 });
 
-// 切换回复列表展开/收起
 const toggleExpandReplies = () => {
   isExpanded.value = !isExpanded.value;
 };
 
-// 点赞/踩处理
 const handleLike = () => {
   liked.value = !liked.value;
   if (liked.value && disliked.value) disliked.value = false;
@@ -171,7 +165,6 @@ const handleDislike = () => {
   emit('dislike', props.comment.id);
 };
 
-// 回复输入框显示切换
 const toggleReplyInput = () => {
   showReplyInput.value = !showReplyInput.value;
   if (!showReplyInput.value) {
@@ -180,7 +173,6 @@ const toggleReplyInput = () => {
   }
 };
 
-// 发送回复
 const handleReplySend = (data: { text: string; images: any[] }) => {
   emit('reply', {
     commentId: props.comment.id,
