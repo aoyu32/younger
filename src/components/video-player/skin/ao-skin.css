@@ -46,7 +46,7 @@
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.6) 0%,
-    rgba(0, 0, 0, 0.35) 30%,
+    rgba(49, 49, 49, 0.203) 30%,
     transparent 55%
   );
   transition: opacity 0.3s ease;
@@ -107,7 +107,7 @@
   left: 0;
   height: 100%;
   width: var(--media-slider-fill);
-  background: #fff;
+  background: #00a3a3;
   border-radius: 9999px;
 }
 
