@@ -835,7 +835,7 @@ const lineBgAnimation = () => {
 };
 const initLenis = () => {
   lenis = new Lenis({
-    duration: 0.3,
+    duration: 0.2,
     easing: (t) => 1 - Math.pow(1 - t, 2),
     smoothWheel: true,
     infinite: false,
