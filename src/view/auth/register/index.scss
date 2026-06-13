@@ -1,0 +1,12 @@
+.register {
+  width: 100%;
+  height: 100vh;
+}
+.register-left {
+  flex: 1;
+}
+
+.register-right {
+  flex: 1;
+  background-color: var(--app-secondary-color);
+}
