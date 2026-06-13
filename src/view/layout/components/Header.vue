@@ -1,5 +1,5 @@
 <template>
-  <div class="header" style="padding: 0 20px;">
+  <div class="header" style="padding: 0 20px">
     <div class="header_left">
       <div class="left_logo" @click="handleLogoClick">
         <div class="logo_img">
@@ -28,16 +28,28 @@
         </ul>
       </div>
     </div>
-    <div class="header_right">
+    <div class="header_right flex-center">
       <div class="tool_collect">
         <!-- <button>工具收藏</button> -->
       </div>
       <div class="theme-btn"></div>
       <div class="right_user">
-        <div class="user_avatar">
-          <img src="@/assets/avatar.png" alt="" />
+        <div class="auth-box flex-center" v-if="!isLogin">
+          <div class="login">登录</div>
+          <div class="line"></div>
+          <div class="register">注册</div>
         </div>
-        <div class="user_name">张三</div>
+        <div class="user-info-box flex-center" v-else>
+          <div class="user_avatar">
+            <AoImage
+              src="@/assets/avatar.png"
+              width="36px"
+              height="36px"
+              circle
+            />
+          </div>
+          <div class="user_name ellipsis">张三</div>
+        </div>
       </div>
     </div>
   </div>
@@ -53,6 +65,7 @@ defineOptions({
 });
 
 // 响应式数据
+const isLogin = ref(true);
 const chLogoName = ref(['洋', '果', '教', '育']);
 const enLogoName = ref(['Y', 'O', 'U', 'N', 'G', 'E', 'R']);
 const navItems = ref([
@@ -67,12 +80,12 @@ const navItems = ref([
     name: '教育视频',
     route: '',
     anchor: 'videos',
-  }
+  },
 ]);
 
-const handleLogoClick=()=>{
+const handleLogoClick = () => {
   router.push('/');
-}
+};
 
 // 平滑滚动函数
 const smoothScrollTo = (to, duration = 450) => {
@@ -183,9 +196,6 @@ const handleNavClick = (anchor) => {
 }
 
 .header_right {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 14px;
 
   .tool_collect {
@@ -218,18 +228,22 @@ const handleNavClick = (anchor) => {
     gap: 10px;
   }
 
-  .user_name {
-    font-size: 14px;
+  .auth-box {
+    gap: 10px;
+    font-size: 15px;
+    color: var(--app-primary-color);
+    .line {
+      width: 1px;
+      height: 16px;
+      background-color: var(--app-border-color);
+      margin: 0 6px;
+    }
   }
 
-  .user_avatar {
-    width: 36px;
-    height: 36px;
-    img {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
+  .user-info-box {
+    gap: 10px;
+    .user_name {
+      max-width: 100px;
     }
   }
 }

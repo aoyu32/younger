@@ -8,6 +8,10 @@
 import { onMounted, onUnmounted } from 'vue';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import {
+  destroyBodyOverlayScrollbars,
+  initBodyOverlayScrollbars,
+} from '@/utils/overlayScrollbars';
 
 NProgress.configure({
   showSpinner: false,
@@ -36,11 +40,14 @@ const handleScroll = () => {
 
 onMounted(() => {
   NProgress.set(0);
+  const osInstance = initBodyOverlayScrollbars();
+  osInstance?.on('scroll', handleScroll);
   window.addEventListener('scroll', handleScroll, { passive: true });
 });
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  destroyBodyOverlayScrollbars();
   NProgress.remove();
 });
 </script>

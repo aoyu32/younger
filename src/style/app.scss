@@ -6,7 +6,6 @@
 html {
   height: 100%;
   box-sizing: border-box;
-  scrollbar-width: none;
 }
 
 body {
@@ -22,11 +21,7 @@ body {
   padding: 0;
   color: var(--app-text-color);
 }
-::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  background: transparent;
-}
+
 #app {
   height: 100%;
 }
@@ -57,21 +52,19 @@ ul {
   padding: 0;
 }
 
-/* 滚动条整体部分 */
-::-webkit-scrollbar {
-  width: 6px; // 纵向滚动条宽度
-  height: 6px; // 横向滚动条高度
+/* 隐藏原生滚动条，由 OverlayScrollbars 接管 */
+html,
+body,
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* 滑块 */
-::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-}
-
-/* 轨道 */
-::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background-color: transparent;
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
 }
 
 .clearfix:after {
@@ -854,4 +847,19 @@ h5 {
 
 .el-message .el-message__badge {
   display: none;
+}
+
+.os-theme-younger {
+  --os-size: 6px;
+  // --os-padding-perpendicular: 2px;
+  // --os-padding-axis: 2px;
+  --os-track-border-radius: 5px;
+  --os-handle-border-radius: 5px;
+  --os-track-bg: transparent;
+  --os-track-bg-hover: transparent;
+  --os-track-bg-active: transparent;
+  --os-handle-bg: rgba(0, 0, 0, 0.2);
+  --os-handle-bg-hover: rgba(0, 0, 0, 0.32);
+  --os-handle-bg-active: rgba(0, 0, 0, 0.45);
+  --os-handle-interactive-area-offset: 4px;
 }
