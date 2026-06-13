@@ -28,6 +28,10 @@ const props = defineProps({
     type: String,
     default: 'cover',
   },
+  circle: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const imageModules = import.meta.glob(
@@ -55,7 +59,10 @@ const containerStyle = computed(() => ({
   height: props.height,
 }));
 
-const imgStyle = computed(() => ({ objectFit: props.fit }));
+const imgStyle = computed(() => ({
+  objectFit: props.fit,
+  borderRadius: props.circle ? '50%' : '0',
+}));
 </script>
 
 <style lang="scss" scoped>
