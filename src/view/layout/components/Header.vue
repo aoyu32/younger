@@ -35,9 +35,9 @@
       <div class="theme-btn"></div>
       <div class="right_user">
         <div class="auth-box flex-center" v-if="!isLogin">
-          <div class="login">登录</div>
+          <div class="login" @click="$router.push('/login')">登录</div>
           <div class="line"></div>
-          <div class="register">注册</div>
+          <div class="register" @click="$router.push('/register')">注册</div>
         </div>
         <div class="user-info-box flex-center" v-else>
           <div class="user_avatar">
@@ -65,7 +65,7 @@ defineOptions({
 });
 
 // 响应式数据
-const isLogin = ref(true);
+const isLogin = ref(false);
 const chLogoName = ref(['洋', '果', '教', '育']);
 const enLogoName = ref(['Y', 'O', 'U', 'N', 'G', 'E', 'R']);
 const navItems = ref([
@@ -77,9 +77,19 @@ const navItems = ref([
   },
   {
     icon: '',
-    name: '教育视频',
+    name: '教程视频',
     route: '',
     anchor: 'videos',
+  },
+  {
+    icon: '',
+    name: 'AI资讯',
+    route: '',
+  },
+  {
+    icon: '',
+    name: '网站导航',
+    route: '',
   },
 ]);
 
@@ -237,6 +247,14 @@ const handleNavClick = (anchor) => {
       height: 16px;
       background-color: var(--app-border-color);
       margin: 0 6px;
+    }
+    .login,
+    .register {
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
+      &:hover {
+        color: var(--app-secondary-color);
+      }
     }
   }
 
