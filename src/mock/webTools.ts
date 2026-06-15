@@ -1,5 +1,10 @@
 export const webTools = [
-  // 原有工具
+  {
+    id: 54,
+    name: '网页总分计算器',
+    url: 'web-tools/网页总分计算器.html',
+    icon: 'https://toolb.cn/favicon/desmos.com',
+  },
   {
     id: 1,
     name: 'JSON 格式化',

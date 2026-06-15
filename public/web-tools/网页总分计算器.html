@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>总分计算器 - 横屏计数板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: #2a2a2a;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #6c6c6c;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* 始终显示容器 */
+        .container {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            background: #c0c0c0;
+            padding: 16px 20px;
+            border: 4px solid;
+            border-top-color: #fdfdfd;
+            border-left-color: #fdfdfd;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* board区域弹性布局，允许子项同行 */
+        .board {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 16px;
+            border: 3px solid;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #ffffff;
+            border-bottom-color: #ffffff;
+            padding: 16px 12px;
+            background: #b5b5b5;
+            align-content: flex-start;
+            justify-content: center;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        /* 所有数字组统一使用九宫格网格布局，便于同行排列 */
+        .num-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px 12px;
+            background: transparent;
+            flex-shrink: 0;
+            min-width: 180px;
+			
+		   
+          
+            border-top-color: #d0d0d0;
+            border-left-color: #d0d0d0;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+        }
+
+
+
+        /* 底部操作区：完全水平一行，宽度自适应与上方num-group保持一致 */
+        .bottom-action-bar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #b5b5b5;
+            padding: 8px 12px;
+            border: 2px solid;
+            border-top-color: #d0d0d0;
+            border-left-color: #d0d0d0;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            width: auto;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            /* 关键调整：让底部操作区的宽度与上方的num-group自然匹配，不强行拉伸到100% */
+            align-self: flex-start;
+        }
+
+        /* 四个快捷按钮组 (0,10,20,30) 水平排列 */
+        .quick-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* 结果样式醒目 */
+        .result {
+            height: 52px;
+            background: #000000;
+            color: #ff2a2a;
+            font-size: 28px;
+            line-height: 52px;
+            font-weight: bold;
+            text-align: center;
+            padding: 0 16px;
+            min-width: 120px;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            letter-spacing: 2px;
+            border-radius: 6px;
+            box-shadow: inset 0 0 4px #444;
+            flex-shrink: 0;
+        }
+
+        /* 按钮通用样式加大触摸区域 */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #d4d4d4;
+            border: 3px solid;
+            border-top-color: #ffffff;
+            border-left-color: #ffffff;
+            border-right-color: #6e6e6e;
+            border-bottom-color: #6e6e6e;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            width: auto;
+            min-width: 70px;
+            height: 64px;
+            font-size: 26px;
+            font-weight: 800;
+            transition: all 0.02s linear;
+            border-radius: 0px;
+            font-family: monospace;
+            padding: 0 8px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        /* 按压反馈 */
+        .btn:active {
+            border-top-color: #6e6e6e;
+            border-left-color: #6e6e6e;
+            border-right-color: #ffffff;
+            border-bottom-color: #ffffff;
+            transform: translate(1px, 1px);
+            background: #bdbdbd;
+        }
+
+        /* 重置按钮特殊风格 */
+        #resetBtn {
+            background: #c06060;
+            color: white;
+            border-top-color: #f0a0a0;
+            border-left-color: #f0a0a0;
+            border-right-color: #802020;
+            border-bottom-color: #802020;
+            font-weight: bold;
+            letter-spacing: 1px;
+            min-width: 90px;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        #resetBtn:active {
+            background: #a04040;
+            border-top-color: #802020;
+            border-left-color: #802020;
+            border-right-color: #f0a0a0;
+            border-bottom-color: #f0a0a0;
+        }
+
+        /* 确保底部操作栏内部元素高度一致 */
+        .bottom-action-bar .btn {
+            min-width: 70px;
+            height: 64px;
+            font-size: 26px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 800px) {
+            .btn {
+                min-width: 54px;
+                height: 54px;
+                font-size: 20px;
+            }
+            .bottom-action-bar .btn {
+                min-width: 54px;
+                height: 54px;
+                font-size: 20px;
+            }
+            .result {
+                font-size: 22px;
+                min-width: 90px;
+                height: 48px;
+                line-height: 48px;
+                padding: 0 10px;
+            }
+            #resetBtn {
+                min-width: 75px;
+                font-size: 18px;
+            }
+            .quick-buttons {
+                gap: 6px;
+            }
+            .bottom-action-bar {
+                gap: 8px;
+                padding: 6px 10px;
+            }
+            .num-group {
+                gap: 6px 8px;
+                min-width: 140px;
+            }
+        
+        }
+
+        @media (min-width: 1024px) {
+            .btn {
+                min-width: 85px;
+                height: 72px;
+                font-size: 32px;
+            }
+            .bottom-action-bar .btn {
+                min-width: 85px;
+                height: 72px;
+                font-size: 32px;
+            }
+            .result {
+                font-size: 34px;
+                height: 64px;
+                line-height: 64px;
+            }
+            #resetBtn {
+                font-size: 28px;
+                min-width: 100px;
+            }
+        }
+
+        /* 滚动条美观 */
+        .board::-webkit-scrollbar {
+            width: 6px;
+            background: #909090;
+        }
+        .board::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 4px;
+        }
+        
+        /* 竖屏时调整，保证内容可见 */
+        @media (orientation: portrait) {
+            .container {
+                display: flex;
+            }
+            .board {
+                gap: 8px;
+                padding: 12px 8px;
+            }
+            .num-group {
+                gap: 6px 8px;
+                min-width: 130px;
+            }
+            .btn {
+                min-width: 48px;
+                height: 52px;
+                font-size: 18px;
+            }
+            .bottom-action-bar .btn {
+                min-width: 48px;
+                height: 52px;
+                font-size: 18px;
+            }
+            .result {
+                font-size: 20px;
+                min-width: 80px;
+                height: 44px;
+                line-height: 44px;
+                padding: 0 6px;
+            }
+            #resetBtn {
+                min-width: 65px;
+                font-size: 16px;
+            }
+            .quick-buttons {
+                gap: 5px;
+            }
+            .bottom-action-bar {
+                gap: 6px;
+                padding: 5px 8px;
+            }
+          
+        }
+    </style>
+</head>
+<body onload="initTotalCalculator()">
+    <div class="container">
+        <div id="board" class="board">
+            <!-- 第一组 1~9 单独一行 -->
+            <div class="num-group"  style=" background: #E3F0FF">
+                <button class="btn" data-val="1">1</button>
+                <button class="btn" data-val="2">2</button>
+                <button class="btn" data-val="3">3</button>
+                <button class="btn" data-val="4">4</button>
+                <button class="btn" data-val="5">5</button>
+                <button class="btn" data-val="6">6</button>
+                <button class="btn" data-val="7">7</button>
+                <button class="btn" data-val="8">8</button>
+                <button class="btn" data-val="9">9</button>
+            </div>
+
+            <!-- 第二组与第三组放在同一个 flex 行内，实现同行效果 -->
+           
+                <!-- 第二组 11~19 三行三列 -->
+                <div class="num-group" style=" background: #EBF5E8;">
+                    <button class="btn" data-val="11">11</button>
+                    <button class="btn" data-val="12">12</button>
+                    <button class="btn" data-val="13">13</button>
+                    <button class="btn" data-val="14">14</button>
+                    <button class="btn" data-val="15">15</button>
+                    <button class="btn" data-val="16">16</button>
+                    <button class="btn" data-val="17">17</button>
+                    <button class="btn" data-val="18">18</button>
+                    <button class="btn" data-val="19">19</button>
+                </div>
+
+                <!-- 第三组 21~29 三行三列-->
+                <div class="num-group"  style=" background: #FFF5E6;">
+                    <button class="btn" data-val="21">21</button>
+                    <button class="btn" data-val="22">22</button>
+                    <button class="btn" data-val="23">23</button>
+                    <button class="btn" data-val="24">24</button>
+                    <button class="btn" data-val="25">25</button>
+                    <button class="btn" data-val="26">26</button>
+                    <button class="btn" data-val="27">27</button>
+                    <button class="btn" data-val="28">28</button>
+                    <button class="btn" data-val="29">29</button>
+                </div>
+                <!-- 第四组 21~29 三行三列，与第二组同一行 -->
+                <div class="num-group"  style=" background: #F0EBFF;" >
+                   <button class="btn" data-val="10">10</button>
+                    <button class="btn" data-val="20">20</button>
+                    <button class="btn" data-val="30">30</button>
+                </div>
+
+            <!-- 底部操作区：宽度与上面num-group保持一致（auto自适应，与num-group内元素同宽） -->
+            <div class="bottom-action-bar">
+                
+                <div class="result" id="totalResult">0</div>
+                <button class="btn" id="resetBtn">重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 总分计算器 - 第二组与第三组同行（均为三行三列），底部操作区宽度与上面一致
+         * 所有数字按钮点击累加，重置归零，横屏/竖屏自适应
+         */
+        function initTotalCalculator() {
+            const resultElement = document.getElementById('totalResult');
+            const resetButton = document.getElementById('resetBtn');
+            let currentTotal = 0;
+            
+            if (resultElement) {
+                resultElement.textContent = '0';
+            }
+            
+            const allButtons = document.querySelectorAll('.btn');
+            
+            allButtons.forEach(btn => {
+                // 跳过重置按钮
+                if (btn.id === 'resetBtn') return;
+                
+                let numericValue = null;
+                if (btn.hasAttribute('data-val')) {
+                    const attrVal = btn.getAttribute('data-val');
+                    numericValue = parseInt(attrVal, 10);
+                }
+                if (isNaN(numericValue)) {
+                    const rawText = btn.textContent.trim();
+                    numericValue = parseInt(rawText, 10);
+                }
+                
+                if (!isNaN(numericValue)) {
+                    btn.addEventListener('click', (function(value) {
+                        return function() {
+                            currentTotal += value;
+                            if (resultElement) {
+                                resultElement.textContent = currentTotal;
+                            }
+                        };
+                    })(numericValue));
+                } else {
+                    console.warn('按钮数值无效，跳过绑定', btn);
+                }
+            });
+            
+            if (resetButton) {
+                resetButton.addEventListener('click', function() {
+                    currentTotal = 0;
+                    if (resultElement) {
+                        resultElement.textContent = '0';
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
