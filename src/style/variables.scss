@@ -17,3 +17,414 @@
 
   --app-base-px: 8px;
 }
+
+/* ============================================================
+   全局设计令牌（扩展）
+   ============================================================ */
+:root {
+  /* ========== 1. 字体体系（Typography） ========== */
+  --ao-font-family-base:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ao-font-family-code: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+
+  --ao-font-size-xs: 12px; /* 辅助说明、标签 */
+  --ao-font-size-sm: 14px; /* 次要文本、按钮 */
+  --ao-font-size-base: 16px; /* 正文 */
+  --ao-font-size-lg: 18px; /* 小标题 */
+  --ao-font-size-xl: 20px; /* 卡片标题 */
+  --ao-font-size-xxl: 24px; /* 页面标题 */
+  --ao-font-size-display: 32px; /* 大标题/展示 */
+
+  --ao-font-weight-normal: 400;
+  --ao-font-weight-medium: 500;
+  --ao-font-weight-semibold: 600;
+  --ao-font-weight-bold: 700;
+
+  --ao-line-height-tight: 1.2; /* 标题 */
+  --ao-line-height-base: 1.5; /* 正文 */
+  --ao-line-height-relaxed: 1.8; /* 长文本 */
+
+  /* ========== 2. 间距体系（Spacing） ========== */
+  --ao-spacing-xxs: 4px;
+  --ao-spacing-xs: 8px;
+  --ao-spacing-sm: 12px;
+  --ao-spacing-md: 16px;
+  --ao-spacing-lg: 24px;
+  --ao-spacing-xl: 32px;
+  --ao-spacing-xxl: 48px;
+
+  /* ========== 3. 阴影体系（Shadows） ========== */
+  --ao-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04); /* 轻微投影（表格行） */
+  --ao-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1); /* 小投影（卡片、按钮） */
+  --ao-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12); /* 中投影（浮层、下拉） */
+  --ao-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16); /* 大投影（弹窗） */
+  --ao-shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.2); /* 超大投影（抽屉） */
+
+  /* ========== 4. 边框宽度（Border Width） ========== */
+  --ao-border-width-none: 0;
+  --ao-border-width-thin: 1px;
+  --ao-border-width-medium: 2px;
+  --ao-border-width-thick: 4px;
+
+  /* ========== 5. 透明度（Opacity） ========== */
+  --ao-opacity-disabled: 0.4; /* 禁用状态透明度 */
+  --ao-opacity-hover: 0.8; /* 悬停时轻微透明 */
+  --ao-opacity-mask: 0.6; /* 遮罩层透明度 */
+
+  /* ========== 6. 动画/缓动（Motion） ========== */
+  --ao-duration-fast: 0.15s; /* 快速交互（涟漪、tooltip） */
+  --ao-duration-base: 0.3s; /* 常规过渡（按钮、选项卡） */
+  --ao-duration-slow: 0.45s; /* 慢速展示（模态框、页面切换） */
+
+  --ao-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1); /* 标准缓动 */
+  --ao-ease-out: cubic-bezier(0, 0, 0.2, 1); /* 减速退出 */
+  --ao-ease-in: cubic-bezier(0.4, 0, 1, 1); /* 加速进入 */
+
+  /* ========== 7. 尺寸常量（Sizing） ========== */
+  --ao-size-icon-xs: 12px; /* 极小图标 */
+  --ao-size-icon-sm: 16px; /* 小图标 */
+  --ao-size-icon-md: 24px; /* 常规图标 */
+  --ao-size-icon-lg: 32px; /* 大图标 */
+
+  --ao-control-height-xs: 24px; /* 迷你控件（小标签） */
+  --ao-control-height-sm: 32px; /* 小控件（紧凑按钮） */
+  --ao-control-height-md: 40px; /* 默认控件高度 */
+  --ao-control-height-lg: 48px; /* 大控件高度 */
+
+  /* ========== 8. 层级管理（Z-Index） ========== */
+  --ao-z-dropdown: 1000; /* 下拉菜单 */
+  --ao-z-sticky: 1020; /* 吸顶元素 */
+  --ao-z-modal-backdrop: 1040; /* 模态框遮罩 */
+  --ao-z-modal: 1050; /* 模态框 */
+  --ao-z-popover: 1060; /* 气泡卡片 */
+  --ao-z-tooltip: 1070; /* 文字提示 */
+  --ao-z-notification: 1080; /* 全局通知 */
+
+  /* ========== 9. 响应式断点（仅作参考，实际需在媒体查询中硬编码） ========== */
+  --ao-breakpoint-xs: 480px;
+  --ao-breakpoint-sm: 576px;
+  --ao-breakpoint-md: 768px;
+  --ao-breakpoint-lg: 992px;
+  --ao-breakpoint-xl: 1200px;
+  --ao-breakpoint-xxl: 1600px;
+
+  /* ========== 10. 布局相关（Layout） ========== */
+  --ao-grid-gutter: var(--ao-spacing-lg); /* 栅格间距，默认 24px */
+  --ao-container-max-width: 1200px; /* 内容区域最大宽度 */
+
+  /* ========== 头部栏高度 ========== */
+  --ao-header-height-sm: 48px;
+  --ao-header-height-base: 56px;
+  --ao-header-height-lg: 64px;
+}
+
+/* ============================================================
+   全局圆角变量
+   ============================================================ */
+:root {
+  --ao-border-radius-none: 0; /* 无圆角 */
+  --ao-border-radius-xs: 2px; /* 极小圆角（标签、徽标） */
+  --ao-border-radius-sm: 4px; /* 小圆角（输入框、按钮） */
+  --ao-border-radius-base: 6px; /* 基础圆角（卡片、面板） */
+  --ao-border-radius-lg: 8px; /* 大圆角（模态框、抽屉） */
+  --ao-border-radius-xl: 12px; /* 特大圆角（弹窗、巨幅卡片） */
+  --ao-border-radius-circle: 50%; /* 圆形（头像、图标按钮） */
+  --ao-border-radius-full: 9999px; /* 胶囊形（标签、按钮） */
+}
+
+/* ============================================================
+   1. 基础色板（品牌色阶 + 中性色阶 + 功能色主色）
+   ============================================================ */
+:root {
+  /* ---------- 品牌色阶（Lime） ---------- */
+  --ao-lime-0: #1f2611;
+  --ao-lime-1: #2e3c10;
+  --ao-lime-2: #3e4f13;
+  --ao-lime-3: #536d13;
+  --ao-lime-4: #6f9412;
+  --ao-lime-5: #8bbb11;
+  --ao-lime-6: #a9d134; /* 主品牌色 */
+  --ao-lime-7: #c9e75d;
+  --ao-lime-8: #e4f88b;
+  --ao-lime-9: #f0fab5;
+
+  /* ---------- 中性色阶（Gray） ---------- */
+  --ao-gray-0: #ffffff;
+  --ao-gray-1: #fafafa;
+  --ao-gray-2: #f5f5f5;
+  --ao-gray-3: #f0f0f0;
+  --ao-gray-4: #d9d9d9;
+  --ao-gray-5: #bfbfbf;
+  --ao-gray-6: #8c8c8c;
+  --ao-gray-7: #595959;
+  --ao-gray-8: #434343;
+  --ao-gray-9: #262626;
+
+  /* ---------- 功能色主色 ---------- */
+  --ao-color-success: #52c41a;
+  --ao-color-warning: #faad14;
+  --ao-color-error: #ff4d4f;
+  --ao-color-info: #1890ff;
+}
+
+/* ============================================================
+   2. 亮色语义变量（默认主题）
+   ============================================================ */
+:root {
+  /* ========== 品牌语义 ========== */
+  --ao-color-primary: var(--ao-lime-6);
+  --ao-color-primary-hover: var(--ao-lime-5);
+  --ao-color-primary-active: var(--ao-lime-4);
+  --ao-color-primary-outline: rgba(169, 209, 52, 0.2);
+  --ao-color-primary-bg: var(--ao-lime-1);
+  --ao-color-primary-bg-hover: var(--ao-lime-2);
+  --ao-color-primary-border: var(--ao-lime-4);
+  --ao-color-primary-text: var(--ao-lime-6);
+  --ao-color-primary-text-hover: var(--ao-lime-5);
+
+  /* ========== 功能语义（扩展状态） ========== */
+  /* 成功 */
+  --ao-color-success-hover: #73d13d;
+  --ao-color-success-active: #389e0d;
+  --ao-color-success-outline: rgba(82, 196, 26, 0.2);
+  --ao-color-success-bg: #f6ffed;
+  --ao-color-success-bg-hover: #d9f7be;
+  --ao-color-success-border: #b7eb8f;
+  --ao-color-success-text: var(--ao-color-success);
+
+  /* 警告 */
+  --ao-color-warning-hover: #ffc53d;
+  --ao-color-warning-active: #d48806;
+  --ao-color-warning-outline: rgba(250, 173, 20, 0.2);
+  --ao-color-warning-bg: #fffbe6;
+  --ao-color-warning-bg-hover: #fff1b8;
+  --ao-color-warning-border: #ffe58f;
+  --ao-color-warning-text: var(--ao-color-warning);
+
+  /* 错误 */
+  --ao-color-error-hover: #ff7875;
+  --ao-color-error-active: #d9363e;
+  --ao-color-error-outline: rgba(255, 77, 79, 0.2);
+  --ao-color-error-bg: #fff2f0;
+  --ao-color-error-bg-hover: #fff1f0;
+  --ao-color-error-border: #ffccc7;
+  --ao-color-error-text: var(--ao-color-error);
+
+  /* 信息 */
+  --ao-color-info-hover: #40a9ff;
+  --ao-color-info-active: #096dd9;
+  --ao-color-info-outline: rgba(24, 144, 255, 0.2);
+  --ao-color-info-bg: #e6f7ff;
+  --ao-color-info-bg-hover: #bae7ff;
+  --ao-color-info-border: #91d5ff;
+  --ao-color-info-text: var(--ao-color-info);
+
+  /* ========== 中性语义 ========== */
+  --ao-color-text-base: var(--ao-gray-9); /* 一级文本/标题 */
+  --ao-color-text-secondary: var(--ao-gray-7); /* 二级文本 */
+  --ao-color-text-tertiary: var(--ao-gray-6); /* 三级辅助文本 */
+  --ao-color-text-disabled: var(--ao-gray-5); /* 禁用文本 */
+
+  --ao-color-bg-base: var(--ao-gray-0); /* 基础背景（页面/组件） */
+  --ao-color-bg-layout: var(--ao-gray-2); /* 布局背景（页面底色） */
+  --ao-color-bg-container: var(--ao-gray-0); /* 容器背景（卡片等） */
+  --ao-color-bg-elevated: var(--ao-gray-0); /* 浮层背景（弹窗/下拉） */
+
+  --ao-color-border: var(--ao-gray-4); /* 一级边框 */
+  --ao-color-border-secondary: var(--ao-gray-3); /* 二级边框 */
+  --ao-color-divider: rgba(5, 5, 5, 0.06); /* 分割线 */
+
+  --ao-color-link: var(--ao-color-primary);
+  --ao-color-link-hover: var(--ao-color-primary-hover);
+  --ao-color-link-active: var(--ao-color-primary-active);
+}
+
+/* ============================================================
+   3. 暗色主题（跟随系统偏好自动切换）
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 品牌色提亮 */
+    --ao-color-primary: var(--ao-lime-7);
+    --ao-color-primary-hover: var(--ao-lime-6);
+    --ao-color-primary-active: var(--ao-lime-5);
+    --ao-color-primary-bg: var(--ao-lime-1);
+    --ao-color-primary-bg-hover: var(--ao-lime-2);
+    --ao-color-primary-border: var(--ao-lime-5);
+    --ao-color-primary-text: var(--ao-lime-7);
+    --ao-color-primary-text-hover: var(--ao-lime-6);
+    --ao-color-primary-outline: rgba(201, 231, 93, 0.2);
+
+    /* 功能色提亮 / 背景加深 */
+    --ao-color-success-hover: #95de64;
+    --ao-color-success-active: #237804;
+    --ao-color-success-bg: #162312;
+    --ao-color-success-bg-hover: #213a18;
+    --ao-color-success-border: #274916;
+    --ao-color-success-text: #73d13d;
+
+    --ao-color-warning-hover: #ffd666;
+    --ao-color-warning-active: #ad6800;
+    --ao-color-warning-bg: #2b2111;
+    --ao-color-warning-bg-hover: #3d2e16;
+    --ao-color-warning-border: #594214;
+    --ao-color-warning-text: #ffc53d;
+
+    --ao-color-error-hover: #ffa39e;
+    --ao-color-error-active: #ab252a;
+    --ao-color-error-bg: #2c1212;
+    --ao-color-error-bg-hover: #3e1a1a;
+    --ao-color-error-border: #581b1b;
+    --ao-color-error-text: #ff7875;
+
+    --ao-color-info-hover: #69c0ff;
+    --ao-color-info-active: #0050b3;
+    --ao-color-info-bg: #111d2c;
+    --ao-color-info-bg-hover: #17273a;
+    --ao-color-info-border: #153450;
+    --ao-color-info-text: #40a9ff;
+
+    /* 中性色反转 */
+    --ao-color-text-base: var(--ao-gray-1);
+    --ao-color-text-secondary: var(--ao-gray-4);
+    --ao-color-text-tertiary: var(--ao-gray-5);
+    --ao-color-text-disabled: var(--ao-gray-6);
+
+    --ao-color-bg-base: #000000;
+    --ao-color-bg-layout: #000000;
+    --ao-color-bg-container: #141414;
+    --ao-color-bg-elevated: #1f1f1f;
+
+    --ao-color-border: #424242;
+    --ao-color-border-secondary: #303030;
+    --ao-color-divider: rgba(253, 253, 253, 0.12);
+
+    --ao-color-link: var(--ao-color-primary);
+    --ao-color-link-hover: var(--ao-color-primary-hover);
+    --ao-color-link-active: var(--ao-color-primary-active);
+  }
+}
+/* ============================================================
+   手动主题切换
+   ============================================================ */
+/* 暗色主题 */
+[data-theme='dark'] {
+  --ao-color-primary: var(--ao-lime-7);
+  --ao-color-primary-hover: var(--ao-lime-6);
+  --ao-color-primary-active: var(--ao-lime-5);
+  --ao-color-primary-bg: var(--ao-lime-1);
+  --ao-color-primary-bg-hover: var(--ao-lime-2);
+  --ao-color-primary-border: var(--ao-lime-5);
+  --ao-color-primary-text: var(--ao-lime-7);
+  --ao-color-primary-text-hover: var(--ao-lime-6);
+  --ao-color-primary-outline: rgba(201, 231, 93, 0.2);
+
+  --ao-color-success-hover: #95de64;
+  --ao-color-success-active: #237804;
+  --ao-color-success-bg: #162312;
+  --ao-color-success-bg-hover: #213a18;
+  --ao-color-success-border: #274916;
+  --ao-color-success-text: #73d13d;
+
+  --ao-color-warning-hover: #ffd666;
+  --ao-color-warning-active: #ad6800;
+  --ao-color-warning-bg: #2b2111;
+  --ao-color-warning-bg-hover: #3d2e16;
+  --ao-color-warning-border: #594214;
+  --ao-color-warning-text: #ffc53d;
+
+  --ao-color-error-hover: #ffa39e;
+  --ao-color-error-active: #ab252a;
+  --ao-color-error-bg: #2c1212;
+  --ao-color-error-bg-hover: #3e1a1a;
+  --ao-color-error-border: #581b1b;
+  --ao-color-error-text: #ff7875;
+
+  --ao-color-info-hover: #69c0ff;
+  --ao-color-info-active: #0050b3;
+  --ao-color-info-bg: #111d2c;
+  --ao-color-info-bg-hover: #17273a;
+  --ao-color-info-border: #153450;
+  --ao-color-info-text: #40a9ff;
+
+  --ao-color-text-base: var(--ao-gray-1);
+  --ao-color-text-secondary: var(--ao-gray-4);
+  --ao-color-text-tertiary: var(--ao-gray-5);
+  --ao-color-text-disabled: var(--ao-gray-6);
+
+  --ao-color-bg-base: #000000;
+  --ao-color-bg-layout: #000000;
+  --ao-color-bg-container: #141414;
+  --ao-color-bg-elevated: #1f1f1f;
+
+  --ao-color-border: #424242;
+  --ao-color-border-secondary: #303030;
+  --ao-color-divider: rgba(253, 253, 253, 0.12);
+
+  --ao-color-link: var(--ao-color-primary);
+  --ao-color-link-hover: var(--ao-color-primary-hover);
+  --ao-color-link-active: var(--ao-color-primary-active);
+}
+
+/* 亮色主题 */
+[data-theme='light'] {
+  --ao-color-primary: var(--ao-lime-6);
+  --ao-color-primary-hover: var(--ao-lime-5);
+  --ao-color-primary-active: var(--ao-lime-4);
+  --ao-color-primary-outline: rgba(169, 209, 52, 0.2);
+  --ao-color-primary-bg: var(--ao-lime-1);
+  --ao-color-primary-bg-hover: var(--ao-lime-2);
+  --ao-color-primary-border: var(--ao-lime-4);
+  --ao-color-primary-text: var(--ao-lime-6);
+  --ao-color-primary-text-hover: var(--ao-lime-5);
+
+  --ao-color-success-hover: #73d13d;
+  --ao-color-success-active: #389e0d;
+  --ao-color-success-outline: rgba(82, 196, 26, 0.2);
+  --ao-color-success-bg: #f6ffed;
+  --ao-color-success-bg-hover: #d9f7be;
+  --ao-color-success-border: #b7eb8f;
+  --ao-color-success-text: var(--ao-color-success);
+
+  --ao-color-warning-hover: #ffc53d;
+  --ao-color-warning-active: #d48806;
+  --ao-color-warning-outline: rgba(250, 173, 20, 0.2);
+  --ao-color-warning-bg: #fffbe6;
+  --ao-color-warning-bg-hover: #fff1b8;
+  --ao-color-warning-border: #ffe58f;
+  --ao-color-warning-text: var(--ao-color-warning);
+
+  --ao-color-error-hover: #ff7875;
+  --ao-color-error-active: #d9363e;
+  --ao-color-error-outline: rgba(255, 77, 79, 0.2);
+  --ao-color-error-bg: #fff2f0;
+  --ao-color-error-bg-hover: #fff1f0;
+  --ao-color-error-border: #ffccc7;
+  --ao-color-error-text: var(--ao-color-error);
+
+  --ao-color-info-hover: #40a9ff;
+  --ao-color-info-active: #096dd9;
+  --ao-color-info-outline: rgba(24, 144, 255, 0.2);
+  --ao-color-info-bg: #e6f7ff;
+  --ao-color-info-bg-hover: #bae7ff;
+  --ao-color-info-border: #91d5ff;
+  --ao-color-info-text: var(--ao-color-info);
+
+  --ao-color-text-base: var(--ao-gray-9);
+  --ao-color-text-secondary: var(--ao-gray-7);
+  --ao-color-text-tertiary: var(--ao-gray-6);
+  --ao-color-text-disabled: var(--ao-gray-5);
+
+  --ao-color-bg-base: var(--ao-gray-0);
+  --ao-color-bg-layout: var(--ao-gray-2);
+  --ao-color-bg-container: var(--ao-gray-0);
+  --ao-color-bg-elevated: var(--ao-gray-0);
+
+  --ao-color-border: var(--ao-gray-4);
+  --ao-color-border-secondary: var(--ao-gray-3);
+  --ao-color-divider: rgba(5, 5, 5, 0.06);
+
+  --ao-color-link: var(--ao-color-primary);
+  --ao-color-link-hover: var(--ao-color-primary-hover);
+  --ao-color-link-active: var(--ao-color-primary-active);
+}
