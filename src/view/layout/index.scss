@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  gap: 10px;
+  gap: var(--ao-spacing-md);
 
   header {
     position: fixed;
@@ -14,15 +14,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
-    z-index: 10000;
-    background-color: #ffffff;
+    box-shadow: var(--ao-shadow-sm);
+    z-index: var(--ao-z-sticky);
+    background-color: var(--ao-color-bg-container);
   }
 
   main {
-    width: var(--app-header-width);
-    margin-top: 72px;
-    padding-top: 15px;
+    width: var(--ao-container-max-width);
+    margin-top: var(--ao-header-height-lg);
+    padding-top: var(--ao-spacing-sm);
   }
 
   footer {

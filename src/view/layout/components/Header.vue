@@ -1,5 +1,5 @@
 <template>
-  <div class="header" style="padding: 0 20px">
+  <div class="header">
     <div class="header_left">
       <div class="left_logo" @click="handleLogoClick">
         <div class="logo_img">
@@ -134,11 +134,12 @@ const handleNavClick = (anchor) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: var(--app-header-width);
-  height: 72px;
+  width: var(--ao-container-max-width);
+  height: var(--ao-header-height-lg);
+
   img {
-    width: 40px;
-    height: 40px;
+    width: var(--ao-control-height-md);
+    height: var(--ao-control-height-md);
     object-fit: cover;
   }
 }
@@ -146,10 +147,11 @@ const handleNavClick = (anchor) => {
 .header_left {
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: calc(var(--ao-spacing-xxl) + var(--ao-spacing-md));
+
   .left_logo {
     display: flex;
-    gap: 10px;
+    gap: var(--ao-spacing-sm);
     cursor: pointer;
   }
 
@@ -164,7 +166,7 @@ const handleNavClick = (anchor) => {
     flex-direction: column;
     align-items: normal;
     justify-content: center;
-    gap: 2px;
+    gap: var(--ao-border-radius-xs);
   }
 
   .name_cn {
@@ -172,33 +174,33 @@ const handleNavClick = (anchor) => {
     height: auto;
     display: flex;
     justify-content: space-between;
-    font-size: 16px;
-    font-weight: 550;
-    color: var(--app-primary-color);
+    font-size: var(--ao-font-size-base);
+    font-weight: var(--ao-font-weight-semibold);
+    color: var(--ao-color-primary);
   }
 
   .name_en {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
-    color: var(--app-bg-color-dark);
-    opacity: 0.7;
+    font-size: var(--ao-font-size-sm);
+    color: var(--ao-color-text-secondary);
+    opacity: var(--ao-opacity-hover);
   }
 
   .left_nav {
     ul {
       display: flex;
-      gap: 40px;
-      font-size: 14px;
+      gap: var(--ao-spacing-xl);
+      font-size: var(--ao-font-size-sm);
 
       a {
         text-decoration: none;
-        color: var(--app-text-color-dark);
+        color: var(--ao-color-text-base);
         opacity: 0.75;
-        transition: 0.18s;
+        transition: color var(--ao-duration-fast) var(--ao-ease-in-out);
 
         &:hover {
-          color: var(--app-primary-color);
+          color: var(--ao-color-primary);
         }
       }
     }
@@ -206,23 +208,23 @@ const handleNavClick = (anchor) => {
 }
 
 .header_right {
-  gap: 14px;
+  gap: calc(var(--ao-spacing-sm) + 2px);
 
   .tool_collect {
     button {
       padding: 6px 14px;
-      font-size: 12px;
-      border-radius: 10px;
-      font-weight: 600;
+      font-size: var(--ao-font-size-xs);
+      border-radius: var(--ao-border-radius-lg);
+      font-weight: var(--ao-font-weight-semibold);
       cursor: pointer;
-      transition: 0.18s;
-      background-color: rgba(0, 163, 163, 0.12);
-      color: var(--app-primary-color);
-      border: 1px solid var(--app-border-color);
+      transition: background-color var(--ao-duration-fast) var(--ao-ease-in-out);
+      background-color: var(--ao-color-primary-outline);
+      color: var(--ao-color-primary);
+      border: var(--ao-border-width-thin) solid var(--ao-color-border);
 
       &:hover {
-        background-color: rgba(0, 163, 163, 0.18);
-        border-color: var(--app-border-color);
+        background-color: var(--ao-color-primary-bg-hover);
+        border-color: var(--ao-color-border);
       }
 
       &:active {
@@ -235,31 +237,35 @@ const handleNavClick = (anchor) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: var(--ao-spacing-sm);
   }
 
   .auth-box {
-    gap: 10px;
-    font-size: 15px;
-    color: var(--app-primary-color);
+    gap: var(--ao-spacing-sm);
+    font-size: var(--ao-font-size-sm);
+    color: var(--ao-color-primary);
+
     .line {
-      width: 1px;
-      height: 16px;
-      background-color: var(--app-border-color);
+      width: var(--ao-border-width-thin);
+      height: var(--ao-spacing-md);
+      background-color: var(--ao-color-border);
       margin: 0 6px;
     }
+
     .login,
     .register {
       cursor: pointer;
-      transition: 0.2s ease-in-out;
+      transition: color var(--ao-duration-base) var(--ao-ease-in-out);
+
       &:hover {
-        color: var(--app-secondary-color);
+        color: var(--ao-color-primary-hover);
       }
     }
   }
 
   .user-info-box {
-    gap: 10px;
+    gap: var(--ao-spacing-sm);
+
     .user_name {
       max-width: 100px;
     }

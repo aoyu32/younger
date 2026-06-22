@@ -55,7 +55,7 @@ onUnmounted(() => {
 <style lang="scss">
 #nprogress .bar {
   z-index: 99999;
-  background: var(--app-primary-color);
+  background: var(--ao-color-primary);
   height: 3px;
 }
 </style>
