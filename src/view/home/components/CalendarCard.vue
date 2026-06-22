@@ -75,53 +75,53 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .calendar-card {
-  background: var(--app-bg-color-light);
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--ao-color-bg-container);
+  border-radius: var(--ao-border-radius-xl);
+  padding: calc(var(--ao-spacing-md) + var(--ao-spacing-xxs));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--ao-shadow-md);
 
   .top-section {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 5px;
+    margin-bottom: var(--ao-spacing-xxs);
 
     .time-area {
       flex: 1;
 
       .current-time {
         font-size: 40px;
-        font-weight: 700;
-        color: var(--app-text-color-light);
+        font-weight: var(--ao-font-weight-bold);
+        color: var(--ao-color-text-tertiary);
         letter-spacing: 2px;
-        line-height: 1.2;
-        margin-bottom: 8px;
+        line-height: var(--ao-line-height-tight);
+        margin-bottom: var(--ao-spacing-xs);
       }
 
       .current-date {
-        font-size: 16px;
-        color: var(--app-bg-color-dark);
-        font-weight: 500;
+        font-size: var(--ao-font-size-base);
+        color: var(--ao-color-text-secondary);
+        font-weight: var(--ao-font-weight-medium);
       }
     }
 
     .tags-area {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: var(--ao-spacing-xxs);
       align-items: flex-end;
 
       .tag {
         display: inline-block;
-        padding: 4px 12px;
-        background: var(--calendar-card-tag-bg-color);
-        color: var(--app-bg-color-light);
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 500;
+        padding: var(--ao-spacing-xxs) var(--ao-spacing-sm);
+        background: var(--ao-gray-6);
+        color: var(--ao-gray-0);
+        border-radius: var(--ao-border-radius-sm);
+        font-size: var(--ao-font-size-xs);
+        font-weight: var(--ao-font-weight-medium);
       }
     }
   }
@@ -130,14 +130,14 @@ onBeforeUnmount(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 10px;
-    border-top: 2px solid var(--app-border-color);
+    padding-top: var(--ao-spacing-sm);
+    border-top: var(--ao-border-width-medium) solid var(--ao-color-border);
 
     .info-item {
       .label {
-        font-size: 14px;
-        color: var(--app-text-color-light);
-        font-weight: 600;
+        font-size: var(--ao-font-size-sm);
+        color: var(--ao-color-text-tertiary);
+        font-weight: var(--ao-font-weight-semibold);
       }
     }
   }

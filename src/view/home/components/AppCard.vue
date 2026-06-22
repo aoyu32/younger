@@ -37,13 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 defineOptions({
   name: 'AppCard',
 });
 
-const props = defineProps({
+defineProps({
   app: {
     type: Object,
     default: () => ({
@@ -57,31 +55,33 @@ const props = defineProps({
   },
 });
 
-const randomHue = () => Math.floor(Math.random() * 80) + 100; // 100~180 绿色系
-const hue = randomHue();
+/** 品牌 Lime 亮色系（--ao-lime-5 ~ --ao-lime-9） */
+const BRAND_LIME_RANGE = [5, 6, 7, 8, 9] as const;
+type LimeShade = (typeof BRAND_LIME_RANGE)[number];
 
-const cardTopBgColor = computed(() => {
-  const h1 = hue;
-  const h2 = (hue + 25) % 360;
-  const h3 = (hue + 50) % 360;
-  return `linear-gradient(135deg, hsla(${h1}, 70%, 55%, 0.7) 0%, hsla(${h2}, 75%, 50%, 0.6) 50%, hsla(${h3}, 65%, 45%, 0.5) 100%)`;
-});
+const limeVar = (shade: LimeShade) => `var(--ao-lime-${shade})`;
 
-const cardTagBgColor1 = computed(() => {
-    return `hsla(${(hue + 25) % 360}, 75%, 50%, 0.6)`;
-});
+/** 品牌色 + 透明度混合 */
+const brandMix = (shade: LimeShade, percent: number) =>
+  `color-mix(in srgb, ${limeVar(shade)} ${percent}%, transparent)`;
 
-const cardTagBgColor2 = computed(() => {
-    return `hsla(${(hue + 45) % 360}, 75%, 50%, 0.5)`;
-});
+/** 每张卡片随机选取 3 个连续品牌色阶，保证渐变协调 */
+const pickBrandShades = (): [LimeShade, LimeShade, LimeShade] => {
+  const start = Math.floor(Math.random() * (BRAND_LIME_RANGE.length - 2));
+  return [
+    BRAND_LIME_RANGE[start],
+    BRAND_LIME_RANGE[start + 1],
+    BRAND_LIME_RANGE[start + 2],
+  ];
+};
 
-const cardTagBgColor3 = computed(() => {
-    return `hsla(${(hue + 65) % 360}, 75%, 50%, 0.4)`;
-});
+const [shade1, shade2, shade3] = pickBrandShades();
 
-const cardTopArrowColor = computed(() => {
-  return `hsla(${(hue + 25) % 360}, 75%, 50%, 0.6)`;
-});
+const cardTopBgColor = `linear-gradient(135deg, ${brandMix(shade1, 70)} 0%, ${brandMix(shade2, 60)} 50%, ${brandMix(shade3, 50)} 100%)`;
+
+const cardTagBgColor1 = brandMix(shade1, 60);
+const cardTagBgColor2 = brandMix(shade2, 50);
+const cardTagBgColor3 = brandMix(shade3, 40);
 </script>
 
 <style scoped lang="scss">
@@ -92,8 +92,8 @@ $card_height: 145px;
   position: relative;
   width: $card_width;
   height: $card_height;
-  background-color: var(--app-bg-color-light);
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  background-color: var(--ao-color-bg-container);
+  box-shadow: var(--ao-shadow-md);
   overflow: hidden;
   border-radius: 10px;
 
@@ -104,7 +104,7 @@ $card_height: 145px;
     background: v-bind(cardTopBgColor);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: var(--ao-border-width-thin) solid rgba(255, 255, 255, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,22 +179,22 @@ $card_height: 145px;
     .bottom_name {
       width: 110px;
       height: auto;
-      color: var(--app-text-color-dark);
-      border-bottom: 1px solid var(--app-border-color);
+      color: var(--ao-color-text-base);
+      border-bottom: var(--ao-border-width-thin) solid var(--ao-color-border);
       padding-bottom: 5px;
       transition: 0.2s;
 
       h3 {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: var(--ao-font-size-sm);
+        font-weight: var(--ao-font-weight-semibold);
       }
     }
 
     .bottom_category {
-      font-size: 12px;
+      font-size: var(--ao-font-size-xs);
       transition: 0.2s;
       padding: 0 5px;
-      color: #808080;
+      color: var(--ao-color-text-tertiary);
     }
   }
 
@@ -210,23 +210,23 @@ $card_height: 145px;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    gap: 8px;
+    gap: var(--ao-spacing-xs);
 
     .info_item {
       transition: 0.2s;
-      gap: 8px;
+      gap: var(--ao-spacing-xs);
     }
 
     .item_value {
-      font-size: 12px;
+      font-size: var(--ao-font-size-xs);
       padding: 3px 5px;
       border-radius: 5px;
-      color: var(--app-text-color-dark);
+      color: var(--ao-color-text-base);
       opacity: 0.7;
     }
 
     .name {
-      font-size: 14px;
+      font-size: var(--ao-font-size-sm);
       font-weight: 550;
     }
   }

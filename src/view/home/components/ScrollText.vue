@@ -45,18 +45,18 @@ defineProps({
   .scroll_container {
     width: 100%;
     height: 100%;
-    border-radius: 5px;
-    background-color: var(--scroll-text-bg-color);
+    border-radius: var(--ao-border-radius-sm);
+    background-color: color-mix(in srgb, var(--ao-color-border) 42%, transparent);
     display: flex;
     align-items: center;
     overflow: hidden;
 
     .label_wrapper {
       flex-shrink: 0;
-      padding: 0 12px;
-      font-weight: 600;
-      color: var(--app-bg-color-light);
-      background-color: var(--scroll-text-label-bg-color);
+      padding: 0 var(--ao-spacing-sm);
+      font-weight: var(--ao-font-weight-semibold);
+      color: var(--ao-gray-0);
+      background-color: var(--ao-color-text-tertiary);
       height: 100%;
       display: flex;
       align-items: center;
@@ -85,15 +85,14 @@ defineProps({
 
         .text-item {
           display: inline-block;
-          color: var(--app-text-color-dark);
-          font-weight: 500;
-          padding: 0 10px;
+          color: var(--ao-color-text-base);
+          font-weight: var(--ao-font-weight-medium);
+          padding: 0 var(--ao-spacing-sm);
         }
       }
     }
   }
 }
-
 @keyframes scroll-left-to-right {
   from {
     left: 0;

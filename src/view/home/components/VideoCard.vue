@@ -87,10 +87,10 @@ const handleImgError = (e: any) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: 12px;
+  border-radius: var(--ao-border-radius-xl);
   overflow: hidden;
-  background-color: var(--app-bg-color-light);
-  border: 1px solid var(--app-border-color);
+  background-color: var(--ao-color-bg-container);
+  border: var(--ao-border-width-thin) solid var(--ao-color-border);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   transition: 0.18s;
 
@@ -130,9 +130,9 @@ const handleImgError = (e: any) => {
 
   .info_title {
     flex: 1;
-    font-size: 14px;
+    font-size: var(--ao-font-size-sm);
     line-height: 1.35;
-    color: var(--app-text-color-dark);
+    color: var(--ao-color-text-base);
     opacity: 0.85;
 
     display: -webkit-box;
@@ -147,16 +147,16 @@ const handleImgError = (e: any) => {
     justify-content: space-between;
 
     .bottom_play {
-      font-size: 12px;
-      color: var(--app-text-color-dark);
+      font-size: var(--ao-font-size-xs);
+      color: var(--ao-color-text-base);
       opacity: 0.45;
     }
 
     .bottom_date {
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      color: var(--app-text-color-light);
+      font-size: var(--ao-font-size-xs);
+      padding: 2px var(--ao-spacing-xs);
+      border-radius: var(--ao-border-radius-full);
+      color: var(--ao-color-text-tertiary);
       opacity: 0.5;
     }
   }

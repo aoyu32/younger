@@ -14,8 +14,8 @@
               <AoIcon
                 :icon="prevIcon"
                 :size="16"
-                :color="isPrev ? '#cccccc' : '#8a8a8a'"
-                :hover-color="isPrev ? '#cccccc' : '#262626'"
+                :color="isPrev ? 'var(--ao-gray-4)' : 'var(--ao-gray-6)'"
+                :hover-color="isPrev ? 'var(--ao-gray-4)' : 'var(--ao-color-text-base)'"
               />
             </div>
             <div class="next" @click="change('next')">
@@ -23,8 +23,8 @@
               <AoIcon
                 :icon="nextIcon"
                 :size="16"
-                :color="isNext ? '#cccccc' : '#8a8a8a'"
-                :hover-color="isNext ? '#cccccc' : '#262626'"
+                :color="isNext ? 'var(--ao-gray-4)' : 'var(--ao-gray-6)'"
+                :hover-color="isNext ? 'var(--ao-gray-4)' : 'var(--ao-color-text-base)'"
               />
             </div>
           </div>
@@ -105,11 +105,11 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .news-card {
-  background: var(--app-bg-color-light);
-  border-radius: 12px;
+  background: var(--ao-color-bg-container);
+  border-radius: var(--ao-border-radius-xl);
   padding: 20px;
   overflow: hidden;
-  border: 1px solid var(--app-border-color);
+  border: var(--ao-border-width-thin) solid var(--ao-color-border);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -120,14 +120,14 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--app-border-color);
+    padding-bottom: var(--ao-spacing-xs);
+    border-bottom: var(--ao-border-width-medium) solid var(--ao-color-border);
 
     h3 {
       margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--app-text-color-dark);
+      font-size: var(--ao-font-size-lg);
+      font-weight: var(--ao-font-weight-semibold);
+      color: var(--ao-color-text-base);
     }
 
     .page-btns {
@@ -154,20 +154,20 @@ onMounted(() => {
       justify-content: space-between;
       align-items: center;
       padding: 10px 5px;
-      border-bottom: 1px solid var(--app-border-color);
+      border-bottom: var(--ao-border-width-thin) solid var(--ao-color-border);
       cursor: pointer;
-      transition: all 0.2s ease-out;
+      transition: all var(--ao-duration-fast) var(--ao-ease-out);
 
       &:hover {
         .news-title,
         .news-views {
-          color: #434343;
+          color: var(--ao-gray-8);
           text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
         }
       }
 
       &:hover {
-        background-color: #dadada33;
+        background-color: color-mix(in srgb, var(--ao-gray-4) 20%, transparent);
       }
 
       &:last-child {
@@ -176,20 +176,20 @@ onMounted(() => {
 
       .news-title {
         flex: 1;
-        font-size: 14px;
-        color: var(--app-text-color-light);
+        font-size: var(--ao-font-size-sm);
+        color: var(--ao-color-text-tertiary);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        margin-right: 12px;
+        margin-right: var(--ao-spacing-sm);
       }
 
       .news-views {
         flex-shrink: 0;
-        font-size: 12px;
-        color: var(--app-text-color-light);
+        font-size: var(--ao-font-size-xs);
+        color: var(--ao-color-text-tertiary);
         max-width: 45px;
-        font-weight: 500;
+        font-weight: var(--ao-font-weight-medium);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

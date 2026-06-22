@@ -155,14 +155,17 @@ defineOptions({
   name: 'Home',
 });
 
+const imgUrl = (filename: string) =>
+  `${import.meta.env.VITE_MINIO_ADDRESS}/younger/banner/${filename}`;
+
 // 响应式数据
 const bannerImage = ref([
-  'https://picsum.photos/800/450?random=1',
-  'https://picsum.photos/800/450?random=2',
-  'https://picsum.photos/800/450?random=3',
-  'https://picsum.photos/800/450?random=4',
-  'https://picsum.photos/800/450?random=5',
-  'https://picsum.photos/800/450?random=6',
+  imgUrl('img1.jpg'),
+  imgUrl('img2.png'),
+  imgUrl('img3.png'),
+  imgUrl('img4.png'),
+  imgUrl('img5.png'),
+  imgUrl('img6.png'),
 ]);
 const apps = ref(appData);
 const tools = ref(webTools);
