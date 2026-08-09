@@ -4,8 +4,9 @@ import AoIcon from './ao-icon/index.vue';
 import AoPage from './ao-page/index.vue';
 import AoImage from './ao-image/index.vue';
 import AoButton from './ao-button/index.vue';
+import AoInput from './ao-input/index.vue';
 
-const components = [AoIcon, AoPage, AoImage, AoButton];
+const components = [AoIcon, AoPage, AoImage, AoButton, AoInput];
 export default {
   install(app: App) {
     components.forEach((component) => {

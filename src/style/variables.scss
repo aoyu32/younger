@@ -1,22 +1,22 @@
-:root {
-  --app-primary-color: #00a3a3;
-  --app-secondary-color: #00c4c4;
-  --app-header-height: 72px;
-  --app-header-width: 1200px;
-  --app-text-color-dark: #212121;
-  --app-text-color-light: #757575;
-  --app-bg-color-dark: #3a3838;
-  --app-bg-color-light: #ffffff;
-  --app-border-color: #e0e0e0;
+// :root {
+//   --app-primary-color: #00a3a3;
+//   --app-secondary-color: #00c4c4;
+//   --app-header-height: 72px;
+//   --app-header-width: 1200px;
+//   --app-text-color-dark: #212121;
+//   --app-text-color-light: #757575;
+//   --app-bg-color-dark: #3a3838;
+//   --app-bg-color-light: #ffffff;
+//   --app-border-color: #e0e0e0;
 
-  // 走马灯组件颜色
-  --scroll-text-bg-color: rgba(203, 203, 203, 0.418);
-  --scroll-text-label-bg-color: #929090;
+//   // 走马灯组件颜色
+//   --scroll-text-bg-color: rgba(203, 203, 203, 0.418);
+//   --scroll-text-label-bg-color: #929090;
 
-  --calendar-card-tag-bg-color: #9b9b9b;
+//   --calendar-card-tag-bg-color: #9b9b9b;
 
-  --app-base-px: 8px;
-}
+//   --app-base-px: 8px;
+// }
 
 /* ============================================================
    全局设计令牌（扩展）
@@ -73,8 +73,8 @@
 
   /* ========== 6. 动画/缓动（Motion） ========== */
   --ao-duration-fast: 0.15s; /* 快速交互（涟漪、tooltip） */
-  --ao-duration-base: 0.3s; /* 常规过渡（按钮、选项卡） */
-  --ao-duration-slow: 0.45s; /* 慢速展示（模态框、页面切换） */
+  --ao-duration-base: 0.25s; /* 常规过渡（按钮、选项卡） */
+  --ao-duration-slow: 0.35s; /* 慢速展示（模态框、页面切换） */
 
   --ao-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1); /* 标准缓动 */
   --ao-ease-out: cubic-bezier(0, 0, 0.2, 1); /* 减速退出 */
@@ -137,16 +137,18 @@
    ============================================================ */
 :root {
   /* ---------- 品牌色阶（Lime） ---------- */
-  --ao-lime-0: #1f2611;
-  --ao-lime-1: #2e3c10;
-  --ao-lime-2: #3e4f13;
-  --ao-lime-3: #536d13;
-  --ao-lime-4: #6f9412;
-  --ao-lime-5: #8bbb11;
-  --ao-lime-6: #a9d134; /* 主品牌色 */
-  --ao-lime-7: #c9e75d;
-  --ao-lime-8: #e4f88b;
-  --ao-lime-9: #f0fab5;
+  /* ---------- 品牌色阶（极光绿 / Aurora Green） ---------- */
+/* ---------- 品牌色阶（明青 / Bright Cyan） ---------- */
+  --ao-lime-0: #001f26;
+  --ao-lime-1: #003740;
+  --ao-lime-2: #00505c;
+  --ao-lime-3: #006b75;
+  --ao-lime-4: #00858e;
+  --ao-lime-5: #009fa7;
+  --ao-lime-6: #00b5b5; /* 主品牌色（明亮青） */
+  --ao-lime-7: #33c9c9;
+  --ao-lime-8: #66dcdc;
+  --ao-lime-9: #99eeee;
 
   /* ---------- 中性色阶（Gray） ---------- */
   --ao-gray-0: #ffffff;
@@ -239,71 +241,71 @@
   --ao-color-link-active: var(--ao-color-primary-active);
 }
 
-/* ============================================================
-   3. 暗色主题（跟随系统偏好自动切换）
-   ============================================================ */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* 品牌色提亮 */
-    --ao-color-primary: var(--ao-lime-7);
-    --ao-color-primary-hover: var(--ao-lime-6);
-    --ao-color-primary-active: var(--ao-lime-5);
-    --ao-color-primary-bg: var(--ao-lime-1);
-    --ao-color-primary-bg-hover: var(--ao-lime-2);
-    --ao-color-primary-border: var(--ao-lime-5);
-    --ao-color-primary-text: var(--ao-lime-7);
-    --ao-color-primary-text-hover: var(--ao-lime-6);
-    --ao-color-primary-outline: rgba(201, 231, 93, 0.2);
+// /* ============================================================
+//    3. 暗色主题（跟随系统偏好自动切换）
+//    ============================================================ */
+// @media (prefers-color-scheme: dark) {
+//   :root {
+//     /* 品牌色提亮 */
+//     --ao-color-primary: var(--ao-lime-7);
+//     --ao-color-primary-hover: var(--ao-lime-6);
+//     --ao-color-primary-active: var(--ao-lime-5);
+//     --ao-color-primary-bg: var(--ao-lime-1);
+//     --ao-color-primary-bg-hover: var(--ao-lime-2);
+//     --ao-color-primary-border: var(--ao-lime-5);
+//     --ao-color-primary-text: var(--ao-lime-7);
+//     --ao-color-primary-text-hover: var(--ao-lime-6);
+//     --ao-color-primary-outline: rgba(201, 231, 93, 0.2);
 
-    /* 功能色提亮 / 背景加深 */
-    --ao-color-success-hover: #95de64;
-    --ao-color-success-active: #237804;
-    --ao-color-success-bg: #162312;
-    --ao-color-success-bg-hover: #213a18;
-    --ao-color-success-border: #274916;
-    --ao-color-success-text: #73d13d;
+//     /* 功能色提亮 / 背景加深 */
+//     --ao-color-success-hover: #95de64;
+//     --ao-color-success-active: #237804;
+//     --ao-color-success-bg: #162312;
+//     --ao-color-success-bg-hover: #213a18;
+//     --ao-color-success-border: #274916;
+//     --ao-color-success-text: #73d13d;
 
-    --ao-color-warning-hover: #ffd666;
-    --ao-color-warning-active: #ad6800;
-    --ao-color-warning-bg: #2b2111;
-    --ao-color-warning-bg-hover: #3d2e16;
-    --ao-color-warning-border: #594214;
-    --ao-color-warning-text: #ffc53d;
+//     --ao-color-warning-hover: #ffd666;
+//     --ao-color-warning-active: #ad6800;
+//     --ao-color-warning-bg: #2b2111;
+//     --ao-color-warning-bg-hover: #3d2e16;
+//     --ao-color-warning-border: #594214;
+//     --ao-color-warning-text: #ffc53d;
 
-    --ao-color-error-hover: #ffa39e;
-    --ao-color-error-active: #ab252a;
-    --ao-color-error-bg: #2c1212;
-    --ao-color-error-bg-hover: #3e1a1a;
-    --ao-color-error-border: #581b1b;
-    --ao-color-error-text: #ff7875;
+//     --ao-color-error-hover: #ffa39e;
+//     --ao-color-error-active: #ab252a;
+//     --ao-color-error-bg: #2c1212;
+//     --ao-color-error-bg-hover: #3e1a1a;
+//     --ao-color-error-border: #581b1b;
+//     --ao-color-error-text: #ff7875;
 
-    --ao-color-info-hover: #69c0ff;
-    --ao-color-info-active: #0050b3;
-    --ao-color-info-bg: #111d2c;
-    --ao-color-info-bg-hover: #17273a;
-    --ao-color-info-border: #153450;
-    --ao-color-info-text: #40a9ff;
+//     --ao-color-info-hover: #69c0ff;
+//     --ao-color-info-active: #0050b3;
+//     --ao-color-info-bg: #111d2c;
+//     --ao-color-info-bg-hover: #17273a;
+//     --ao-color-info-border: #153450;
+//     --ao-color-info-text: #40a9ff;
 
-    /* 中性色反转 */
-    --ao-color-text-base: var(--ao-gray-1);
-    --ao-color-text-secondary: var(--ao-gray-4);
-    --ao-color-text-tertiary: var(--ao-gray-5);
-    --ao-color-text-disabled: var(--ao-gray-6);
+//     /* 中性色反转 */
+//     --ao-color-text-base: var(--ao-gray-1);
+//     --ao-color-text-secondary: var(--ao-gray-4);
+//     --ao-color-text-tertiary: var(--ao-gray-5);
+//     --ao-color-text-disabled: var(--ao-gray-6);
 
-    --ao-color-bg-base: #000000;
-    --ao-color-bg-layout: #000000;
-    --ao-color-bg-container: #141414;
-    --ao-color-bg-elevated: #1f1f1f;
+//     --ao-color-bg-base: #000000;
+//     --ao-color-bg-layout: #000000;
+//     --ao-color-bg-container: #141414;
+//     --ao-color-bg-elevated: #1f1f1f;
 
-    --ao-color-border: #424242;
-    --ao-color-border-secondary: #303030;
-    --ao-color-divider: rgba(253, 253, 253, 0.12);
+//     --ao-color-border: #424242;
+//     --ao-color-border-secondary: #303030;
+//     --ao-color-divider: rgba(253, 253, 253, 0.12);
 
-    --ao-color-link: var(--ao-color-primary);
-    --ao-color-link-hover: var(--ao-color-primary-hover);
-    --ao-color-link-active: var(--ao-color-primary-active);
-  }
-}
+//     --ao-color-link: var(--ao-color-primary);
+//     --ao-color-link-hover: var(--ao-color-primary-hover);
+//     --ao-color-link-active: var(--ao-color-primary-active);
+//   }
+// }
 /* ============================================================
    手动主题切换
    ============================================================ */
