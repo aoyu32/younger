@@ -2,7 +2,13 @@
   <div class="calendar-card">
     <div class="top-section">
       <div class="time-area">
-        <div class="current-time">{{ currentTime }}</div>
+        <div class="current-time flex">
+          {{ currentTime }}:
+          <div>
+            {{ `${currentSeconds.slice(0, 1)}`
+            }}<span>{{ `${currentSeconds.slice(1, 2)}` }}</span>
+          </div>
+        </div>
         <div class="current-date">{{ currentDate }}</div>
       </div>
       <div class="tags-area">
@@ -33,6 +39,7 @@ const currentTime = ref('');
 const currentDate = ref('');
 const weekDay = ref('');
 const daysToYearEnd = ref(0);
+const currentSeconds = ref('');
 let timer: any = null;
 
 const updateTime = () => {
@@ -42,7 +49,8 @@ const updateTime = () => {
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
-  currentTime.value = `${hours}:${minutes}:${seconds}`;
+  currentTime.value = `${hours}:${minutes}`;
+  currentSeconds.value = seconds;
 
   // 格式化日期 YYYY年MM月DD日
   const year = now.getFullYear();
@@ -99,6 +107,10 @@ onBeforeUnmount(() => {
         letter-spacing: 2px;
         line-height: var(--ao-line-height-tight);
         margin-bottom: var(--ao-spacing-xs);
+
+        span {
+          color: var(--ao-color-primary);
+        }
       }
 
       .current-date {
@@ -115,13 +127,33 @@ onBeforeUnmount(() => {
       align-items: flex-end;
 
       .tag {
-        display: inline-block;
+        position: relative;
         padding: var(--ao-spacing-xxs) var(--ao-spacing-sm);
-        background: var(--ao-gray-6);
+        background: var(--ao-gray-5);
         color: var(--ao-gray-0);
         border-radius: var(--ao-border-radius-sm);
         font-size: var(--ao-font-size-xs);
         font-weight: var(--ao-font-weight-medium);
+        &::after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%); 
+          width: 3px;
+          height: 8px;
+          border-radius: var(--ao-border-radius-sm);
+          background-color: var(--ao-color-primary);
+        }
+
+        &:first-child::after,
+        &:last-child::after {
+          right: -1px;
+        }
+
+        &:nth-child(2)::after {
+          left: -1px;
+        }
       }
     }
   }
