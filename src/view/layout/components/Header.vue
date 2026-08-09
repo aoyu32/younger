@@ -3,7 +3,7 @@
     <div class="header_left">
       <div class="left_logo" @click="handleLogoClick">
         <div class="logo_img">
-          <img src="@/assets/logo.png" alt="" />
+          <img src="@/assets/younger_logo.png" />
         </div>
         <div class="logo_name">
           <div class="name_cn">
@@ -140,7 +140,8 @@ const handleNavClick = (anchor) => {
   img {
     width: var(--ao-control-height-md);
     height: var(--ao-control-height-md);
-    object-fit: cover;
+
+    object-fit: contain;
   }
 }
 
