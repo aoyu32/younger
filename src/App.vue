@@ -1,11 +1,13 @@
 <template>
   <div id="app">
     <router-view />
+    <TransitionOverlay />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
+import TransitionOverlay from '@/view/auth/components/TransitionOverlay.vue';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import {
