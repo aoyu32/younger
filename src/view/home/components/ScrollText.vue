@@ -15,27 +15,27 @@
 
 <script setup lang="ts">
 defineOptions({
-  name: 'ScrollText'
-})
+  name: 'ScrollText',
+});
 
 defineProps({
   lable: {
     type: String,
-    default: '默认标题'
+    default: '默认标题',
   },
   text: {
     type: String,
-    default: '默认文本'
+    default: '默认文本',
   },
   height: {
     type: String,
-    default: '30px'
+    default: '30px',
   },
   speed: {
     type: Number,
-    default: 60
-  }
-})
+    default: 60,
+  },
+});
 </script>
 
 <style lang="scss" scoped>
@@ -46,7 +46,11 @@ defineProps({
     width: 100%;
     height: 100%;
     border-radius: var(--ao-border-radius-sm);
-    background-color: color-mix(in srgb, var(--ao-color-border) 42%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--ao-color-border) 42%,
+      transparent
+    );
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -60,6 +64,7 @@ defineProps({
       height: 100%;
       display: flex;
       align-items: center;
+      position: relative;
 
       p {
         margin: 0;
@@ -82,7 +87,18 @@ defineProps({
         align-items: center;
         white-space: nowrap;
         animation: scroll-left-to-right 15s linear infinite;
-
+        &::after {
+          content: '';
+          display: block;
+          position: absolute;
+          border-radius: var(--ao-border-radius-sm);
+          width: 100px;
+          height: 2px;
+          bottom: 0px;
+          right: 25px;
+          background-color: var(--ao-color-primary);
+          margin-left: var(--ao-spacing-sm);
+        }
         .text-item {
           display: inline-block;
           color: var(--ao-color-text-base);
