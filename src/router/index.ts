@@ -58,6 +58,14 @@ const routes = [
       title: '注册',
     },
   },
+  {
+    name: 'reset',
+    path: '/reset',
+    component: () => import('@/view/auth/reset/index.vue'),
+    meta: {
+      title: '重置密码',
+    },
+  },
 ];
 
 const router = createRouter({
