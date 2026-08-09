@@ -1,0 +1,48 @@
+.ao-button-btn {
+  cursor: pointer;
+  width: 100%;
+  padding: 10px 20px;
+  border: none;
+  background-color: var(--aobtn-bg, #009fa7);
+  color: #fff;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.ao-button-btn:hover:not(:disabled) {
+  background-color: var(--aobtn-hover-bg);
+}
+
+.ao-button-btn:active:not(:disabled) {
+  background-color: var(--aobtn-active-bg);
+}
+
+.ao-button-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- text ---------- */
+.ao-button-btn.is-text {
+  width: auto;
+  padding: 0;
+  background-color: transparent;
+  color: #323232;
+}
+
+.ao-button-btn.is-text:hover:not(:disabled) {
+  background-color: transparent;
+  color: rgba(50, 50, 50, 0.74);
+}
+
+/* ---------- plain ---------- */
+.ao-button-btn.is-plain {
+  background-color: transparent;
+  border: 1px solid var(--aobtn-bg, #009fa7);
+  color: var(--aobtn-bg, #009fa7);
+}
+
+.ao-button-btn.is-plain:hover:not(:disabled) {
+  background-color: var(--aobtn-hover-bg);
+  color: #fff;
+}
