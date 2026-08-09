@@ -15,7 +15,9 @@
                 :icon="prevIcon"
                 :size="16"
                 :color="isPrev ? 'var(--ao-gray-4)' : 'var(--ao-gray-6)'"
-                :hover-color="isPrev ? 'var(--ao-gray-4)' : 'var(--ao-color-text-base)'"
+                :hover-color="
+                  isPrev ? 'var(--ao-gray-4)' : 'var(--ao-color-text-base)'
+                "
               />
             </div>
             <div class="next" @click="change('next')">
@@ -24,7 +26,9 @@
                 :icon="nextIcon"
                 :size="16"
                 :color="isNext ? 'var(--ao-gray-4)' : 'var(--ao-gray-6)'"
-                :hover-color="isNext ? 'var(--ao-gray-4)' : 'var(--ao-color-text-base)'"
+                :hover-color="
+                  isNext ? 'var(--ao-gray-4)' : 'var(--ao-color-text-base)'
+                "
               />
             </div>
           </div>
@@ -128,6 +132,18 @@ onMounted(() => {
       font-size: var(--ao-font-size-lg);
       font-weight: var(--ao-font-weight-semibold);
       color: var(--ao-color-text-base);
+      position: relative;
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 50%;
+        right: -12px;
+        width: 5px;
+        height: 10px;
+        border-radius: var(--ao-border-radius-sm);
+        background-color: var(--ao-color-primary);
+      }
     }
 
     .page-btns {
