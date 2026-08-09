@@ -32,7 +32,7 @@
           >
             <template #controls="{ isPrev, isNext, change }">
               <div class="content_label">
-                <h3>实用工具</h3>
+                <h3 class="first_h3">实用工具</h3>
                 <div class="label_text flex-x">
                   <div
                     class="pre-btn"
@@ -74,7 +74,7 @@
           >
             <template #controls="{ isNext, isPrev, change }">
               <div class="content_label">
-                <h3>网页工具</h3>
+                <h3 class="second_h3">网页工具</h3>
                 <div class="label_text flex-x">
                   <div
                     class="pre-btn"
@@ -139,6 +139,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { useAuthTransition } from '@/view/auth/composables/useAuthTransition';
 import AoBanner from '@/components/ao-banner/index.vue';
 import AppCard from '@/view/home/components/AppCard.vue';
 import WebToolCard from '@/view/home/components/WebToolCard.vue';
@@ -155,6 +156,7 @@ defineOptions({
   name: 'Home',
 });
 
+const { hideOverlay } = useAuthTransition();
 const imgUrl = (filename: string) =>
   `${import.meta.env.VITE_MINIO_ADDRESS}/younger/banner/${filename}`;
 
@@ -230,6 +232,7 @@ const handleNewsItemClick = (id: any) => {
 
 // 生命周期
 onMounted(() => {
+  hideOverlay();
   getData();
   document.title = '洋果教育 - 首页';
 });
