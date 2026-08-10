@@ -87,10 +87,9 @@ const handleImgError = (e: any) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: var(--ao-border-radius-xl);
+  border-radius: var(--ao-border-radius-lg);
   overflow: hidden;
   background-color: var(--ao-color-bg-container);
-  border: var(--ao-border-width-thin) solid var(--ao-color-border);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   transition: 0.18s;
 
@@ -133,7 +132,6 @@ const handleImgError = (e: any) => {
     font-size: var(--ao-font-size-sm);
     line-height: 1.35;
     color: var(--ao-color-text-base);
-    opacity: 0.85;
 
     display: -webkit-box;
     -webkit-line-clamp: 2;

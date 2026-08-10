@@ -134,6 +134,23 @@
         </div>
       </div>
     </div>
+    <div class="vip_video_content">
+      <div class="video_label">
+        <div class="content_label">
+          <h3>精品课程</h3>
+          <div class="label_text">
+            <span>值得付费的精品课程视频</span>
+          </div>
+        </div>
+      </div>
+      <div class="video_list">
+        <div class="video_item" v-for="item in videos" :key="item.id">
+          <router-link :to="`/video/${item.id}`" target="_blank">
+            <VipVideoCard :data="item" />
+          </router-link>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -144,6 +161,7 @@ import AoBanner from '@/components/ao-banner/index.vue';
 import AppCard from '@/view/home/components/AppCard.vue';
 import WebToolCard from '@/view/home/components/WebToolCard.vue';
 import VideoCard from '@/view/home/components/VideoCard.vue';
+import VipVideoCard from './components/VipVideoCard.vue';
 import { appData } from '@/mock/appData';
 import { webTools } from '@/mock/webTools';
 import { videoData } from '@/mock/videoData';

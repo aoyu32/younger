@@ -20,10 +20,17 @@
       </div>
       <div class="left_nav">
         <ul>
-          <li v-for="(item, index) in navItems" :key="index">
-            <a href="javascript:;" @click="handleNavClick(item.anchor)">{{
-              item.name
-            }}</a>
+          <li v-for="(item, itemIndex) in navItems" :key="index">
+            <a href="javascript:;" @click="handleNavClick(item.anchor)">
+              <span
+                v-for="(value, itemNameIndex) in item.name.split('')"
+                :key="index"
+                :style="{
+                  fontSize: itemNameIndex === 0 ? '15px' : '14px',
+                }"
+                >{{ value }}</span
+              >
+            </a>
           </li>
         </ul>
       </div>
@@ -48,7 +55,7 @@
               circle
             />
           </div>
-          <div class="user_name ellipsis">张三</div>
+          <div class="user_name ellipsis">张三fsdsfsdfsdfsdfsfsdf</div>
         </div>
       </div>
     </div>
