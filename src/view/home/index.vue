@@ -120,7 +120,7 @@
     <div class="video_content" id="videos">
       <div class="video_label">
         <div class="content_label">
-          <h3>视频专区</h3>
+          <h3 class="video_h3_1">视频专区</h3>
           <div class="label_text">
             <span>精选 AI 学习内容</span>
           </div>
@@ -137,7 +137,14 @@
     <div class="vip_video_content">
       <div class="video_label">
         <div class="content_label">
-          <h3>精品课程</h3>
+          <div class="label_left flex-center">
+            <AoImage
+              src="@/assets/home/icon_best.svg"
+              width="24px"
+              height="24px"
+            ></AoImage>
+            <h3>精品课程</h3>
+          </div>
           <div class="label_text">
             <span>值得付费的精品课程视频</span>
           </div>

@@ -147,6 +147,7 @@ const props = withDefaults(
       line-height: 1.35;
       color: var(--ao-color-text-base);
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
 
