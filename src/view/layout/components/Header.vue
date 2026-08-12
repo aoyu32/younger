@@ -39,7 +39,14 @@
       <div class="tool_collect">
         <!-- <button>工具收藏</button> -->
       </div>
-      <div class="theme-btn"></div>
+      <div class="right-vip flex-center" @click="$router.push('/vip')">
+        <AoImage
+          src="@/assets/vip/icon_svip.svg"
+          width="20px"
+          height="20px"
+        ></AoImage>
+        <span>开通会员</span>
+      </div>
       <div class="right_user">
         <div class="auth-box flex-center" v-if="!isLogin">
           <div class="login" @click="$router.push('/login')">登录</div>
@@ -50,12 +57,21 @@
           <div class="user_avatar">
             <AoImage
               src="@/assets/avatar.png"
-              width="36px"
-              height="36px"
+              width="30px"
+              height="30px"
               circle
             />
           </div>
-          <div class="user_name ellipsis">张三fsdsfsdfsdfsdfsfsdf</div>
+          <div class="user_name">
+            <div class="name ellipsis">张fdsfsdfsdf</div>
+          </div>
+          <div class="header-menu">
+            <div class="menu-wrapper">
+              <div class="menu-item">开通会员</div>
+              <div class="menu-item">我的课程</div>
+              <div class="menu-item logout">退出登录</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -241,6 +257,19 @@ const handleNavClick = (anchor) => {
     }
   }
 
+  .right-vip {
+    margin: 0 15px;
+    gap: var(--ao-spacing-xxs);
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    &:hover {
+      color: rgb(233, 182, 75);
+    }
+    span {
+      padding-bottom: 1px;
+    }
+  }
+
   .right_user {
     display: flex;
     align-items: center;
@@ -272,10 +301,59 @@ const handleNavClick = (anchor) => {
   }
 
   .user-info-box {
-    gap: var(--ao-spacing-sm);
-
+    gap: 6px;
+    cursor: pointer;
+    position: relative;
     .user_name {
-      max-width: 100px;
+      .name {
+        max-width: 100px;
+      }
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: 8px;
+    }
+
+    &:hover {
+      .header-menu {
+        max-height: 200px;
+        pointer-events: auto;
+      }
+    }
+  }
+
+  .header-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 8px;
+    background-color: var(--ao-gray-0);
+    box-shadow: var(--ao-shadow-md);
+    border-radius: var(--ao-border-radius-lg);
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 0.3s ease-in-out;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 15px;
+
+      &:hover {
+        background-color: var(--ao-gray-1);
+      }
+    }
+
+    .logout {
+      color: var(--ao-color-error);
     }
   }
 }

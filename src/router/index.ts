@@ -66,6 +66,14 @@ const routes = [
       title: '重置密码',
     },
   },
+  {
+    name: 'vip',
+    path: '/vip',
+    component: () => import('@/view/vip/index.vue'),
+    meta: {
+      title: '开通会员',
+    },
+  },
 ];
 
 const router = createRouter({
