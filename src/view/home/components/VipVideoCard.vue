@@ -165,17 +165,30 @@ const props = withDefaults(
   .info-price {
     .tags {
       padding: 4px 12px;
-      border: 1px solid #b8860b;
+      border: 1px solid rgba(110, 80, 38, 0.45);
       border-radius: 4px;
       font-size: var(--ao-font-size-xs, 12px);
-      color: #d4af37;
-      background: rgba(255, 221, 137, 0.2);
+      color: #3a2c1b;
+      background: linear-gradient(
+        135deg,
+        #faf5ec 0%,
+        #f3e7d1 45%,
+        #faf5ec 100%
+      );
+      border-color: rgba(130, 95, 50, 0.38);
+      color: #3d2f1e;
       transition: all 0.3s ease-in-out;
     }
 
     .tags:hover {
-      background: rgba(255, 201, 65, 0.3);
-      border-color: #d4af37;
+      background: linear-gradient(
+        135deg,
+        #fffdfa 0%,
+        #f6ecd7 50%,
+        #fffdfa 100%
+      );
+      border-color: #b99d58;
+      box-shadow: 0 2px 8px rgba(155, 115, 40, 0.18);
     }
 
     .price {

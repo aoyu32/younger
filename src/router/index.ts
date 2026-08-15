@@ -74,6 +74,14 @@ const routes = [
       title: '开通会员',
     },
   },
+  {
+    name: 'pay',
+    path: '/pay',
+    component: () => import('@/view/pay/index.vue'),
+    meta: {
+      title: '支付',
+    },
+  },
 ];
 
 const router = createRouter({

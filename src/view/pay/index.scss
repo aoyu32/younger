@@ -1,0 +1,205 @@
+.pay {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.pay-header {
+  width: 100%;
+  padding: 10px 30px;
+  box-shadow: var(--ao-shadow-sm);
+  .back-home {
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+    &:hover {
+      color: var(--ao-gray-5);
+    }
+  }
+}
+
+.pay-order {
+  padding: 30px 40px;
+  background-color: var(--ao-gray-2);
+
+  .text {
+    font-size: var(--ao-font-size-xl);
+    font-weight: var(--ao-font-weight-semibold);
+    margin-bottom: 10px;
+  }
+  .sub-text {
+    span {
+      color: var(--ao-color-error);
+    }
+    font-size: var(--ao-font-size-sm);
+    color: var(--ao-gray-7);
+    margin-bottom: 10px;
+  }
+
+  .amount-label {
+    font-size: var(--ao-font-size-xl);
+    font-weight: var(--ao-font-weight-semibold);
+  }
+
+  .order-amount {
+    height: 100%;
+    justify-content: end;
+    align-items: flex-end;
+  }
+
+  .amount {
+    align-items: end;
+  }
+
+  .pay-price {
+    font-size: calc(var(--ao-font-size-xxl) + 4px);
+    font-weight: var(--ao-font-weight-bold);
+    color: #ff4500;
+    margin-right: 6px;
+    line-height: calc(var(--ao-font-size-xxl) + 4px);
+  }
+  .pay-unit {
+    display: block;
+    padding-bottom: 1px;
+  }
+
+  .order-info {
+    margin-top: 30px;
+    border-radius: var(--ao-radius-base);
+
+    .info-item {
+      display: flex;
+      align-items: center;
+
+      & + .info-item {
+        margin-top: 16px;
+      }
+
+      .item-label {
+        flex-shrink: 0;
+        width: 90px;
+        color: var(--ao-gray-8);
+      }
+
+      .item-value {
+        display: flex;
+        gap: 20px;
+        color: var(--ao-gray-7);
+
+        .pay-type {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          padding: 6px 16px;
+          border: 1px solid var(--ao-gray-4);
+          border-radius: var(--ao-border-radius-sm);
+          background-color: var(--ao-bg-color);
+          transition: border-color 0.2s;
+
+          &:hover {
+            border-color: var(--ao-color-primary);
+          }
+        }
+      }
+    }
+  }
+}
+
+.pay-qr-code {
+  flex: 1;
+  position: relative;
+  padding: 40px 0 50px 0;
+
+  .brand-logo {
+    position: absolute;
+    right: 40px;
+    bottom: 30px;
+    filter: grayscale(100%) brightness(1.4);
+    opacity: 0.3;
+  }
+
+  .qr-code {
+    text-align: center;
+    margin-bottom: 50px;
+
+    p {
+      font-size: var(--ao-font-size-sm);
+      color: var(--ao-gray-7);
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-size: calc(var(--ao-font-size-xxl) + 14px);
+      font-weight: var(--ao-font-weight-bold);
+      color: #ff4500;
+      margin-bottom: 24px;
+    }
+
+    .qr-code-img {
+      display: flex;
+      justify-content: center;
+
+      .qr-code-inner {
+        padding: 16px;
+        background-color: var(--ao-bg-color);
+        background-image:
+          linear-gradient(to right, var(--ao-color-primary), var(--ao-color-primary)),
+          linear-gradient(to right, var(--ao-color-primary), var(--ao-color-primary)),
+          linear-gradient(to left, var(--ao-color-primary), var(--ao-color-primary)),
+          linear-gradient(to left, var(--ao-color-primary), var(--ao-color-primary)),
+          linear-gradient(to bottom, var(--ao-color-primary), var(--ao-color-primary)),
+          linear-gradient(to bottom, var(--ao-color-primary), var(--ao-color-primary)),
+          linear-gradient(to top, var(--ao-color-primary), var(--ao-color-primary)),
+          linear-gradient(to top, var(--ao-color-primary), var(--ao-color-primary));
+        background-position:
+          0 0,
+          0 100%,
+          100% 0,
+          100% 100%,
+          0 0,
+          100% 0,
+          0 100%,
+          100% 100%;
+        background-size:
+          22px 2px,
+          22px 2px,
+          22px 2px,
+          22px 2px,
+          2px 22px,
+          2px 22px,
+          2px 22px,
+          2px 22px;
+        background-repeat: no-repeat;
+        line-height: 0;
+      }
+    }
+
+    .pay-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 22px;
+      font-size: var(--ao-font-size-sm);
+      color: var(--ao-gray-7);
+    }
+
+    .pay-agreement {
+      margin-top: 26px;
+      gap: 4px;
+      font-size: var(--ao-font-size-xs);
+      color: var(--ao-gray-6);
+
+      .contact {
+        color: var(--ao-color-primary);
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
