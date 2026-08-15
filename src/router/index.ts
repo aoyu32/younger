@@ -9,35 +9,75 @@ const routes = [
     redirect: '/home',
     children: [
       {
-        name: 'home',
+        name: 'YOUNGER',
         path: '/home',
         component: () => import('@/view/home/index.vue'),
         meta: {
-          title: '首页',
+          title: '洋果教育',
+          menu: false,
         },
       },
       {
-        name: 'detail',
-        path: '/app/detail/:id',
-        component: () => import('@/view/app-detail/index.vue'),
+        name: 'application',
+        path: '/app',
+        component: () => import('@/view/app/index.vue'),
         meta: {
-          title: '应用详情',
+          title: '软件工具',
+          menu: true,
         },
       },
       {
         name: 'video',
-        path: '/video/:id',
-        component: () => import('@/view/video/index.vue'),
+        path: '/video',
+        component: () => import('@/view/app/index.vue'),
         meta: {
-          title: '视频详情',
+          title: '教程视频',
+          menu: true,
+        },
+      },
+      {
+        name: 'website',
+        path: '/website',
+        component: () => import('@/view/app/index.vue'),
+        meta: {
+          title: '网站导航',
+          menu: true,
         },
       },
       {
         name: 'news',
+        path: '/news',
+        component: () => import('@/view/app/index.vue'),
+        meta: {
+          title: 'AI资讯',
+          menu: true,
+        },
+      },
+      {
+        name: 'app-detail',
+        path: '/app/:id',
+        component: () => import('@/view/app-detail/index.vue'),
+        meta: {
+          title: '应用详情',
+          menu: false,
+        },
+      },
+      {
+        name: 'video-detail',
+        path: '/video/:id',
+        component: () => import('@/view/video/index.vue'),
+        meta: {
+          title: '视频详情',
+          menu: false,
+        },
+      },
+      {
+        name: 'news-detail',
         path: '/news/:id',
         component: () => import('@/view/news/index.vue'),
         meta: {
           title: '新闻详情',
+          menu: false,
         },
       },
     ],
@@ -48,6 +88,7 @@ const routes = [
     component: () => import('@/view/auth/login/index.vue'),
     meta: {
       title: '登录',
+      menu: false,
     },
   },
   {
@@ -56,6 +97,7 @@ const routes = [
     component: () => import('@/view/auth/register/index.vue'),
     meta: {
       title: '注册',
+      menu: false,
     },
   },
   {
@@ -64,6 +106,7 @@ const routes = [
     component: () => import('@/view/auth/reset/index.vue'),
     meta: {
       title: '重置密码',
+      menu: false,
     },
   },
   {
@@ -72,6 +115,7 @@ const routes = [
     component: () => import('@/view/vip/index.vue'),
     meta: {
       title: '开通会员',
+      menu: false,
     },
   },
   {
@@ -80,6 +124,7 @@ const routes = [
     component: () => import('@/view/pay/index.vue'),
     meta: {
       title: '支付',
+      menu: false,
     },
   },
 ];

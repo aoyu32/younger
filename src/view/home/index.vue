@@ -56,7 +56,7 @@
             </template>
             <div class="apps_grid">
               <div class="apps_item" v-for="item in appList" :key="item.id">
-                <router-link :to="`/app/detail/${item.id}`">
+                <router-link :to="`/app/${item.id}`">
                   <AppCard :app="item" />
                 </router-link>
               </div>

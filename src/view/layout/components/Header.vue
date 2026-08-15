@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header_left">
-      <div class="left_logo" @click="handleLogoClick">
+      <router-link class="left_logo" to="/home">
         <div class="logo_img">
           <AoImage src="@/assets/logo.svg" width="33px" />
         </div>
@@ -17,24 +17,27 @@
             </span>
           </div>
         </div>
-      </div>
+      </router-link>
       <div class="left_nav">
         <ul>
-          <li v-for="(item, itemIndex) in navItems" :key="itemIndex">
-            <a href="javascript:;" @click="handleNavClick(item.anchor)">
-              <span v-for="value in item.name.split('')" :key="itemIndex">{{
-                value
-              }}</span>
-            </a>
+          <li
+            v-for="(item, itemIndex) in navMenuRouters"
+            :key="itemIndex"
+            :class="{ active: router.path === item.path }"
+          >
+            <router-link :to="item.path">
+              <span
+                v-for="value in item.meta.title.split('')"
+                :key="itemIndex"
+                >{{ value }}</span
+              >
+            </router-link>
           </li>
         </ul>
       </div>
     </div>
     <div class="header_right flex-center">
-      <div class="tool_collect">
-        <!-- <button>工具收藏</button> -->
-      </div>
-      <div class="right-vip flex-center" @click="$router.push('/vip')">
+      <div class="right-vip flex-center" @click="router.push('/vip')">
         <AoImage
           src="@/assets/vip/icon_svip.svg"
           width="20px"
@@ -44,9 +47,9 @@
       </div>
       <div class="right_user">
         <div class="auth-box flex-center" v-if="!isLogin">
-          <div class="login" @click="$router.push('/login')">登录</div>
+          <div class="login" @click="router.push('/login')">登录</div>
           <div class="line"></div>
-          <div class="register" @click="$router.push('/register')">注册</div>
+          <div class="register" @click="router.push('/register')">注册</div>
         </div>
         <div class="user-info-box flex-center" v-else>
           <div class="user_avatar">
@@ -74,10 +77,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import logo from '@/assets/logo.svg';
 const router = useRouter();
+const routers = router.getRoutes();
 // 组件名称
 defineOptions({
   name: 'LayoutHeader',
@@ -85,66 +88,25 @@ defineOptions({
 
 // 响应式数据
 const isLogin = ref(false);
-const chLogoName = ref(['洋', '果', '教', '育']);
-const enLogoName = ref(['Y', 'O', 'U', 'N', 'G', 'E', 'R']);
-const navItems = ref([
-  {
-    icon: '',
-    name: '软件工具',
-    route: '',
-    anchor: 'tools',
-  },
-  {
-    icon: '',
-    name: '教程视频',
-    route: '',
-    anchor: 'videos',
-  },
-  {
-    icon: '',
-    name: 'AI资讯',
-    route: '',
-  },
-  {
-    icon: '',
-    name: '网站导航',
-    route: '',
-  },
-]);
+
+const chLogoName = computed(() => {
+  const name = routers.find((item) => item.path === '/home').meta.title;
+  return name;
+});
+
+const enLogoName = computed(() => {
+  const name = routers.find((item) => item.path === '/home').name;
+  return name;
+});
+
+const navMenuRouters = computed(() => {
+  console.log(routers);
+  const menu = routers.filter((item) => item.meta.menu);
+  return menu;
+});
 
 const handleLogoClick = () => {
   router.push('/');
-};
-
-// 平滑滚动函数
-const smoothScrollTo = (to, duration = 450) => {
-  const start = window.pageYOffset;
-  const distance = to - start;
-  const startTime = performance.now();
-
-  const easeInOutCubic = (t) => {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  };
-
-  const step = (now) => {
-    const elapsed = now - startTime;
-    const progress = Math.min(1, elapsed / duration);
-    const eased = easeInOutCubic(progress);
-    window.scrollTo(0, start + distance * eased);
-    if (progress < 1) requestAnimationFrame(step);
-  };
-
-  requestAnimationFrame(step);
-};
-
-// 导航点击处理
-const handleNavClick = (anchor) => {
-  const el = document.getElementById(anchor);
-  if (!el) return;
-  const header = document.querySelector('header');
-  const offset = header ? header.getBoundingClientRect().height : 0;
-  const to = el.getBoundingClientRect().top + window.pageYOffset - offset - 10;
-  smoothScrollTo(to, 450);
 };
 </script>
 
@@ -222,16 +184,30 @@ const handleNavClick = (anchor) => {
         span:first-child {
           font-family: var(--ao-font-family-ali);
           color: var(--ao-gray-7);
+          font-size: 15px;
         }
 
         &:hover {
           span:first-child {
-            color: var(--ao-color-primary);
+            color: var(--ao-color-primary-hover);
           }
-          color: var(--ao-color-primary);
+          color: var(--ao-color-primary-hover);
         }
       }
     }
+  }
+
+  .active {
+    color: var(--ao-color-primary-active);
+  }
+}
+
+.router-link-active {
+  span:first-child {
+    color: var(--ao-color-primary-active) !important;
+  }
+  span {
+    color: var(--ao-color-primary-active);
   }
 }
 
