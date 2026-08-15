@@ -2,7 +2,7 @@
   <Transition name="overlay">
     <div v-if="overlayVisible" class="auth-overlay flex-center">
       <div class="overlay-logo">
-        <AoImage src="@/assets/younger_logo.png" width="48px" />
+        <AoImage src="@/assets/logo.svg" width="48px" />
         <p class="overlay-text">{{ overlayText }}</p>
       </div>
     </div>

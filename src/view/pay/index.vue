@@ -65,7 +65,7 @@
     <div class="pay-qr-code">
       <div class="brand-logo">
         <AoImage
-          src="@/assets/younger_logo.png"
+          src="@/assets/logo.svg"
           width="90px"
         ></AoImage>
       </div>

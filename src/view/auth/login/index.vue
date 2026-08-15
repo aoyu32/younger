@@ -4,7 +4,7 @@
       <div class="left-content">
         <div class="logo-box">
           <div class="logo-img">
-            <AoImage src="@/assets/younger_logo.png" width="24px" />
+            <AoImage src="@/assets/logo.svg" width="30px" height="30px"/>
           </div>
           <div class="logo-name">洋果教育</div>
         </div>

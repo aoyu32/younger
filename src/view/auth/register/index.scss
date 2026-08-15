@@ -112,11 +112,10 @@
   align-items: center;
   gap: 10px;
   border-radius: var(--ao-border-radius-full);
-  backdrop-filter: blur(12px);
 
   .logo-name {
     color: var(--ao-gray-0);
-    font-size: var(--ao-font-size-xxl);
+    font-size: var(--ao-font-size-xl);
     letter-spacing: 2px;
     font-weight: var(--ao-font-weight-semibold);
   }

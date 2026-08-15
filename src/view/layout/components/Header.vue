@@ -3,7 +3,7 @@
     <div class="header_left">
       <div class="left_logo" @click="handleLogoClick">
         <div class="logo_img">
-          <img src="@/assets/younger_logo.png" />
+          <AoImage src="@/assets/logo.svg" width="33px"/>
         </div>
         <div class="logo_name">
           <div class="name_cn">
@@ -81,6 +81,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import logo from '@/assets/logo.svg';
 const router = useRouter();
 // 组件名称
 defineOptions({

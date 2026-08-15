@@ -1,7 +1,7 @@
 <template>
   <div class="vip">
     <div class="logo">
-      <AoImage src="@/assets/younger_logo.png" width="24px" />
+      <AoImage src="@/assets/logo.svg" width="30px" height="30px"/>
       <span class="logo-name">洋果教育</span>
     </div>
     <VipBackground />
@@ -56,7 +56,6 @@ const router = useRouter();
 const monthBenefits = [
   '30天全站视频免费看',
   '尊贵VIP身份标识',
-
   '高清无损视频画质',
   'VIP专属交流群',
 ];
