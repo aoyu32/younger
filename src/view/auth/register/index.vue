@@ -15,27 +15,59 @@
         </div>
         <div class="register-form flex-col">
           <div class="form-item">
-            <label>用户名：</label>
-            <AoInput type="text" placeholder="请输入用户名"></AoInput>
+            <ao-form-input
+              placeholder="请输入用户名"
+              v-model="form.username"
+              :rule="rules.username"
+              clearable
+            >
+              <template #label>用户名：</template>
+            </ao-form-input>
           </div>
           <div class="form-item">
-            <label>邮箱：</label>
-            <AoInput type="text" placeholder="请输入邮箱"></AoInput>
+            <ao-form-input
+              type="text"
+              placeholder="请输入邮箱"
+              v-model="form.email"
+              :rule="rules.email"
+              clearable
+            >
+              <template #label>邮箱：</template>
+            </ao-form-input>
           </div>
           <div class="form-item">
-            <label>验证码：</label>
             <div class="code-row">
-              <AoInput type="text" placeholder="请输入验证码"></AoInput>
+              <ao-form-input
+                type="text"
+                placeholder="请输入验证码"
+                v-model="form.verifyCode"
+                :rule="rules.verifyCode"
+                clearable
+              >
+                <template #label>验证码：</template>
+              </ao-form-input>
               <ao-button class="code-btn" plain>获取验证码</ao-button>
             </div>
           </div>
           <div class="form-item">
-            <label>密码：</label>
-            <AoInput type="password" placeholder="请输入密码"></AoInput>
+            <ao-form-input
+              type="password"
+              placeholder="请输入密码"
+              v-model="form.password"
+              :rule="rules.password"
+            >
+              <template #label>密码：</template>
+            </ao-form-input>
           </div>
           <div class="form-item">
-            <label>确认密码：</label>
-            <AoInput type="password" placeholder="请再次输入密码"></AoInput>
+            <ao-form-input
+              type="password"
+              placeholder="请再次输入密码"
+              v-model="form.confirmPassword"
+              :rule="rules.confirmPassword"
+            >
+              <template #label>确认密码：</template>
+            </ao-form-input>
           </div>
         </div>
         <div class="register-submit">
@@ -47,7 +79,7 @@
       <div class="right-content">
         <div class="logo-box">
           <div class="logo-img">
-            <AoImage src="@/assets/logo.svg" width="30px" height="30px"/>
+            <AoImage src="@/assets/logo.svg" width="30px" height="30px" />
           </div>
           <div class="logo-name">洋果教育</div>
         </div>
@@ -70,6 +102,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '../composables/useAuthTransition';
+import AoFormInput from '@/components/ao-form-input/index.vue';
 
 const { showOverlay, hideOverlay } = useAuthTransition();
 const router = useRouter();
@@ -77,11 +110,17 @@ const registerBoxRef = ref<HTMLElement>();
 const registerLeftRef = ref<HTMLElement>();
 const registerRightRef = ref<HTMLElement>();
 
+const usernameRules = [
+  { required: true, message: '用户名不能为空' },
+  { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含字母、数字或下划线' },
+  { min: 3, max: 20, message: '用户名长度须在 3~20 位之间' },
+];
+
 defineOptions({
   name: 'Register',
 });
 
-const registerForm = ref({
+const form = ref({
   username: '',
   email: '',
   verifyCode: '',
@@ -89,12 +128,39 @@ const registerForm = ref({
   confirmPassword: '',
 });
 
+const rules = {
+  username: [
+    { required: true, message: '用户名不能为空' },
+    { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含字母、数字或下划线' },
+    { min: 3, max: 20, message: '用户名长度须在 3~20 位之间' },
+  ],
+  email: [
+    { required: true, message: '邮箱不能为空' },
+    { pattern: /^[\w.-]+@[\w.-]+\.\w+$/, message: '邮箱格式不正确' },
+  ],
+  verifyCode: [
+    { required: true, message: '验证码不能为空' },
+    { pattern: /^\d{6}$/, message: '验证码为6位数字' },
+  ],
+  password: [
+    { required: true, message: '密码不能为空' },
+    { min: 6, max: 20, message: '密码长度须在 6~20 位之间' },
+  ],
+  confirmPassword: [
+    { required: true, message: '确认密码不能为空' },
+    {
+      validator: (value: string) =>
+        value === form.value.password || '两次输入的密码不一致',
+    },
+  ],
+};
+
 const handleGetCode = () => {
   console.log('send verify code');
 };
 
 const handleRegister = () => {
-  console.log(registerForm.value);
+  console.log(form.value);
 };
 
 const handleBackHome = () => {

@@ -4,7 +4,7 @@
       <div class="left-content">
         <div class="logo-box">
           <div class="logo-img">
-            <AoImage src="@/assets/logo.svg" width="30px" height="30px"/>
+            <AoImage src="@/assets/logo.svg" width="30px" height="30px" />
           </div>
           <div class="logo-name">洋果教育</div>
         </div>
@@ -35,12 +35,25 @@
         </div>
         <div class="login-form flex-col">
           <div class="form-item">
-            <label>账号：</label>
-            <AoInput type="text" placeholder="请输入用户名或邮箱"></AoInput>
+            <ao-form-input
+              type="text"
+              placeholder="请输入用户名或邮箱"
+              v-model="loginForm.username"
+              :rule="rules.username"
+              clearable
+            >
+              <template #label>账号：</template>
+            </ao-form-input>
           </div>
           <div class="form-item">
-            <label>密码：</label>
-            <AoInput type="password" placeholder="请输入密码"></AoInput>
+            <ao-form-input
+              type="password"
+              placeholder="请输入密码"
+              v-model="loginForm.password"
+              :rule="rules.password"
+            >
+              <template #label>密码：</template>
+            </ao-form-input>
           </div>
         </div>
         <div class="form-bottom">
@@ -58,6 +71,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '../composables/useAuthTransition';
+import AoFormInput from '@/components/ao-form-input/index.vue';
 
 const { showOverlay, hideOverlay } = useAuthTransition();
 
@@ -74,6 +88,11 @@ const loginForm = ref({
   username: '',
   password: '',
 });
+
+const rules = {
+  username: [{ required: true, message: '账号不能为空' }],
+  password: [{ required: true, message: '密码不能为空' }],
+};
 
 const handleLogin = () => {
   console.log(loginForm.value);

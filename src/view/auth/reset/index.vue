@@ -35,23 +35,47 @@
         </div>
         <div class="reset-form flex-col">
           <div class="form-item">
-            <label>邮箱：</label>
-            <AoInput type="text" placeholder="请输入邮箱"></AoInput>
+            <ao-form-input
+              type="text"
+              placeholder="请输入邮箱"
+              v-model="resetForm.email"
+              :rule="rules.email"
+            >
+              <template #label>邮箱：</template>
+            </ao-form-input>
           </div>
           <div class="form-item">
-            <label>验证码：</label>
             <div class="code-row">
-              <AoInput type="text" placeholder="请输入验证码"></AoInput>
+              <ao-form-input
+                type="text"
+                placeholder="请输入验证码"
+                v-model="resetForm.verifyCode"
+                :rule="rules.verifyCode"
+              >
+                <template #label>验证码：</template>
+              </ao-form-input>
               <ao-button class="code-btn" plain>获取验证码</ao-button>
             </div>
           </div>
           <div class="form-item">
-            <label>新密码：</label>
-            <AoInput type="password" placeholder="请输入新密码"></AoInput>
+            <ao-form-input
+              type="password"
+              placeholder="请输入新密码"
+              v-model="resetForm.password"
+              :rule="rules.password"
+            >
+              <template #label>新密码：</template>
+            </ao-form-input>
           </div>
           <div class="form-item">
-            <label>确认密码：</label>
-            <AoInput type="password" placeholder="请再次输入密码"></AoInput>
+            <ao-form-input
+              type="password"
+              placeholder="请再次输入密码"
+              v-model="resetForm.confirmPassword"
+              :rule="rules.confirmPassword"
+            >
+              <template #label>确认密码：</template>
+            </ao-form-input>
           </div>
         </div>
         <div class="reset-submit">
@@ -66,6 +90,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '../composables/useAuthTransition';
+import AoFormInput from '@/components/ao-form-input/index.vue';
 
 const { showOverlay, hideOverlay } = useAuthTransition();
 const router = useRouter();
@@ -83,6 +108,28 @@ const resetForm = ref({
   password: '',
   confirmPassword: '',
 });
+
+const rules = {
+  email: [
+    { required: true, message: '邮箱不能为空' },
+    { pattern: /^[\w.-]+@[\w.-]+\.\w+$/, message: '邮箱格式不正确' },
+  ],
+  verifyCode: [
+    { required: true, message: '验证码不能为空' },
+    { pattern: /^\d{6}$/, message: '验证码为6位数字' },
+  ],
+  password: [
+    { required: true, message: '新密码不能为空' },
+    { min: 6, max: 20, message: '密码长度须在 6~20 位之间' },
+  ],
+  confirmPassword: [
+    { required: true, message: '确认密码不能为空' },
+    {
+      validator: (value: string) =>
+        value === resetForm.value.password || '两次输入的密码不一致',
+    },
+  ],
+};
 
 const handleGetCode = () => {
   console.log('send verify code');
