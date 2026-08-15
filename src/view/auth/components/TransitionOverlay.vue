@@ -32,7 +32,7 @@ const { overlayVisible, overlayText } = useAuthTransition();
   gap: 12px;
 
   p {
-    font-family: 'ZCOOL XiaoWei', sans-serif;
+    font-family: var(--ao-font-family-ali);
     color: var(--ao-gray-9);
     font-size: var(--ao-font-size-xxl);
     margin-top: 15px;

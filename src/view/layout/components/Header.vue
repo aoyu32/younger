@@ -3,7 +3,7 @@
     <div class="header_left">
       <div class="left_logo" @click="handleLogoClick">
         <div class="logo_img">
-          <AoImage src="@/assets/logo.svg" width="33px"/>
+          <AoImage src="@/assets/logo.svg" width="33px" />
         </div>
         <div class="logo_name">
           <div class="name_cn">
@@ -20,16 +20,11 @@
       </div>
       <div class="left_nav">
         <ul>
-          <li v-for="(item, itemIndex) in navItems" :key="index">
+          <li v-for="(item, itemIndex) in navItems" :key="itemIndex">
             <a href="javascript:;" @click="handleNavClick(item.anchor)">
-              <span
-                v-for="(value, itemNameIndex) in item.name.split('')"
-                :key="index"
-                :style="{
-                  fontSize: itemNameIndex === 0 ? '15px' : '14px',
-                }"
-                >{{ value }}</span
-              >
+              <span v-for="value in item.name.split('')" :key="itemIndex">{{
+                value
+              }}</span>
             </a>
           </li>
         </ul>
@@ -192,6 +187,7 @@ const handleNavClick = (anchor) => {
     align-items: normal;
     justify-content: center;
     gap: var(--ao-border-radius-xs);
+    font-family: var(--ao-font-family-ali);
   }
 
   .name_cn {
@@ -217,14 +213,21 @@ const handleNavClick = (anchor) => {
       display: flex;
       gap: var(--ao-spacing-xl);
       font-size: var(--ao-font-size-sm);
-
       a {
         text-decoration: none;
         color: var(--ao-color-text-base);
         opacity: 0.75;
         transition: color var(--ao-duration-fast) var(--ao-ease-in-out);
 
+        span:first-child {
+          font-family: var(--ao-font-family-ali);
+          color: var(--ao-gray-7);
+        }
+
         &:hover {
+          span:first-child {
+            color: var(--ao-color-primary);
+          }
           color: var(--ao-color-primary);
         }
       }

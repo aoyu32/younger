@@ -86,7 +86,7 @@
 }
 
 .logo-box {
-  font-family: 'ZCOOL XiaoWei', sans-serif;
+  font-family: var(--ao-font-family-ali);
   position: absolute;
   top: 20px;
   left: 20px;
@@ -122,7 +122,7 @@
     font-size: 56px;
     font-weight: var(--ao-font-weight-bold);
     letter-spacing: 5px;
-    font-family: 'ZCOOL XiaoWei', sans-serif;
+    font-family: var(--ao-font-family-ali);
     text-align: center;
   }
 
@@ -133,7 +133,7 @@
   p {
     letter-spacing: 2px;
     text-align: center;
-    font-family: 'ZCOOL XiaoWei', sans-serif;
+    font-family: var(--ao-font-family-ali);
     padding: 30px 0;
     color: var(--ao-gray-0);
   }
@@ -147,7 +147,7 @@
     font-size: 92px;
     color: rgba(255, 255, 255, 0.233);
     letter-spacing: 5px;
-    font-family: 'ZCOOL XiaoWei', sans-serif;
+    font-family: var(--ao-font-family-ali);
   }
 }
 
@@ -166,10 +166,10 @@
 }
 
 .login-title {
-  font-family: 'ZCOOL XiaoWei', sans-serif;
+  font-family: var(--ao-font-family-ali);
   h2 {
     font-weight: var(--ao-font-weight-semibold);
-    font-family: 'ZCOOL XiaoWei', sans-serif;
+    font-family: var(--ao-font-family-ali);
     font-size: 32px;
     margin-bottom: 20px;
     letter-spacing: 1px;
@@ -199,7 +199,7 @@
 }
 
 .form-item {
-  font-family: 'ZCOOL XiaoWei', sans-serif;
+  font-family: var(--ao-font-family-ali);
   width: 300px;
   display: flex;
   flex-direction: column;
@@ -212,7 +212,7 @@
 }
 
 .form-bottom {
-  font-family: 'ZCOOL XiaoWei', sans-serif;
+  font-family: var(--ao-font-family-ali);
   display: flex;
   justify-content: end;
   color: var(--ao-color-text-tertiary);
@@ -229,7 +229,7 @@
 }
 
 .to-register {
-  font-family: 'ZCOOL XiaoWei', sans-serif;
+  font-family: var(--ao-font-family-ali);
   position: absolute;
   font-size: 15px;
   bottom: 100px;
