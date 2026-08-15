@@ -50,6 +50,8 @@
 <script setup lang="ts">
 import VipBackground from './components/VipBackground.vue';
 import VipCard from './components/VipCard.vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const monthBenefits = [
   '30天全站视频免费看',
@@ -69,7 +71,7 @@ const yearBenefits = [
 ];
 
 function handlePay(type: string) {
-  // TODO: 接入支付
+  router.push('/pay');
 }
 </script>
 
