@@ -1,6 +1,10 @@
 <template>
   <div
-    :class="['card', type === 'year' ? 'year-card' : 'month-card']"
+    :class="[
+      'card',
+      type === 'year' ? 'year-card' : 'month-card',
+      { 'is-hovering': isHovering && type === 'year' },
+    ]"
     ref="cardRef"
     @mouseenter="handleEnter"
     @mouseleave="handleLeave"
@@ -24,15 +28,15 @@
       <div class="vip-mark">
         {{ mark }}
       </div>
-      <ao-button class="card-btn" :bg="buttonBg" @click="$emit('pay')"
-        >立即开通</ao-button
-      >
+      <ao-button class="card-btn" :bg="buttonBg" @click="$emit('pay')">
+        立即开通
+      </ao-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const cardRef = ref<HTMLElement | null>(null);
 const tierRef = ref<HTMLElement | null>(null);
@@ -53,107 +57,102 @@ defineEmits<{
   pay: [];
 }>();
 
-/**
- * 应用动态渐变（仅年卡调用）
- * @param el         目标元素
- * @param offsetX    鼠标相对卡片中心的水平偏移比例（-1 ~ 1）
- * @param offsetY    鼠标相对卡片中心的垂直偏移比例（-1 ~ 1）
- */
-const applyYearTextGradient = (
-  el: HTMLElement,
-  offsetX: number,
-  offsetY: number,
-) => {
-  // 将偏移比例映射为背景位置百分比 (0% ~ 100%)
-  const posX = ((offsetX + 1) / 2) * 100;
-  const posY = ((offsetY + 1) / 2) * 100;
+const isHovering = ref(false);
+let rafId: number | null = null;
+let cachedRect: DOMRect | null = null;
 
-  // 使用 135° 对角渐变，白色高光收窄
-  el.style.backgroundImage = `linear-gradient(
-    135deg,
-    rgb(233, 182, 75) 0%,
-    rgb(249, 217, 118) 35%,
-    #ffffff 50%,
-    rgb(249, 217, 118) 65%,
-    rgb(233, 182, 75) 100%
-  )`;
-  el.style.backgroundSize = '200% 200%'; // 放大背景，以便移动
-  el.style.backgroundPosition = `${posX}% ${posY}%`; // 移动白色高光
-  el.style.backgroundClip = 'text';
-  el.style.webkitBackgroundClip = 'text';
-  el.style.webkitTextFillColor = 'transparent';
-  el.style.textShadow = `
-    0 0 4px rgba(255, 255, 255, 0.3),
-    0 0 10px rgba(233, 182, 75, 0.15)
-  `;
+const handleResize = () => {
+  cachedRect = null;
 };
 
-/**
- * 清除内联样式，恢复 CSS 默认
- */
-const clearTextStyle = (el: HTMLElement) => {
-  el.style.backgroundImage = '';
-  el.style.backgroundSize = '';
-  el.style.backgroundPosition = '';
-  el.style.backgroundClip = '';
-  el.style.webkitBackgroundClip = '';
-  el.style.webkitTextFillColor = '';
-  el.style.textShadow = '';
-};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onBeforeUnmount(() => {
+  if (rafId !== null) cancelAnimationFrame(rafId);
+  window.removeEventListener('resize', handleResize);
+});
 
 const handleEnter = () => {
-  console.log('鼠标进入');
+  if (cardRef.value) {
+    cachedRect = cardRef.value.getBoundingClientRect();
+  }
+  isHovering.value = true;
 };
 
 const handleLeave = () => {
-  const card = cardRef.value;
-  const tier = tierRef.value;
-  const price = priceValueRef.value;
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
 
+  const card = cardRef.value;
   if (card) {
     card.style.transform = `perspective(800px) rotateX(0deg) rotateY(0deg)`;
   }
-  if (tier) clearTextStyle(tier);
-  if (price) clearTextStyle(price);
+
+  const tier = tierRef.value;
+  const price = priceValueRef.value;
+  if (tier)
+    tier.style.removeProperty('--bg-x') && tier.style.removeProperty('--bg-y');
+  if (price)
+    price.style.removeProperty('--bg-x') &&
+      price.style.removeProperty('--bg-y');
+
+  isHovering.value = false;
+  cachedRect = null;
 };
 
 const handleOver = (event: MouseEvent) => {
-  const card = cardRef.value;
-  const tier = tierRef.value;
-  const price = priceValueRef.value;
-  if (!card || !tier || !price) return;
+  if (rafId !== null) return;
 
-  const cardRect = card.getBoundingClientRect();
-  const cardHalfHeight = cardRect.height / 2;
-  const cardHalfWidth = cardRect.width / 2;
-  const cardCenterX = cardRect.left + cardHalfWidth;
-  const cardCenterY = cardRect.top + cardHalfHeight;
+  rafId = requestAnimationFrame(() => {
+    rafId = null;
 
-  // 1. 计算卡片倾斜角度（保留原有逻辑）
-  const rotateRate = 25;
-  const mouseY = event.clientY;
-  const mouseX = event.clientX;
-  const cardRotateX = cardHalfHeight + cardRect.top - mouseY;
-  const cardRotateY = cardHalfWidth + cardRect.left - mouseX;
-  card.style.transform = `perspective(800px) rotateX(${cardRotateX / rotateRate}deg) rotateY(${-cardRotateY / rotateRate}deg) translateZ(10px)`;
+    const card = cardRef.value;
+    if (!card) return;
 
-  // 2. 计算鼠标相对中心的偏移比例，用于控制背景位置（扫光效果）
-  const offsetX = (mouseX - cardCenterX) / cardHalfWidth; // -1 ~ 1
-  const offsetY = (mouseY - cardCenterY) / cardHalfHeight; // -1 ~ 1
+    if (!cachedRect) {
+      cachedRect = card.getBoundingClientRect();
+    }
+    const cardRect = cachedRect;
+    const cardHalfHeight = cardRect.height / 2;
+    const cardHalfWidth = cardRect.width / 2;
+    const cardCenterX = cardRect.left + cardHalfWidth;
+    const cardCenterY = cardRect.top + cardHalfHeight;
 
-  // 3. 仅年卡应用动态文本渐变
-  if (props.type === 'year') {
-    applyYearTextGradient(tier, offsetX, offsetY);
-    applyYearTextGradient(price, offsetX, offsetY);
-  } else {
-    clearTextStyle(tier);
-    clearTextStyle(price);
-  }
+    // 卡片倾斜
+    const rotateRate = 25;
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+    const cardRotateX = cardHalfHeight + cardRect.top - mouseY;
+    const cardRotateY = cardHalfWidth + cardRect.left - mouseX;
+    card.style.transform = `perspective(800px) rotateX(${cardRotateX / rotateRate}deg) rotateY(${-cardRotateY / rotateRate}deg) translateZ(10px)`;
+
+    // 仅年卡更新动态扫光位置
+    if (props.type === 'year') {
+      const offsetX = (mouseX - cardCenterX) / cardHalfWidth;
+      const offsetY = (mouseY - cardCenterY) / cardHalfHeight;
+      const posX = ((offsetX + 1) / 2) * 100;
+      const posY = ((offsetY + 1) / 2) * 100;
+
+      const tier = tierRef.value;
+      const price = priceValueRef.value;
+      if (tier) {
+        tier.style.setProperty('--bg-x', `${posX}%`);
+        tier.style.setProperty('--bg-y', `${posY}%`);
+      }
+      if (price) {
+        price.style.setProperty('--bg-x', `${posX}%`);
+        price.style.setProperty('--bg-y', `${posY}%`);
+      }
+    }
+  });
 };
 </script>
 
 <style scoped lang="scss">
-/* 样式保持不变，与原代码相同 */
 .card {
   width: 320px;
   min-height: 460px;
@@ -205,14 +204,6 @@ const handleOver = (event: MouseEvent) => {
   font-size: var(--ao-font-size-sm);
   font-weight: 500;
   margin-left: 2px;
-}
-
-.card-saving {
-  font-size: var(--ao-font-size-xs);
-  padding: 4px 14px;
-  border-radius: 9999px;
-  letter-spacing: 1px;
-  margin-top: -8px;
 }
 
 .card-benefits {
@@ -345,8 +336,8 @@ const handleOver = (event: MouseEvent) => {
     background: linear-gradient(180deg, rgb(249, 217, 118), rgb(233, 182, 75));
     background-clip: text;
     -webkit-background-clip: text;
-    background-size: 200% 200%;
     -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
   }
 
   .card-saving {
@@ -381,12 +372,46 @@ const handleOver = (event: MouseEvent) => {
   }
 }
 
-@keyframes sword-glow {
-  0% {
-    background-position: -100% 0;
+.year-card.is-hovering {
+  .card-tier {
+    background-image: linear-gradient(
+      135deg,
+      rgb(233, 182, 75) 0%,
+      rgb(249, 217, 118) 35%,
+      #ffffff 50%,
+      rgb(249, 217, 118) 65%,
+      rgb(233, 182, 75) 100%
+    );
+    background-size: 200% 200%;
+    background-position: var(--bg-x, 50%) var(--bg-y, 50%);
+    text-shadow:
+      0 0 4px rgba(255, 255, 255, 0.3),
+      0 0 10px rgba(233, 182, 75, 0.15);
   }
-  100% {
-    background-position: 200% 0;
+
+  .price-value {
+    background-image: linear-gradient(
+      135deg,
+      rgb(233, 182, 75) 0%,
+      rgb(249, 217, 118) 35%,
+      #ffffff 50%,
+      rgb(249, 217, 118) 65%,
+      rgb(233, 182, 75) 100%
+    );
+    background-size: 200% 200%;
+    background-position: var(--bg-x, 50%) var(--bg-y, 50%);
+    text-shadow:
+      0 0 4px rgba(255, 255, 255, 0.3),
+      0 0 10px rgba(233, 182, 75, 0.15);
+  }
+
+  .price-symbol,
+  .price-unit {
+    background-image: linear-gradient(
+      180deg,
+      rgb(249, 217, 118),
+      rgb(233, 182, 75)
+    );
   }
 }
 </style>
