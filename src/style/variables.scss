@@ -1,23 +1,3 @@
-// :root {
-//   --app-primary-color: #00a3a3;
-//   --app-secondary-color: #00c4c4;
-//   --app-header-height: 72px;
-//   --app-header-width: 1200px;
-//   --app-text-color-dark: #212121;
-//   --app-text-color-light: #757575;
-//   --app-bg-color-dark: #3a3838;
-//   --app-bg-color-light: #ffffff;
-//   --app-border-color: #e0e0e0;
-
-//   // 走马灯组件颜色
-//   --scroll-text-bg-color: rgba(203, 203, 203, 0.418);
-//   --scroll-text-label-bg-color: #929090;
-
-//   --calendar-card-tag-bg-color: #9b9b9b;
-
-//   --app-base-px: 8px;
-// }
-
 /* ============================================================
    全局设计令牌（扩展）
    ============================================================ */
@@ -26,6 +6,7 @@
   --ao-font-family-base:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ao-font-family-code: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  --ao-font-family-ali: 'AlimamaFangYuanTi', sans-serif;
 
   --ao-font-size-xs: 12px; /* 辅助说明、标签 */
   --ao-font-size-sm: 14px; /* 次要文本、按钮 */

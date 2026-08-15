@@ -1,3 +1,15 @@
+/* ---------- 本地字体定义 ---------- */
+@font-face {
+  font-family: 'AlimamaFangYuanTi';
+  src:
+    url('@/assets/fonts/AlimamaFangYuanTiVF-Thin.woff2') format('woff2'),
+    url('@/assets/fonts/AlimamaFangYuanTiVF-Thin.woff') format('woff'),
+    url('@/assets/fonts/AlimamaFangYuanTiVF-Thin.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---------- 全局重置 ---------- */
 *,
 *::before,
