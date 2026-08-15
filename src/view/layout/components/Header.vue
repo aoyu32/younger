@@ -196,18 +196,16 @@ const handleLogoClick = () => {
       }
     }
   }
-
-  .active {
-    color: var(--ao-color-primary-active);
-  }
 }
 
 .router-link-active {
-  span:first-child {
-    color: var(--ao-color-primary-active) !important;
-  }
   span {
-    color: var(--ao-color-primary-active);
+    color: var(--ao-color-primary) !important;
+  }
+  .name_en {
+    span {
+      color: var(--ao-color-text-secondary) !important;
+    }
   }
 }
 
