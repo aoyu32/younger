@@ -242,7 +242,7 @@ const arrowRef = ref<SVGGElement>();
 const getMaxScroll = () => {
   if (!mdScrollInnerRef.value) return 0;
   const parent = mdScrollInnerRef.value.parentElement!;
-  return mdScrollInnerRef.value.scrollHeight - parent.clientHeight;
+  return Math.max(mdScrollInnerRef.value.scrollHeight - parent.clientHeight, 0);
 };
 const setupPathScrollAnimation = () => {
   if (!svgPathRef.value || !motionPathRef.value || !arrowRef.value) return;
@@ -546,6 +546,9 @@ const triggerRippleAnimation = () => {
 };
 
 let scrollTriggers: ScrollTrigger[] = [];
+// 监听文档内容高度变化，触发 ScrollTrigger 重算
+let mdResizeObserver: ResizeObserver | null = null;
+let mdResizeTimer = 0;
 
 const scrollAnimation = () => {
   scrollTriggers.forEach((trigger) => trigger.kill());
@@ -589,8 +592,6 @@ const setupDownloadPin = () => {
     return;
   }
 
-  const maxScroll = getMaxScroll();
-
   gsap.set(mdInner, { y: 0 });
   gsap.set(innerWrapperEl, {
     position: 'relative',
@@ -603,13 +604,19 @@ const setupDownloadPin = () => {
     .fromTo(
       headerEl,
       { width: '1200px' },
-      { width: '100vw', duration: 1, ease: 'power2.inOut' },
+      { width: '100vw', padding: '0 20px', duration: 1, ease: 'power2.inOut' },
       0,
     )
     .fromTo(
       innerWrapperEl,
       { width: '1200px', borderRadius: '24px' },
-      { width: '100vw', borderRadius: 0, duration: 1, ease: 'power2.inOut' },
+      {
+        width: '100vw',
+        padding: '20px',
+        borderRadius: 0,
+        duration: 1,
+        ease: 'power2.inOut',
+      },
       0,
     )
     .addLabel('enter', 1)
@@ -664,26 +671,26 @@ const setupDownloadPin = () => {
     )
     .addLabel('scrollStart', 2);
 
-  if (maxScroll > 0) {
-    tl.to(
-      mdInner,
-      {
-        y: -maxScroll,
-        ease: 'none',
-        duration: 2,
-      },
-      'scrollStart',
-    ).addLabel('scrollEnd', 'scrollStart+=2');
-  } else {
-    tl.addLabel('scrollEnd', 'scrollStart');
-  }
+  // 文档内部滚动段：目标值用函数式写法，配合 invalidateOnRefresh 在每次
+  // refresh 时按最新布局重新计算滚动距离，避免创建时测量为 0 而跳过该阶段
+  tl.to(
+    mdInner,
+    {
+      y: () => -getMaxScroll(),
+      ease: 'none',
+      duration: 2,
+    },
+    'scrollStart',
+  ).addLabel('scrollEnd', 'scrollStart+=2');
 
   tl.addLabel('leave', 'scrollEnd')
     .to(mdEl, { x: '-150%', duration: 1, ease: 'power2.in' }, 'leave')
     .addLabel('shrink', 'leave+=1')
+    // 收缩阶段统一使用线性缓动：卡片回归与头部栏/容器宽度收窄的速度曲线
+    // 完全一致，避免 scrub 模式下多个元素节奏不同步产生的顿挫感
     .to(
       headerEl,
-      { width: '1200px', duration: 1, ease: 'power2.inOut' },
+      { width: '1200px', padding: '0px', duration: 1, ease: 'none' },
       'shrink',
     )
     .to(
@@ -693,7 +700,7 @@ const setupDownloadPin = () => {
         y: '0',
         scale: '1',
         duration: 1,
-        ease: 'power2.out',
+        ease: 'none',
       },
       'shrink',
     )
@@ -701,16 +708,26 @@ const setupDownloadPin = () => {
       innerWrapperEl,
       {
         width: '1200px',
+        padding: '20px 0',
         borderRadius: '24px',
         duration: 1,
-        ease: 'power2.inOut',
+        ease: 'none',
       },
       'shrink',
     );
 
+  // 头部栏实际高度（--ao-header-height-lg = 64px）：pin 偏移与头部栏底边对齐，
+  // 消除头部栏与固定区块之间的空隙，且区块底部正好贴住视口底边
+  const headerOffset =
+    parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        '--ao-header-height-lg',
+      ),
+    ) || 0;
+
   const st = ScrollTrigger.create({
     trigger: introSectionEl,
-    start: 'top top+=72px',
+    start: () => `top top+=${headerOffset}px`,
     end: '+=6000',
     scrub: 1,
     pin: true,
@@ -719,6 +736,16 @@ const setupDownloadPin = () => {
   });
 
   scrollTriggers.push(st);
+
+  // 文档内容尺寸变化后防抖刷新 ScrollTrigger（重算内部滚动距离）。
+  // 必须防抖：展开/收缩动画期间宽度逐帧变化，若每帧 refresh 会让时间线
+  // 反复失效重录并强制同步布局，表现为段落起步处的明显卡顿
+  mdResizeObserver?.disconnect();
+  mdResizeObserver = new ResizeObserver(() => {
+    window.clearTimeout(mdResizeTimer);
+    mdResizeTimer = window.setTimeout(() => ScrollTrigger.refresh(), 200);
+  });
+  mdResizeObserver.observe(mdInner);
 };
 const bannerAnimation = () => {
   const swiperEl = detailSwiperRef.value?.$el;
@@ -913,6 +940,9 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   lenis?.destroy();
+  window.clearTimeout(mdResizeTimer);
+  mdResizeObserver?.disconnect();
+  mdResizeObserver = null;
   scrollTriggers.forEach((trigger) => trigger.kill());
 
   document.removeEventListener('keydown', handleKeydown);

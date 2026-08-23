@@ -44,7 +44,7 @@
   img {
     width: 75px;
     height: 75px;
-    border-radius: 8px;
+    border-radius: var(--ao-border-radius-lg);
     object-fit: cover;
     position: relative;
     filter: drop-shadow(0 0 7px rgba(251, 82, 82, 0.3));
@@ -56,17 +56,17 @@
 .info-content {
   h2 {
     font-size: 40px;
-    margin-bottom: 17px;
+    margin-bottom: var(--ao-spacing-md);
     letter-spacing: 3px;
-    font-weight: 600;
-    color: #424242;
+    font-weight: var(--ao-font-weight-semibold);
+    color: var(--ao-gray-8);
   }
 
   p {
     letter-spacing: 3px;
     font-size: 26px;
     margin-bottom: 29px;
-    color: #424242;
+    color: var(--ao-gray-8);
   }
 
   .download {
@@ -76,11 +76,11 @@
   }
 
   button {
-    padding: 8px 20px;
-    font-size: 16px;
+    padding: var(--ao-spacing-xs) 20px;
+    font-size: var(--ao-font-size-base);
     border: none;
-    color: #ffffff;
-    border-radius: 8px;
+    color: var(--ao-gray-0);
+    border-radius: var(--ao-border-radius-lg);
     cursor: pointer;
     transition: all 0.3s ease;
     &:hover {
@@ -89,7 +89,7 @@
   }
 
   a {
-    font-size: 16px;
+    font-size: var(--ao-font-size-base);
     color: #7a7373;
   }
 }
@@ -101,7 +101,7 @@
   flex-direction: column;
 
   h2 {
-    font-size: 25px;
+    font-size: var(--ao-font-size-xxl);
     padding: 42px;
     font-weight: 300;
   }
@@ -114,7 +114,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 33px;
+    gap: var(--ao-spacing-xl);
     margin-top: 108px;
     font-family: var(--ao-font-family-ali);
 
@@ -124,7 +124,7 @@
     }
 
     p {
-      font-size: 17px;
+      font-size: var(--ao-font-size-base);
       color: #7a7373;
     }
 
@@ -139,7 +139,7 @@
 .svg-path {
   position: relative;
   .svg-wrapper {
-    font-size: 24px;
+    font-size: var(--ao-font-size-xxl);
     font-family: var(--ao-font-family-ali);
   }
   .svg-label-1,
@@ -157,10 +157,12 @@
   position: absolute;
   background-color: #ffffff38;
   transform: translate(0, 0);
+  /* 预提升合成层：避免 pin 动画各阶段启动时首次提升图层造成的卡帧 */
+  will-change: transform;
   .name {
     font-size: 56px;
-    font-weight: 600;
-    color: #ffffff;
+    font-weight: var(--ao-font-weight-semibold);
+    color: var(--ao-gray-0);
     white-space: nowrap;
   }
 }
@@ -184,7 +186,7 @@
     width: 5px;
     height: 5px;
     background-color: #ffffff5d;
-    border-radius: 50%;
+    border-radius: var(--ao-border-radius-circle);
   }
 
   .tip-text {
@@ -216,7 +218,13 @@
 .app-intro-md {
   width: 60%;
   height: 100%;
-  overflow-y: auto;
+  /* 文档滚动由 GSAP transform 驱动，关闭原生滚动条避免双重滚动冲突 */
+  overflow-y: hidden;
+  will-change: transform;
+}
+
+.md-scroll-inner {
+  will-change: transform;
 }
 
 :deep(.md-editor) {
@@ -241,20 +249,20 @@
   }
 
   button {
-    border-radius: 50%;
+    border-radius: var(--ao-border-radius-circle);
     background: none;
     border: none;
     cursor: pointer;
   }
 
   svg {
-    width: 32px;
-    height: 32px;
+    width: var(--ao-size-icon-lg);
+    height: var(--ao-size-icon-lg);
   }
 
   p {
     color: #999999;
-    font-size: 12px;
+    font-size: var(--ao-font-size-xs);
   }
 }
 
@@ -266,7 +274,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - var(--app-header-height) - 40px);
+  height: calc(100vh - var(--ao-header-height-lg));
 }
 
 .video-modal-overlay {
