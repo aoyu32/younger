@@ -1,7 +1,7 @@
 .video-recommend {
   width: 100%;
   padding: 20px 0;
-  background-color: var(--app-bg-color);
+  background-color: var(--ao-gray-0);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -62,9 +62,10 @@
     text-overflow: ellipsis;
     word-break: break-all;
     transition: all 0.3s ease-out;
+    color: var(--ao-gray-8);
 
     &:hover {
-      color: var(--app-primary-color);
+      color: var(--ao-color-primary);
     }
   }
 
