@@ -13,7 +13,7 @@
   padding: 20px 0 35px 0;
   gap: 20px;
   h3 {
-    font-weight: 500;
+    font-weight: var(--ao-font-weight-medium);
     font-size: 22px;
     flex-shrink: 0;
     overflow: hidden;
@@ -25,11 +25,11 @@
     align-items: center;
     gap: 20px;
     color: #9499a0;
-    font-size: 13px;
+    font-size: var(--ao-font-size-sm);
   }
 
   .meta-item {
-    gap: 5px;
+    gap: var(--ao-spacing-xxs);
   }
 }
 
