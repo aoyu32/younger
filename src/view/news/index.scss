@@ -13,7 +13,7 @@
 }
 
 .content {
-  background-color: #f2f3f5;
+  background-color: var(--ao-color-bg-layout);
   padding: 30px;
 }
 
@@ -31,8 +31,8 @@
   }
 
   .meta-item {
-    gap: 8px;
-    font-size: 14px;
+    gap: var(--ao-spacing-xs);
+    font-size: var(--ao-font-size-sm);
   }
 
   .date,
@@ -67,7 +67,7 @@
     }
 
     .label-item {
-      border-radius: 6px;
+      border-radius: var(--ao-border-radius-base);
       padding: 5px 15px;
       background-color: #a6a6a62c;
       max-width: 70px;
@@ -87,7 +87,7 @@
     gap: 5px;
 
     .action-text {
-      color: #8a8a8a;
+      color: var(--ao-color-text-tertiary);
       transition: color 0.2s;
       margin-top: 1px;
     }
@@ -108,7 +108,7 @@
 
 .news-comment {
   margin-top: 20px;
-  background-color: #f2f3f5;
+  background-color: var(--ao-color-bg-layout);
   padding: 10px 30px;
 }
 
@@ -120,21 +120,21 @@
 
 .sidebar-inner {
   position: sticky;
-  top: calc(var(--app-header-height, 72px) + 15px);
+  top: calc(var(--ao-header-height-lg, 64px) + 14px);
   width: 100%;
   will-change: transform;
 
   .news-outline {
-    padding: 24px 20px 20px 20px;
-    background-color: #f2f3f5;
+    padding: var(--ao-spacing-lg) 20px 20px 20px;
+    background-color: var(--ao-color-bg-layout);
 
     .outline-header {
       padding-bottom: 15px;
-      border-bottom: 1px solid #9999996a;
+      border-bottom: var(--ao-border-width-thin) solid #9999996a;
     }
 
     .title {
-      font-size: 15px;
+      font-size: var(--ao-font-size-base);
       font-weight: 550;
     }
 
@@ -148,6 +148,6 @@
   .news-other {
     margin-top: 20px;
     padding: 20px;
-    background-color: #f2f3f5;
+    background-color: var(--ao-color-bg-layout);
   }
 }

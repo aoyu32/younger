@@ -59,18 +59,18 @@ const handleClick = (item: any) => {
   align-items: center;
   gap: 6px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #9999996a;
+  border-bottom: var(--ao-border-width-thin) solid #9999996a;
   margin-bottom: 4px;
 }
 
 .header-icon {
-  font-size: 15px;
+  font-size: var(--ao-font-size-base);
   line-height: 1;
 }
 
 .header-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--ao-font-size-base);
+  font-weight: var(--ao-font-weight-semibold);
   color: #1a1a1a;
 }
 
@@ -82,11 +82,11 @@ const handleClick = (item: any) => {
 .recommend-item {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #cacaca49;
+  gap: var(--ao-spacing-sm);
+  padding: var(--ao-spacing-sm) 0;
+  border-bottom: var(--ao-border-width-thin) solid #cacaca49;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--ao-duration-fast) ease;
 
   &:last-child {
     border-bottom: none;
@@ -96,7 +96,7 @@ const handleClick = (item: any) => {
     opacity: 0.75;
 
     .item-title {
-      color: var(--primary-color, #1677ff);
+      color: var(--ao-color-primary);
     }
   }
 }
@@ -106,26 +106,26 @@ const handleClick = (item: any) => {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--ao-spacing-xxs);
 }
 
 .item-title {
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: var(--ao-font-weight-medium);
   color: #222;
-  line-height: 1.5;
+  line-height: var(--ao-line-height-base);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  transition: color 0.15s ease;
+  transition: color var(--ao-duration-fast) ease;
 }
 
 .item-meta {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
+  gap: var(--ao-spacing-xxs);
+  font-size: var(--ao-font-size-xs);
   color: #999;
 }
 
