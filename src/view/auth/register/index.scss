@@ -258,6 +258,10 @@
   align-items: flex-end;
   gap: 10px;
   flex: 1;
+  :deep(.ao-button-btn){
+    padding: 10px 6px;
+    font-family: inherit;
+  }
 }
 
 .back-home {

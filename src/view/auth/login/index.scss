@@ -273,7 +273,7 @@
   :deep(img) {
     transition: all 0.2s ease-in-out;
     transform: translate(12px, -12px) rotate(45deg);
-    &:hover{
+    &:hover {
       transform: translate(12px, -12px) scaleX(1.1);
     }
   }
