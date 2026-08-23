@@ -6,7 +6,8 @@
   background-color: var(--aobtn-bg, #009fa7);
   color: #fff;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .ao-button-btn:hover:not(:disabled) {
