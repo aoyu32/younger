@@ -1,7 +1,7 @@
 <template>
   <div class="vip">
-    <div class="logo">
-      <AoImage src="@/assets/logo.svg" width="30px" height="30px"/>
+    <div class="logo" @click="router.push('/')">
+      <AoImage src="@/assets/logo.svg" width="30px" height="30px" />
       <span class="logo-name">洋果教育</span>
     </div>
     <VipBackground />

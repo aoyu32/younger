@@ -13,6 +13,12 @@
   display: flex;
   align-items: center;
   gap: var(--ao-spacing-xs);
+  cursor: pointer;
+  &:hover {
+    .logo-name {
+      color: rgba(255, 255, 255);
+    }
+  }
 }
 
 .logo-name {
