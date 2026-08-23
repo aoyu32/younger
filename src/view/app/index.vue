@@ -59,7 +59,28 @@
         <div class="tip">共 {{ appTotal }} 个APP</div>
       </div>
     </div>
-    <div class="app-bottom"></div>
+    <div class="app-bottom">
+      <div class="app-category">
+        <div class="category-wrapper">
+          <div class="next-category">
+            <!-- <AoImage src="@/assets/app/icon_pre.svg"></AoImage> -->
+          </div>
+          <div class="category-nav">
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+            <div class="nav-item"></div>
+          </div>
+          <div class="next-category"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
