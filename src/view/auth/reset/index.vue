@@ -30,7 +30,7 @@
       </div>
       <div class="form-wrapper flex-c">
         <div class="reset-title">
-          <h2>YOUNGER <span>RESET PWD</span></h2>
+          <h2>YOUNGER <span>RE PWD</span></h2>
           <p>Reset Your Password, Back 洋果教育</p>
         </div>
         <div class="reset-form flex-col">
