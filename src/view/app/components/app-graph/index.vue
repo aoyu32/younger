@@ -67,13 +67,12 @@ let searchTimer = 0;
 const easeInOutCubic = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-// 相机平滑动画到目标位置
-const animateCameraTo = (tx: number, ty: number) => {
+// 相机平滑动画到目标位置（duration 可自定义：搜索居中 450ms / 生成跟随 500ms）
+const animateCameraTo = (tx: number, ty: number, duration = 450) => {
   if (camAnimRafId) cancelAnimationFrame(camAnimRafId);
   const sx = camera.value.x;
   const sy = camera.value.y;
   const startTime = performance.now();
-  const duration = 450;
   const step = () => {
     const p = Math.min(1, (performance.now() - startTime) / duration);
     const e = easeInOutCubic(p);
@@ -119,12 +118,14 @@ const focusNode = (node: any) => {
     showNameTip(children);
   }
 
-  // 视口召回：把远处的关联节点拉进视野
-  if (physicsMap.size === 0) initPhysics();
-  bringRelatedIntoView(node);
-  if (!physicsRunning) {
-    physicsRunning = true;
-    physicsRafId = requestAnimationFrame(physicsLoop(renderVersion));
+  // 视口召回：把远处的关联节点拉进视野（出场动画期间跳过，避免推散未出场节点）
+  if (!animState.active) {
+    if (physicsMap.size === 0) initPhysics();
+    bringRelatedIntoView(node);
+    if (!physicsRunning) {
+      physicsRunning = true;
+      physicsRafId = requestAnimationFrame(physicsLoop(renderVersion));
+    }
   }
 
   // 相机平滑居中到该节点
@@ -313,6 +314,16 @@ const assignPositions = (): { order: any[]; parentEdge: Map<any, any> } => {
   };
   const parentEdge = new Map<any, any>();
 
+  // Label -> 其 App 列表 / App -> 其 Label 列表（簇式生成用）
+  const labelApps = new Map<any, any[]>();
+  const appLabels = new Map<any, any[]>();
+  connections.value.forEach((conn) => {
+    if (!labelApps.has(conn.label)) labelApps.set(conn.label, []);
+    labelApps.get(conn.label)!.push(conn.app);
+    if (!appLabels.has(conn.app)) appLabels.set(conn.app, []);
+    appLabels.get(conn.app)!.push(conn.label);
+  });
+
   const placed = new Set<any>();
   const placedNodes: any[] = [];
   const placedLines: { a: any; b: any }[] = [];
@@ -381,7 +392,7 @@ const assignPositions = (): { order: any[]; parentEdge: Map<any, any> } => {
     );
 
     // 分多轮扩大搜索范围，第一轮用标准距离，之后逐轮放宽 MAX_DIST
-    const distMultipliers = [1, 1.25, 1.5, 1.8, 2.2];
+    const distMultipliers = [1, 1.15, 1.3];
     const attemptsPerRound = 150;
 
     let fallback: { x: number; y: number; score: number } | null = null;
@@ -453,47 +464,195 @@ const assignPositions = (): { order: any[]; parentEdge: Map<any, any> } => {
     return null;
   };
 
-  // BFS 遍历放置
-  const queue: any[] = [];
+  // 候选位置校验：不重叠 / 新连线不与已有连线交叉 / 不穿过其他节点
+  const validPos = (
+    anchor: any,
+    target: any,
+    x: number,
+    y: number,
+  ): boolean => {
+    const rT = radiusOf(target);
+    for (const n of placedNodes) {
+      if (Math.hypot(x - n.x, y - n.y) < radiusOf(n) + rT + GAP) return false;
+    }
+    for (const ln of placedLines) {
+      if (segCross({ x: anchor.x, y: anchor.y }, { x, y }, ln.a, ln.b))
+        return false;
+    }
+    for (const n of placedNodes) {
+      if (n === anchor) continue;
+      if (pointToSegDist(n.x, n.y, anchor.x, anchor.y, x, y) < radiusOf(n) + 8)
+        return false;
+    }
+    return true;
+  };
+
+  // 在 anchor 周围的扇区内放置 target：
+  // 优先用规划角度（扇区内均匀分布+抖动）× 标准随机距离，被挡则逐级放宽，最后全向兜底
+  const placeInSector = (
+    anchor: any,
+    target: any,
+    baseAngle: number,
+    spread: number,
+    index: number,
+    count: number,
+  ): { x: number; y: number } | null => {
+    const slot = count <= 1 ? 0.5 : (index + 0.5) / count;
+    const jitter = (Math.random() - 0.5) * spread * 0.12;
+    const angle = baseAngle - spread / 2 + spread * slot + jitter;
+
+    const distPlans: number[] = [
+      MIN_DIST + Math.random() * (MAX_DIST - MIN_DIST),
+      MAX_DIST,
+      MAX_DIST * 1.15,
+      MAX_DIST * 1.3,
+    ];
+    for (const dist of distPlans) {
+      const x = anchor.x + dist * Math.cos(angle);
+      const y = anchor.y + dist * Math.sin(angle);
+      if (validPos(anchor, target, x, y)) return { x, y };
+    }
+    // 扇区内随机角度再试
+    for (let i = 0; i < 40; i++) {
+      const a2 = baseAngle - spread / 2 + Math.random() * spread;
+      const d2 = MIN_DIST + Math.random() * (MAX_DIST - MIN_DIST);
+      const x = anchor.x + d2 * Math.cos(a2);
+      const y = anchor.y + d2 * Math.sin(a2);
+      if (validPos(anchor, target, x, y)) return { x, y };
+    }
+    // 最终兜底：全向搜索
+    return findPos(anchor, target);
+  };
+
+  // 最后兜底：只保证不重叠（忽略交叉/穿越检查），距离限制在 [MIN, MAX*1.8]
+  // 簇式生成中绝不放弃连通节点——否则节点会落入远端兜底分支，
+  // 没有 parentEdge 就没有动画排程，导致动画中断、交互时节点批量出现
+  const placeAnywhere = (
+    anchor: any,
+    target: any,
+  ): { x: number; y: number } | null => {
+    const rT = radiusOf(target);
+    const maxD = MAX_DIST * 1.8;
+    for (let attempt = 0; attempt < 400; attempt++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = MIN_DIST + Math.random() * (maxD - MIN_DIST);
+      const x = anchor.x + dist * Math.cos(angle);
+      const y = anchor.y + dist * Math.sin(angle);
+      let overlap = false;
+      for (const n of placedNodes) {
+        if (Math.hypot(x - n.x, y - n.y) < radiusOf(n) + rT + GAP) {
+          overlap = true;
+          break;
+        }
+      }
+      if (!overlap) return { x, y };
+    }
+    return null;
+  };
+
+  // 为 Label 铺设它所有未放置的 AppNode（扇区避开来时方向，向外生长）
+  const placeAppsOfLabel = (label: any, entryApp: any | null) => {
+    const entryDir =
+      entryApp != null
+        ? Math.atan2(entryApp.y - label.y, entryApp.x - label.x)
+        : null;
+    const baseAngle =
+      entryDir === null ? Math.random() * Math.PI * 2 : entryDir + Math.PI;
+    const spread = entryDir === null ? Math.PI * 2 : Math.PI * 1.25;
+
+    const unplacedApps = (labelApps.get(label) || []).filter(
+      (a) => !placed.has(a),
+    );
+    unplacedApps.forEach((app, i) => {
+      if (placed.has(app)) return;
+      let pos = placeInSector(
+        label,
+        app,
+        baseAngle,
+        spread,
+        i,
+        unplacedApps.length,
+      );
+      if (!pos) pos = placeAnywhere(label, app); // 拥挤时只保证不重叠也要就地放置
+      if (!pos) return;
+      place(app, pos.x, pos.y);
+      const conn = findConn(label, app);
+      if (conn) parentEdge.set(app, conn);
+      placedLines.push({ a: label, b: app });
+    });
+  };
+
+  // ---------- 簇式深度优先生成（DFS） ----------
+  // 渲染顺序：
+  //   Label → 它的所有 AppNode → 按顺序遍历各 App：
+  //     发现关联的未渲染 Label → 渲染它 → 递归渲染它的所有 AppNode → 继续深入，
+  //     直到分支尽头再回溯；共享 App 的多个 Label 先全部渲染完，再下一个 App
+  //   （例：谷歌浏览器连接 浏览器/谷歌产品/移动互联 —— 浏览器渲染完后遍历到它，
+  //     先渲染谷歌产品及其全部 AppNode 并继续深入，回溯后再渲染移动互联）
+  const processLabelCluster = (label: any, entryApp: any | null) => {
+    // 1) 铺满当前 Label 的所有未放置 AppNode
+    placeAppsOfLabel(label, entryApp);
+
+    // 2) 逐个 App 深入：发现未渲染 Label → 放置 → 递归渲染它的整棵子簇
+    for (const app of labelApps.get(label) || []) {
+      if (!placed.has(app)) continue;
+      const outDir = Math.atan2(app.y - label.y, app.x - label.x);
+      const otherLabels = (appLabels.get(app) || []).filter(
+        (l) => !placed.has(l),
+      );
+      otherLabels.forEach((otherLabel, li) => {
+        if (placed.has(otherLabel)) return; // 递归中可能已被更早的分支渲染
+        let pos = placeInSector(
+          app,
+          otherLabel,
+          outDir,
+          Math.PI * 0.9,
+          li,
+          otherLabels.length,
+        );
+        if (!pos) pos = placeAnywhere(app, otherLabel); // 拥挤时也要就地放置
+        if (!pos) return;
+        place(otherLabel, pos.x, pos.y);
+        const conn = findConn(app, otherLabel);
+        if (conn) parentEdge.set(otherLabel, conn);
+        placedLines.push({ a: app, b: otherLabel });
+        // 深度优先：先把这个 Label 的整棵子簇渲染完，再回溯下一个
+        processLabelCluster(otherLabel, app);
+      });
+    }
+  };
+
   if (labels.length > 0) {
     place(labels[0], 0, 0);
-    queue.push(labels[0]);
+    processLabelCluster(labels[0], null);
   }
 
-  while (queue.length > 0) {
-    const current = queue.shift()!;
-    let neighbors = adj.get(current) || [];
-    // 过滤未放置的邻居，按连接度降序排列（高连接度的共享节点优先放置，
-    // 使其尽早成为已放置锚点，后续相关 Label 放置时能参考它的位置拉近）
-    neighbors = neighbors
-      .filter((n) => !placed.has(n))
-      .sort((a, b) => (adj.get(b)?.length || 0) - (adj.get(a)?.length || 0));
-    // 在连接度相同的前若干个邻居中随机选，兼顾多样性
-    for (let i = neighbors.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [neighbors[i], neighbors[j]] = [neighbors[j], neighbors[i]];
+  // ---------- 孤立分量处理 ----------
+  // 数据中可能存在与起始 Label 不连通的分类（其 App 全部是单关联，
+  // 例如"JetBrains 全家桶"的 App 只属于自己，唯一桥梁 IDEA 只连到同为孤岛的
+  // "开发工具"）——DFS 从起点永远走不到它们。
+  // 处理：把每个孤立分量的根 Label 放到已布局区域的边缘（不再远端散布），
+  // 然后正常递归渲染整簇（有 parentEdge / 有连线动画排程，作为新链追加播放）
+  for (const label of labels) {
+    if (placed.has(label)) continue;
+    // 锚点：已放置节点中最靠右的，新簇长在其东侧
+    let anchor = placedNodes[0] ?? { x: 0, y: 0 };
+    for (const n of placedNodes) {
+      if (n.x > anchor.x) anchor = n;
     }
-    for (const neighbor of neighbors) {
-      if (placed.has(neighbor)) continue;
-      const pos = findPos(current, neighbor);
-      if (pos) {
-        place(neighbor, pos.x, pos.y);
-        const conn = findConn(current, neighbor);
-        if (conn) parentEdge.set(neighbor, conn);
-        placedLines.push({ a: current, b: neighbor });
-        queue.push(neighbor);
-      }
-    }
+    let pos = placeAnywhere(anchor, label);
+    if (!pos) pos = { x: anchor.x + MIN_DIST * 2, y: anchor.y };
+    place(label, pos.x, pos.y);
+    processLabelCluster(label, null);
   }
 
-  // 兜底：图不连通时的未放置节点，在外围随机散布
+  // 兜底：极少数仍未放置的节点（理论不会发生），在近郊随机散布
   for (const n of [...labels, ...apps]) {
     if (placed.has(n)) continue;
     const rN = radiusOf(n);
-    let placedOk = false;
     for (let tries = 0; tries < 300; tries++) {
       const angle = Math.random() * Math.PI * 2;
-      const dist = 520 + Math.random() * 800 + tries * 6;
+      const dist = MIN_DIST * 2 + Math.random() * MAX_DIST + tries * 6;
       const x = Math.cos(angle) * dist;
       const y = Math.sin(angle) * dist;
       let ok = true;
@@ -505,18 +664,137 @@ const assignPositions = (): { order: any[]; parentEdge: Map<any, any> } => {
       }
       if (ok) {
         place(n, x, y);
-        placedOk = true;
         break;
       }
     }
-    // 实在找不到无重叠位置：强制放到远端，保证进入 order（有动画排程）
-    // 否则会因无 nodeStart 而在动画中被跳过或被 else 误画
-    if (!placedOk) {
-      const angle = Math.random() * Math.PI * 2;
-      const dist = 1500 + placedNodes.length * 50;
-      place(n, Math.cos(angle) * dist, Math.sin(angle) * dist);
-    }
   }
+
+  // ---------- 力导向整理（Fruchterman-Reingold 式松弛） ----------
+  // 极坐标随机放置是"随机游走"式，簇会涣散。这里用两股力迭代收敛：
+  //   斥力：所有节点两两推开（防重叠 + 簇间分离）
+  //   弹簧：每条连线长度拉回 [MIN_DIST, MAX_DIST] 约束带（簇内聚拢）
+  // 无惯性（每轮速度归零），稳定不震荡
+  const relaxForces = () => {
+    const all = placedNodes;
+    const n = all.length;
+    if (n === 0) return;
+
+    const REPULSE_R = MIN_DIST * 1.15; // 斥力作用半径
+    const REPULSE_K = 1.0; // 斥力系数（位移比例）
+    const SPRING_TARGET = (MIN_DIST + MAX_DIST) / 2; // 弹簧目标长度
+    const SPRING_K = 0.045; // 弹簧系数
+    const MAX_STEP = 16; // 单轮最大位移
+    const ITERATIONS = 260;
+
+    for (let iter = 0; iter < ITERATIONS; iter++) {
+      const fx = new Map<any, number>();
+      const fy = new Map<any, number>();
+      all.forEach((m) => {
+        fx.set(m, 0);
+        fy.set(m, 0);
+      });
+
+      // 斥力（两两，重叠越近推力越强）
+      for (let i = 0; i < n; i++) {
+        const a = all[i];
+        for (let j = i + 1; j < n; j++) {
+          const b = all[j];
+          let dx = b.x - a.x;
+          let dy = b.y - a.y;
+          let d = Math.hypot(dx, dy);
+          if (d < 1e-6) {
+            dx = Math.random() - 0.5;
+            dy = Math.random() - 0.5;
+            d = Math.hypot(dx, dy) || 1;
+          }
+          if (d >= REPULSE_R) continue;
+          const f = ((REPULSE_R - d) / REPULSE_R) * REPULSE_K;
+          const ux = dx / d;
+          const uy = dy / d;
+          fx.set(a, fx.get(a)! - ux * f);
+          fy.set(a, fy.get(a)! - uy * f);
+          fx.set(b, fx.get(b)! + ux * f);
+          fy.set(b, fy.get(b)! + uy * f);
+        }
+      }
+
+      // 弹簧（连线长度回归约束带）
+      for (const ln of placedLines) {
+        const a = ln.a;
+        const b = ln.b;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const d = Math.hypot(dx, dy) || 1;
+        // 只在越界时施力：太远拉近、太近推开，区间内不干预
+        let f = 0;
+        if (d > MAX_DIST) f = (MAX_DIST * 0.95 - d) * SPRING_K;
+        else if (d < MIN_DIST * 0.9) f = (MIN_DIST - d) * SPRING_K;
+        if (f === 0) continue;
+        const ux = dx / d;
+        const uy = dy / d;
+        fx.set(a, fx.get(a)! - ux * f);
+        fy.set(a, fy.get(a)! - uy * f);
+        fx.set(b, fx.get(b)! + ux * f);
+        fy.set(b, fy.get(b)! + uy * f);
+      }
+
+      // 积分：限步位移，能量足够低则提前收敛
+      let energy = 0;
+      for (const m of all) {
+        let ix = fx.get(m)!;
+        let iy = fy.get(m)!;
+        const sp = Math.hypot(ix, iy);
+        if (sp > MAX_STEP) {
+          ix = (ix / sp) * MAX_STEP;
+          iy = (iy / sp) * MAX_STEP;
+        }
+        m.x += ix;
+        m.y += iy;
+        energy += Math.hypot(ix, iy);
+      }
+      if (energy / n < 0.08) break;
+    }
+  };
+  relaxForces();
+
+  // 边长修正兜底：力导向后仍有超长边（被重叠卡住）则直接拉近
+  const relaxLongEdges = () => {
+    const maxAllowed = MAX_DIST * 1.05;
+    for (let pass = 0; pass < 10; pass++) {
+      let moved = false;
+      for (const ln of placedLines) {
+        const a = ln.a;
+        const b = ln.b;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const d = Math.hypot(dx, dy);
+        if (d <= maxAllowed || d < 1e-6) continue;
+        // 目标位置：沿 a->b 方向拉近到 maxAllowed
+        const t = maxAllowed / d;
+        const nx = a.x + dx * t;
+        const ny = a.y + dy * t;
+        // 新位置不能与其他节点重叠（排除 a/b 自身）
+        let ok = true;
+        for (const m of placedNodes) {
+          if (m === a || m === b) continue;
+          if (
+            Math.hypot(nx - m.x, ny - m.y) <
+            radiusOf(m) + radiusOf(b) + GAP * 0.5
+          ) {
+            ok = false;
+            break;
+          }
+        }
+        if (ok) {
+          b.x = nx;
+          b.y = ny;
+          moved = true;
+        }
+      }
+      if (!moved) break;
+    }
+  };
+  relaxLongEdges();
 
   return { order, parentEdge };
 };
@@ -805,11 +1083,21 @@ const phyRadius = (n: any) => (n instanceof AppNode ? 32 : 50);
 const physicsStep = (dragNode: any | null, labelChildren: Set<any>) => {
   const all = nodes.value;
 
+  // 出场动画期间：未出场的节点不参与任何物理（位置由布局算法锁定，
+  // 否则会被斥力/弹簧推散，导致链式生长线端错乱、剩余节点出现时位置不对）
+  const revealed = (n: any): boolean => {
+    if (!animState.active) return true;
+    const ns = animState.nodeStart.get(n);
+    return ns !== undefined && performance.now() >= ns;
+  };
+
   // 1) 硬重叠位置分离：直接推开穿透量（确定性，不注入能量，避免互推振荡）
   for (let i = 0; i < all.length; i++) {
     const a = all[i];
+    if (!revealed(a)) continue;
     for (let j = i + 1; j < all.length; j++) {
       const b = all[j];
+      if (!revealed(b)) continue;
       if (a === dragNode && b === dragNode) continue;
       const minDist = phyRadius(a) + phyRadius(b) + 20;
       let dx = b.x - a.x;
@@ -845,16 +1133,18 @@ const physicsStep = (dragNode: any | null, labelChildren: Set<any>) => {
   for (let i = 0; i < all.length; i++) {
     const n = all[i];
     if (n === dragNode) continue; // 拖动节点由鼠标控制，不参与力学
+    if (!revealed(n)) continue; // 出场动画期间：未出场节点不参与力学
     const st = physicsMap.get(n);
     if (!st) continue;
 
     let fx = 0;
     let fy = 0;
 
-    // 节点间斥力（库仑力，封顶防爆）
+    // 节点间斥力（库仑力，封顶防爆，只统计已出场节点）
     for (let j = 0; j < all.length; j++) {
       if (j === i) continue;
       const m = all[j];
+      if (!revealed(m)) continue;
       const dx = n.x - m.x;
       const dy = n.y - m.y;
       let d2 = dx * dx + dy * dy;
@@ -1123,15 +1413,18 @@ const handleDown = (e: MouseEvent) => {
     } else {
       hideNameTip();
     }
-    // 确保物理状态已初始化（动画可能还在进行中，用当前位置初始化）
-    if (physicsMap.size === 0) initPhysics();
-    // 把视口外的关联节点平滑拉回视口内（距离约束 [VIEW_MIN, VIEW_MAX]）
-    bringRelatedIntoView(hitNode);
+    // 出场动画期间：只做视觉高亮，不启动物理/召回（避免未出场节点被推散）
+    if (!animState.active) {
+      // 确保物理状态已初始化（动画可能还在进行中，用当前位置初始化）
+      if (physicsMap.size === 0) initPhysics();
+      // 把视口外的关联节点平滑拉回视口内（距离约束 [VIEW_MIN, VIEW_MAX]）
+      bringRelatedIntoView(hitNode);
+    }
     // 子 AppNode 相对偏移延迟到首次拖动时记录：
     // 点击后关联节点可能正在飞向视口（召回动画），此时记录的偏移才是最终布局
     dragChildOffsets = new Map();
     viewRecallAnchor = hitNode;
-    startPhysics(hitNode);
+    if (!animState.active) startPhysics(hitNode);
   } else {
     clickNode = null;
     isNodeDragging = false;
@@ -1170,9 +1463,12 @@ const handleMove = (e: MouseEvent) => {
     }
 
     // 拖动 Label 时子 AppNode 直接同步移动（与 Label 相同位移），保证速度一致
-    // 弹簧 + 斥力仍在 physicsStep 中生效：子节点可被其他节点推开，松手回弹到跟随位置
+    // 出场动画期间：未出场的子节点不跟随（位置由布局锁定，避免链式生长错乱）
     if (clickNode instanceof LabelNode && dragChildOffsets.size > 0) {
       dragChildOffsets.forEach((off, child) => {
+        const ns = animState.nodeStart.get(child);
+        if (animState.active && (ns === undefined || performance.now() < ns))
+          return; // 未出场不跟随
         child.x += deltaX;
         child.y += deltaY;
         const st = physicsMap.get(child);
@@ -1190,8 +1486,8 @@ const handleMove = (e: MouseEvent) => {
   if (isDragging) {
     camera.value.x = startCameraX + e.clientX - startScreenX;
     camera.value.y = startCameraY + e.clientY - startScreenY;
-    // 视口变化后重新计算召回目标（基于新视口）
-    if (viewRecallAnchor && highlight) {
+    // 视口变化后重新计算召回目标（基于新视口）；出场动画期间不召回
+    if (viewRecallAnchor && highlight && !animState.active) {
       bringRelatedIntoView(viewRecallAnchor);
       if (!physicsRunning) {
         physicsRunning = true;
@@ -1265,8 +1561,8 @@ const handleWheel = (e: WheelEvent) => {
 
     camera.value.x = mouseCanvasX - worldPosX * camera.value.zoom;
     camera.value.y = mouseCanvasY - worldPosY * camera.value.zoom;
-    // 视口变化后重新计算召回目标（基于新缩放）
-    if (viewRecallAnchor && highlight) {
+    // 视口变化后重新计算召回目标（基于新缩放）；出场动画期间不召回
+    if (viewRecallAnchor && highlight && !animState.active) {
       bringRelatedIntoView(viewRecallAnchor);
       // 确保物理循环在跑，把节点拉向新目标
       if (!physicsRunning) {
@@ -1298,6 +1594,9 @@ const animState = {
   lineStart: new Map<any, number>(),
 };
 
+// 视口跟随队列：每个 Label 出场前，视口先平移居中到该节点（生成跟随效果）
+let cameraFollowQueue: { node: any; triggerTime: number }[] = [];
+
 let animRunning = false;
 let animRafId = 0;
 
@@ -1321,6 +1620,7 @@ const stopAnimation = () => {
   animState.active = false;
   animState.nodeStart = new Map();
   animState.lineStart = new Map();
+  cameraFollowQueue = [];
   // 重置高亮与蒙版
   highlight = null;
   mask.active = false;
@@ -1339,6 +1639,21 @@ const createAnimLoop = (myVersion: number) => () => {
   if (!animRunning) return;
 
   const now = performance.now();
+
+  // 视口跟随：Label 出场前把视口平移居中到它（用户正在拖动时跳过平移）
+  while (cameraFollowQueue.length > 0 && cameraFollowQueue[0].triggerTime <= now) {
+    const visit = cameraFollowQueue.shift()!;
+    if (!isDragging && !isNodeDragging) {
+      const container = containerRef.value;
+      if (container) {
+        animateCameraTo(
+          container.clientWidth / 2 - visit.node.x * camera.value.zoom,
+          container.clientHeight / 2 - visit.node.y * camera.value.zoom,
+          500,
+        );
+      }
+    }
+  }
   // 判断所有节点和连线是否都已完成
   let done = true;
   for (const start of animState.nodeStart.values()) {
@@ -1375,7 +1690,6 @@ const startAnimation = (order: any[], parentEdge: Map<any, any>) => {
   animState.lineStart = new Map();
 
   if (order.length === 0) return;
-  const root = order[0];
 
   // 构建每个节点的子边列表（BFS 树中它作为父节点发现的边）
   const childEdges = new Map<any, any[]>();
@@ -1389,25 +1703,44 @@ const startAnimation = (order: any[], parentEdge: Map<any, any>) => {
 
   // 节点完成时间 = 出场开始 + NODE_DURATION
   const nodeComplete = new Map<any, number>();
-  animState.nodeStart.set(root, now);
-  nodeComplete.set(root, now + NODE_DURATION);
 
-  // 按 BFS 顺序计算：父节点完成后开始画子边，边画完子节点才出场
-  const queue: any[] = [root];
-  while (queue.length > 0) {
-    const cur = queue.shift()!;
-    const curComplete = nodeComplete.get(cur)!;
-    const edges = childEdges.get(cur) || [];
-    edges.forEach((edge, idx) => {
-      const stagger = idx * 45; // 同父的多个子分支错开 45ms
-      const lineStart = curComplete + 40 + stagger; // 父节点完成后 40ms 开始延伸连线
-      animState.lineStart.set(edge, lineStart);
-      const lineComplete = lineStart + LINE_DURATION;
-      const child = edge.label === cur ? edge.app : edge.label;
-      animState.nodeStart.set(child, lineComplete); // 连线到达，子节点才出场
-      nodeComplete.set(child, lineComplete + NODE_DURATION);
-      queue.push(child);
+  // 多链调度：遍历放置顺序，遇到未调度的节点就开启一条新链
+  // （兜底的不连通节点没有父边，也必须获得排程——否则它们永远不出场，
+  //   动画提前判定完成冻结画面，交互时又批量出现）
+  let chainStart = now;
+  for (const node of order) {
+    if (animState.nodeStart.has(node)) continue;
+
+    // 新链起点：排在上一条链结束之后
+    animState.nodeStart.set(node, chainStart);
+    nodeComplete.set(node, chainStart + NODE_DURATION);
+
+    // 沿子边 BFS 链式排程：父节点完成后画边，边画完子节点才出场
+    const queue: any[] = [node];
+    while (queue.length > 0) {
+      const cur = queue.shift()!;
+      const curComplete = nodeComplete.get(cur)!;
+      const edges = childEdges.get(cur) || [];
+      edges.forEach((edge, idx) => {
+        const stagger = idx * 45; // 同父的多个子分支错开 45ms
+        const lineStart = curComplete + 40 + stagger; // 父节点完成后 40ms 开始延伸连线
+        if (!animState.lineStart.has(edge))
+          animState.lineStart.set(edge, lineStart);
+        const lineComplete = lineStart + LINE_DURATION;
+        const child = edge.label === cur ? edge.app : edge.label;
+        if (animState.nodeStart.has(child)) return; // 已调度（换父的共享节点）
+        animState.nodeStart.set(child, lineComplete); // 连线到达，子节点才出场
+        nodeComplete.set(child, lineComplete + NODE_DURATION);
+        queue.push(child);
+      });
+    }
+
+    // 下一条链的起点 = 本链所有节点完成时间的最大值 + 间隔
+    let maxEnd = chainStart + NODE_DURATION;
+    nodeComplete.forEach((t) => {
+      if (t > maxEnd) maxEnd = t;
     });
+    chainStart = maxEnd + 120;
   }
 
   // 非树边（共享 AppNode 连向其他 Label 的边）：两端节点都出场后再延伸
@@ -1418,6 +1751,17 @@ const startAnimation = (order: any[], parentEdge: Map<any, any>) => {
     if (lc === undefined || ac === undefined) return;
     animState.lineStart.set(conn, Math.max(lc, ac) + 50);
   });
+
+  // 视口跟随队列：每个 Label 出场前 520ms 触发视口平移（500ms 缓动刚好就位）
+  // 第一个 Label 已在视口中心（triggerTime <= now）自动跳过
+  cameraFollowQueue = order
+    .filter((n) => n instanceof LabelNode)
+    .map((n) => ({
+      node: n,
+      triggerTime: (animState.nodeStart.get(n) ?? now) - 520,
+    }))
+    .filter((v) => v.triggerTime > now)
+    .sort((a, b) => a.triggerTime - b.triggerTime);
 
   animState.active = true;
   animRunning = true;
