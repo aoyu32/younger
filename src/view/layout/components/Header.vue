@@ -40,8 +40,8 @@
       <div class="right-vip flex-center" @click="router.push('/vip')">
         <AoImage
           src="@/assets/vip/icon_svip.svg"
-          width="20px"
-          height="20px"
+          width="17px"
+          height="17px"
         ></AoImage>
         <span>开通会员</span>
       </div>
