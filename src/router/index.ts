@@ -18,6 +18,15 @@ const routes = [
         },
       },
       {
+        name: 'video',
+        path: '/video',
+        component: () => import('@/view/app/index.vue'),
+        meta: {
+          title: '教程中心',
+          menu: true,
+        },
+      },
+      {
         name: 'application',
         path: '/app',
         component: () => import('@/view/app/index.vue'),
@@ -26,15 +35,7 @@ const routes = [
           menu: true,
         },
       },
-      {
-        name: 'video',
-        path: '/video',
-        component: () => import('@/view/app/index.vue'),
-        meta: {
-          title: '教程视频',
-          menu: true,
-        },
-      },
+
       {
         name: 'website',
         path: '/website',
