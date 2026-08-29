@@ -31,7 +31,7 @@ const routes = [
         path: '/app',
         component: () => import('@/view/app/index.vue'),
         meta: {
-          title: '软件工具',
+          title: '应用中心',
           menu: true,
         },
       },
@@ -66,7 +66,7 @@ const routes = [
       {
         name: 'video-detail',
         path: '/video/:id',
-        component: () => import('@/view/video/index.vue'),
+        component: () => import('@/view/video-detail/index.vue'),
         meta: {
           title: '视频详情',
           menu: false,
