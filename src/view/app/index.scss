@@ -1,15 +1,13 @@
 .app {
   width: 100%;
-  height: 100vh;
 }
 
 .app-top {
-  height: 90%;
   display: flex;
   flex-direction: column;
   border-radius: var(--ao-border-radius-lg);
   border: 1px solid var(--ao-gray-3);
-  box-shadow: var(--ao-shadow-md);
+  box-shadow: var(--ao-shadow-xs);
 }
 
 .header {
@@ -115,5 +113,55 @@
   .tip {
     font-size: var(--ao-font-size-sm);
     color: var(--ao-gray-6);
+  }
+}
+
+.app-bottom {
+  margin-top: 30px;
+
+  .label {
+    .title {
+      font-size: var(--ao-font-size-base);
+      font-weight: 600;
+      position: relative;
+    }
+    .desc {
+      font-size: var(--ao-font-size-sm);
+      color: var(--ao-gray-5);
+    }
+    margin-bottom: 15px;
+  }
+
+  .app-category-list {
+    width: 100%;
+
+    .category-label {
+      margin: 10px 0;
+      padding: 10px 15px;
+      background-color: var(--ao-gray-3);
+      border-radius: var(--ao-border-radius-base);
+
+      .title {
+        position: relative;
+        &::before {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          background-color: var(--ao-color-primary);
+          bottom: -10%;
+          
+        }
+      }
+    }
+
+    .app-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+      :deep(.app-card) {
+        width: 100%;
+      }
+    }
   }
 }

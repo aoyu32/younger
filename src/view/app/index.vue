@@ -1,5 +1,11 @@
 <template>
   <div class="app">
+    <div class="slogan">
+      <PageSlogan
+        content="学会使用一个APP，就是掌握一项新技能。 "
+        sub-content="应用中心"
+      />
+    </div>
     <div class="app-top">
       <div class="header">
         <div class="label">应用图谱</div>
@@ -60,24 +66,24 @@
       </div>
     </div>
     <div class="app-bottom">
+      <div class="label flex-between">
+        <div class="title">分类导航</div>
+        <div class="desc">点击导航项，快速分类查找你的目标APP</div>
+      </div>
       <div class="app-category">
-        <div class="category-wrapper">
-          <div class="next-category">
-            <!-- <AoImage src="@/assets/app/icon_pre.svg"></AoImage> -->
+        <AppCanvasNav />
+      </div>
+      <div class="app-category-list">
+        <div class="category-label flex-between">
+          <div class="title">AI应用</div>
+          <div class="sub-title">目前最热门的AI应用</div>
+        </div>
+        <div class="app-list">
+          <div class="app-item" v-for="item in apps">
+            <router-link :to="`/app/${item.id}`">
+              <ApplicationCard :app="item" />
+            </router-link>
           </div>
-          <div class="category-nav">
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-            <div class="nav-item"></div>
-          </div>
-          <div class="next-category"></div>
         </div>
       </div>
     </div>
@@ -87,7 +93,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import AppGraph from './components/app-graph/index.vue';
-
+import AppCanvasNav from './components/AppCanvasNav.vue';
+import ApplicationCard from './components/ApplicationCard.vue';
+import PageSlogan from '@/components/page-slogan/index.vue';
+import { appData } from '@/mock/appData';
+const apps = ref(appData);
 const appMapRef = ref<InstanceType<typeof AppGraph> | null>(null);
 
 // 刷新：重新随机生成节点位置并重播生成动画
