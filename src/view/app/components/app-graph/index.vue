@@ -1,5 +1,9 @@
 <template>
   <div class="app-graph" ref="containerRef">
+    <div class="triangle-top-right corner"></div>
+    <div class="triangle-top-left corner"></div>
+    <div class="triangle-bottom-right corner"></div>
+    <div class="triangle-bottom-left corner"></div>
     <canvas
       ref="canvasRef"
       @mousedown="handleDown"
@@ -250,10 +254,7 @@ const render = () => {
   });
 
   // 上报应用总数（去重后的 AppNode 数量），供父组件显示
-  emit(
-    'app-count',
-    nodes.value.filter((n) => n instanceof AppNode).length,
-  );
+  emit('app-count', nodes.value.filter((n) => n instanceof AppNode).length);
 
   const { order, parentEdge } = assignPositions();
   // 重置相机到原点（第一个 Label 位置）
@@ -1641,7 +1642,10 @@ const createAnimLoop = (myVersion: number) => () => {
   const now = performance.now();
 
   // 视口跟随：Label 出场前把视口平移居中到它（用户正在拖动时跳过平移）
-  while (cameraFollowQueue.length > 0 && cameraFollowQueue[0].triggerTime <= now) {
+  while (
+    cameraFollowQueue.length > 0 &&
+    cameraFollowQueue[0].triggerTime <= now
+  ) {
     const visit = cameraFollowQueue.shift()!;
     if (!isDragging && !isNodeDragging) {
       const container = containerRef.value;
@@ -2132,9 +2136,61 @@ defineExpose({
   min-height: 0; /* 允许在 flex 列容器中收缩，canvas 尺寸由 ResizeObserver 跟随 */
   border-bottom-left-radius: var(--ao-border-radius-lg);
   border-bottom-right-radius: var(--ao-border-radius-lg);
+  position: relative;
+}
+
+.corner {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+}
+
+.triangle-bottom-right {
+  background: transparent;
+  clip-path: polygon(100% 100%, 100% 0, 0 100%);
+  border-bottom: 1px solid var(--ao-color-primary);
+  border-right: 1px solid var(--ao-color-primary);
+  border-top: none;
+  border-left: none;
+  right: 0;
+  bottom: 0;
+}
+
+.triangle-top-left {
+  background: transparent;
+
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+
+  border-top: 1px solid var(--ao-color-primary);
+  border-left: 1px solid var(--ao-color-primary);
+
+  border-right: none;
+  border-bottom: none;
+}
+
+.triangle-bottom-left {
+  background: transparent;
+  clip-path: polygon(0 100%, 0 0, 100% 100%);
+  border-left: 1px solid var(--ao-color-primary);
+  border-bottom: 1px solid var(--ao-color-primary);
+  border-top: none;
+  border-right: none;
+  bottom: 0;
+}
+
+.triangle-top-right {
+  background: transparent;
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  border-top: 1px solid var(--ao-color-primary);
+  border-right: 1px solid var(--ao-color-primary);
+  border-bottom: none;
+  border-left: none;
+  right: 0;
 }
 
 canvas {
+  min-height: 75vh;
+  max-height: 75vh;
   background-color: transparent; /* 背景由 draw 函数绘制 */
   cursor: pointer;
 }
