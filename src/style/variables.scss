@@ -7,6 +7,7 @@
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ao-font-family-code: 'SF Mono', Consolas, 'Liberation Mono', monospace;
   --ao-font-family-ali: 'AlimamaFangYuanTi', sans-serif;
+  --ao-font-family-cao: 'LiuJianMaoCao', sans-serif;
 
   --ao-font-size-xs: 12px; /* 辅助说明、标签 */
   --ao-font-size-sm: 14px; /* 次要文本、按钮 */
@@ -119,7 +120,7 @@
 :root {
   /* ---------- 品牌色阶（Lime） ---------- */
   /* ---------- 品牌色阶（极光绿 / Aurora Green） ---------- */
-/* ---------- 品牌色阶（明青 / Bright Cyan） ---------- */
+  /* ---------- 品牌色阶（明青 / Bright Cyan） ---------- */
   --ao-lime-0: #001f26;
   --ao-lime-1: #003740;
   --ao-lime-2: #00505c;

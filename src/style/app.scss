@@ -7,6 +7,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'LiuJianMaoCao';
+  src: url('../assets/fonts/LiuJianMaoCao-Regular.ttf') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---------- 全局重置 ---------- */
 *,
 *::before,
