@@ -1,6 +1,6 @@
 <template>
-  <div class="ao-page">
-    <div class="controls">
+  <div class="ao-page" :class="{ 'is-bottom': controlsPosition === 'bottom' }">
+    <div class="controls" v-if="$slots.controls">
       <slot
         name="controls"
         :isPrev="isPreDisabled"
@@ -27,6 +27,12 @@ const props = defineProps({
   },
   size: { type: Number, default: 10 },
   total: { type: Number, default: 0 },
+  /** controls 插槽位置：top 在内容上方，bottom 在内容下方 */
+  controlsPosition: {
+    type: String,
+    default: 'top',
+    validator: (value: string) => ['top', 'bottom'].includes(value),
+  },
 });
 
 const emit = defineEmits(['update:current']);
@@ -71,10 +77,29 @@ defineExpose({ handlePageChange, isNextDisabled, isPreDisabled });
 .ao-page {
   width: 100%;
   height: 100%;
-}
+  display: flex;
+  flex-direction: column;
 
-.page-wrapper {
-  width: 100%;
-  height: 100%;
+  .controls {
+    flex-shrink: 0;
+    order: 0;
+  }
+
+  .page-wrapper {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    order: 1;
+  }
+
+  &.is-bottom {
+    .controls {
+      order: 1;
+    }
+
+    .page-wrapper {
+      order: 0;
+    }
+  }
 }
 </style>
