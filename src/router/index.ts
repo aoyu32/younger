@@ -75,7 +75,7 @@ const routes = [
       {
         name: 'news-detail',
         path: '/news/:id',
-        component: () => import('@/view/news/index.vue'),
+        component: () => import('@/view/news-detail/index.vue'),
         meta: {
           title: '新闻详情',
           menu: false,
