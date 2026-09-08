@@ -1,10 +1,15 @@
 <template>
-  <div class="player-container" ref="containerRef">
+  <div
+    class="player-container"
+    ref="containerRef"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+  >
     <video-player class="video-player">
       <media-container>
         <video
           :src="src"
-          autoplay
+          :autoplay="autoPlay"
           playsinline
           ref="videoRef"
           @click="togglePlay"
@@ -17,7 +22,10 @@
           @play="handlePlay"
           @loadedmetadata="handleLoadedMetadata"
         ></video>
-        <div class="pause-overlay" :class="{ visible: showPauseOverlay }">
+        <div
+          class="pause-overlay"
+          :class="{ visible: showPauseOverlay && !hoverPlay }"
+        >
           <div class="pause-overlay-wrapper">
             <img :src="iconPlay" alt="暂停" />
           </div>
@@ -134,7 +142,7 @@
             </svg>
           </div>
         </div>
-        <media-controls class="media-controls">
+        <media-controls class="media-controls" v-if="controls">
           <!-- 进度条行 -->
           <div class="progress-row">
             <media-time-slider class="media-time-slider">
@@ -288,10 +296,24 @@ import iconExitPip from './icons/icon_exit_pip.svg?url';
 import iconFullscreen from './icons/icon_fullscreen.svg?url';
 import iconExitFullscreen from './icons/icon_exit_fullscreen.svg?url';
 
-const props = defineProps<{
-  src: string;
-  poster?: string;
-}>();
+defineOptions({
+  name: 'ao-video-player',
+});
+
+const props = withDefaults(
+  defineProps<{
+    src: string;
+    poster?: string;
+    controls?: boolean;
+    hoverPlay?: boolean;
+    autoPlay?: boolean;
+  }>(),
+  {
+    controls: true,
+    hoverPlay: false,
+    autoPlay: true,
+  },
+);
 
 const showPauseOverlay = ref(false);
 const showVolume = ref(false);
@@ -307,6 +329,7 @@ let hideTimer: ReturnType<typeof setTimeout> | null = null;
 let rateHideTimer: ReturnType<typeof setTimeout> | null = null;
 
 const togglePlay = () => {
+  if (props.hoverPlay) return;
   const video = videoRef.value;
   if (!video) return;
   if (video.paused) {
@@ -322,9 +345,31 @@ const handlePause = () => {
   isVideoLoading.value = false;
 };
 
+const handleMouseEnter = () => {
+  const video = videoRef.value;
+  if (!video) return;
+  if (props.hoverPlay) {
+    video.play();
+  }
+};
+
+const handleMouseLeave = () => {
+  const video = videoRef.value;
+  if (!video) return;
+  if (props.hoverPlay) {
+    video.currentTime = 0;
+    showPauseOverlay.value = true;
+    isVideoLoading.value = false;
+    video.pause();
+  }
+};
+
 const handleVideoSeeked = () => {
   const video = videoRef.value;
   if (!video) return;
+  if (props.hoverPlay) {
+    return;
+  }
   if (video.paused) {
     video.play();
     showPauseOverlay.value = false;
@@ -408,10 +453,14 @@ const handlePlaying = () => {
 const handleLoadedMetadata = async () => {
   const video = videoRef.value;
   if (!video) return;
-  try {
-    await video.play();
-    showPauseOverlay.value = false;
-  } catch (e) {
+  if (props.autoPlay) {
+    try {
+      await video.play();
+      showPauseOverlay.value = false;
+    } catch (e) {
+      showPauseOverlay.value = true;
+    }
+  } else {
     showPauseOverlay.value = true;
   }
 };
@@ -451,6 +500,5 @@ img {
 .video-player media-container {
   display: block;
   position: relative;
-  background-color: black;
 }
 </style>
