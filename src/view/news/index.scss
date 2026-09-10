@@ -1,0 +1,26 @@
+.news {
+  min-height: 100vh;
+}
+
+.section-wrapper {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  gap: 20px;
+  align-items: stretch;
+
+  .wrapper-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 0;
+  }
+
+  .wrapper-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wrapper-right {
+    background: rgba(0, 0, 255, 0.05);
+  }
+}

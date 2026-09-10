@@ -48,7 +48,7 @@ const routes = [
       {
         name: 'news',
         path: '/news',
-        component: () => import('@/view/app/index.vue'),
+        component: () => import('@/view/news/index.vue'),
         meta: {
           title: 'AI资讯',
           menu: true,
