@@ -45,7 +45,7 @@
         ></AoImage>
         <span>开通会员</span>
       </div>
-      <div class="right_user">
+      <div class="right_user" @click="$router.push('/')">
         <div class="auth-box flex-center" v-if="!isLogin">
           <div class="login" @click="router.push('/login')">登录</div>
           <div class="line"></div>
@@ -61,7 +61,7 @@
             />
           </div>
           <div class="user_name">
-            <div class="name ellipsis">张fdsfsdfsdf</div>
+            <div class="name ellipsis">张dffsdfsdfdsfsfdsfsdf</div>
           </div>
           <div class="header-menu">
             <div class="menu-wrapper">
@@ -87,7 +87,7 @@ defineOptions({
 });
 
 // 响应式数据
-const isLogin = ref(false);
+const isLogin = ref(true);
 
 const chLogoName = computed(() => {
   const name = routers.find((item) => item.path === '/home').meta.title;
@@ -308,8 +308,14 @@ const handleLogoClick = () => {
   .header-menu {
     position: absolute;
     top: 100%;
-    left: 0;
-    width: 100%;
+    /* 修复：改为右对齐，防止菜单超出屏幕右侧 */
+    right: 0;
+    left: auto;
+    /* 修复：取消宽度跟随父元素 */
+    /* width: 100%; */
+    /* 修复：由内容撑开宽度，并设置最小宽度 */
+    width: max-content;
+    min-width: 120px;
     margin-top: 8px;
     background-color: var(--ao-gray-0);
     box-shadow: var(--ao-shadow-md);
@@ -324,6 +330,9 @@ const handleLogoClick = () => {
       align-items: center;
       justify-content: center;
       padding: 10px 15px;
+      width: 100%;
+      /* 修复：强制文字不换行 */
+      white-space: nowrap;
 
       &:hover {
         background-color: var(--ao-gray-1);
