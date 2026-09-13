@@ -45,7 +45,7 @@
         ></AoImage>
         <span>开通会员</span>
       </div>
-      <div class="right_user" @click="$router.push('/')">
+      <div class="right_user" @click="$router.push('/profile')">
         <div class="auth-box flex-center" v-if="!isLogin">
           <div class="login" @click="router.push('/login')">登录</div>
           <div class="line"></div>

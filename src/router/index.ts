@@ -81,6 +81,15 @@ const routes = [
           menu: false,
         },
       },
+      {
+        name: 'profile',
+        path: '/profile',
+        component: () => import('@/view/profile/index.vue'),
+        meta: {
+          title: '个人中心',
+          menu: false,
+        },
+      },
     ],
   },
   {
