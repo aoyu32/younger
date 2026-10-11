@@ -9,79 +9,122 @@
 }
 
 .ao-dialog {
-  background-color: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 40px);
+  background-color: var(--ao-color-bg-container);
+  border-radius: var(--ao-border-radius-lg);
+  box-shadow: var(--ao-shadow-xl);
   overflow: hidden;
 
+  /* ---------- 头部 ---------- */
   &__header {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid #e8e8e8;
+    gap: var(--ao-spacing-md);
+    padding: 10px;
+    background-color: var(--ao-color-bg-layout);
+  }
+
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--ao-spacing-sm);
+    min-width: 0;
   }
 
   &__title {
+    min-width: 0;
     font-size: 16px;
-    font-weight: 500;
-    color: #333;
+    font-weight: 600;
+    color: var(--ao-color-text-base);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__close {
-    font-size: 18px;
-    color: #999;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: var(--ao-border-radius-circle);
+    background: none;
+    color: var(--ao-color-text-tertiary);
     cursor: pointer;
-    line-height: 1;
-    transition: color 0.2s;
+    transition:
+      color var(--ao-duration-fast) var(--ao-ease-in-out),
+      background-color var(--ao-duration-fast) var(--ao-ease-in-out);
 
     &:hover {
-      color: #333;
+      color: var(--ao-color-primary);
+      background-color: var(--ao-gray-2);
     }
   }
 
-  &__body {
-    padding: 20px;
-    min-height: 60px;
-    font-size: 14px;
-    color: #666;
+  /* 关闭图标：fill=currentColor，颜色跟随按钮文字色 */
+  &__close-icon {
+    width: 14px;
+    height: 14px;
   }
 
+  /* ---------- 内容区 ---------- */
+  &__body {
+    flex: 1;
+    min-height: 60px;
+    padding: var(--ao-spacing-lg);
+    font-size: var(--ao-font-size-sm);
+    color: var(--ao-color-text-secondary);
+    overflow: auto;
+  }
+
+  /* ---------- 底部按钮 ---------- */
   &__footer {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 12px 20px;
-    border-top: 1px solid #e8e8e8;
-    gap: 10px;
+    gap: var(--ao-spacing-sm);
+    padding: 10px;
+    background-color: var(--ao-color-bg-layout);
   }
 
   &__btn {
-    padding: 6px 16px;
+    padding: 5px 15px;
     font-size: 14px;
-    border-radius: 4px;
-    border: 1px solid #d9d9d9;
+    border-radius: var(--ao-border-radius-sm);
     cursor: pointer;
-    transition: all 0.2s;
+    transition:
+      color var(--ao-duration-fast) var(--ao-ease-in-out),
+      background-color var(--ao-duration-fast) var(--ao-ease-in-out),
+      border-color var(--ao-duration-fast) var(--ao-ease-in-out);
 
     &--cancel {
-      background-color: #fff;
+      border: var(--ao-border-width-thin) solid var(--ao-color-border);
+      background-color: var(--ao-color-bg-container);
+      color: var(--ao-color-text-secondary);
 
       &:hover {
-        color: #409eff;
-        border-color: #c6e2ff;
-        background-color: #ecf5ff;
+        color: var(--ao-color-primary);
+        border-color: var(--ao-color-primary);
       }
     }
 
     &--confirm {
-      background-color: #409eff;
-      color: #fff;
-      border-color: #409eff;
+      border: var(--ao-border-width-thin) solid var(--ao-color-primary);
+      background-color: var(--ao-color-primary);
+      color: var(--ao-gray-0);
 
       &:hover {
-        background-color: #66b1ff;
-        border-color: #66b1ff;
+        border-color: var(--ao-color-primary-hover);
+        background-color: var(--ao-color-primary-hover);
       }
     }
   }
@@ -89,7 +132,7 @@
 
 .ao-dialog-fade-enter-active,
 .ao-dialog-fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity var(--ao-duration-fast) var(--ao-ease-in-out);
 }
 
 .ao-dialog-fade-enter-from,
