@@ -120,7 +120,7 @@
 import { computed, ref, watch } from 'vue';
 import NavFlowerLine from './NavFlowerLine.vue';
 import SwayingRose from './SwayingRose.vue';
-import HistoryRecord from './HistoryRecord.vue';
+import HistoryRecord from './history-record/HistoryRecord.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
 
 /** 历史记录菜单 key：命中后内容区渲染 HistoryRecord */

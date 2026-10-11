@@ -1,12 +1,10 @@
 <template>
   <div ref="rootRef" class="history-record">
-    <!-- 左侧时间线：sticky 固定在滚动视口内，圆点绝对定位跟随内容 -->
-    <aside class="history-aside">
+    <!-- 左侧时间线：无数据时整体隐藏 -->
+    <aside v-if="activeGroups.length" class="history-aside">
       <div ref="timelineRef" class="timeline">
-        <!-- 竖线：铺满全高，头尾由渐变遮罩淡化 -->
         <span class="timeline__rail" aria-hidden="true" />
 
-        <!-- 动态圆点：top 由 JS 计算，绝对定位 -->
         <button
           v-for="item in timelineItems"
           :key="item.key"
@@ -43,7 +41,10 @@
         </section>
       </template>
 
-      <div v-if="!activeGroups.length" class="history-empty">暂无观看记录</div>
+      <div v-if="!activeGroups.length" class="history-empty">
+        <img :src="emptyIcon" alt="" />
+        <p>没有历史记录</p>
+      </div>
     </div>
   </div>
 </template>
@@ -61,6 +62,7 @@ import type { ComponentPublicInstance } from 'vue';
 import UserVideoCard from './UserVideoCard.vue';
 import type { VideoHistoryItem } from './UserVideoCard.vue';
 import { categoryData, type VideoItem } from '@/mock/videoLIst';
+import emptyIcon from '@/assets/website/icon_empty.svg?url';
 
 defineOptions({
   name: 'HistoryRecord',
@@ -160,19 +162,13 @@ const groups = ref<HistoryGroup[]>([
     key: 'week-ago',
     title: '一周前',
     label: '一周前',
-    list: [
-      createItem(23, daysAgo(9), 0.5),
-      createItem(16, daysAgo(12), 0.04),
-    ],
+    list: [createItem(23, daysAgo(9), 0.5), createItem(16, daysAgo(12), 0.04)],
   },
   {
     key: 'month-ago',
     title: '一个月前',
     label: '一个月前',
-    list: [
-      createItem(3, daysAgo(20), 0.38),
-      createItem(7, daysAgo(25), 0.88),
-    ],
+    list: [createItem(3, daysAgo(20), 0.38), createItem(7, daysAgo(25), 0.88)],
   },
 ]);
 
@@ -420,6 +416,7 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .history-record {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: var(--ao-spacing-xl);
@@ -565,10 +562,27 @@ onBeforeUnmount(() => {
   }
 }
 
+/* 空状态：绝对定位铺满内容区（父级高度为 min-height + auto，flex 无法撑满），
+   图标与文案整体水平垂直居中 */
 .history-empty {
-  padding: var(--ao-spacing-xxl) 0;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ao-spacing-md);
   text-align: center;
   font-size: var(--ao-font-size-sm);
   color: var(--ao-color-text-tertiary);
+
+  img {
+    width: 64px;
+    height: 64px;
+  }
+
+  p {
+    margin: 0;
+  }
 }
 </style>
