@@ -7,8 +7,17 @@ import AoButton from './ao-button/index.vue';
 import AoInput from './ao-input/index.vue';
 import AoScrollbar from './ao-scrollbar/index.vue';
 import AoDialog from './ao-dialog/index.vue';
+import AoPagination from './ao-pagination/index.vue';
 
-const components = [AoIcon, AoPage, AoImage, AoButton, AoInput, AoScrollbar];
+const components = [
+  AoIcon,
+  AoPage,
+  AoImage,
+  AoButton,
+  AoInput,
+  AoScrollbar,
+  AoPagination,
+];
 export default {
   install(app: App) {
     components.forEach((component) => {
