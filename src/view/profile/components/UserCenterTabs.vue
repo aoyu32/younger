@@ -70,61 +70,27 @@
           </template>
         </div>
         <div class="header-actions">
-          <!-- 历史记录：批量管理 / 全部清空 -->
-          <template v-if="activeKey === HISTORY_KEY">
-            <button
-              type="button"
-              class="header-action-btn"
-              @click="handleToggleBatchMode"
-            >
-              {{ batchMode ? '完成管理' : '批量管理' }}
-            </button>
-            <button
-              type="button"
-              class="header-action-btn"
-              @click="clearDialogVisible = true"
-            >
-              全部清空
-            </button>
-          </template>
-          <slot v-else name="actions" />
+          <slot
+            name="actions"
+            :active-key="activeKey"
+            :active-item="activeItem"
+          />
         </div>
       </header>
 
       <div class="content-inner">
         <ao-scrollbar class="content-body">
-          <!-- 历史记录：命中对应菜单时直接渲染内部组件，其余走插槽 -->
-          <HistoryRecord
-            v-if="activeKey === HISTORY_KEY"
-            ref="historyRef"
-            :batch-mode="batchMode"
-          />
-          <slot v-else :active-key="activeKey" :active-item="activeItem" />
+          <slot :active-key="activeKey" :active-item="activeItem" />
         </ao-scrollbar>
       </div>
     </section>
-
-    <!-- 清空历史记录二次确认 -->
-    <AoDialog
-      v-model="clearDialogVisible"
-      title="清空观看记录"
-      confirm-text="清空"
-      @confirm="handleClearHistory"
-    >
-      确定要清空全部观看记录吗？清空后不可恢复。
-    </AoDialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import NavFlowerLine from './NavFlowerLine.vue';
 import SwayingRose from './SwayingRose.vue';
-import HistoryRecord from './history-record/HistoryRecord.vue';
-import AoDialog from '@/components/ao-dialog/index.vue';
-
-/** 历史记录菜单 key：命中后内容区渲染 HistoryRecord */
-const HISTORY_KEY = 'course-watching';
 
 interface NavItem {
   key: string;
@@ -230,34 +196,6 @@ function findItem(groups: NavItem[], key: string): NavItem | undefined {
   }
   return undefined;
 }
-
-/* ============================================================
-   历史记录操作区：批量管理 / 全部清空
-   ============================================================ */
-/** 批量管理模式：开启后历史卡片右上角展示勾选框 */
-const batchMode = ref(false);
-
-/** 清空二次确认弹窗 */
-const clearDialogVisible = ref(false);
-
-const historyRef = ref<InstanceType<typeof HistoryRecord>>();
-
-/** 切换批量管理 */
-function handleToggleBatchMode() {
-  batchMode.value = !batchMode.value;
-}
-
-/** 确认清空全部历史记录 */
-function handleClearHistory() {
-  historyRef.value?.clearAll();
-  clearDialogVisible.value = false;
-  batchMode.value = false;
-}
-
-/** 离开历史记录菜单时退出批量管理 */
-watch(activeKey, (key) => {
-  if (key !== HISTORY_KEY) batchMode.value = false;
-});
 
 const emit = defineEmits<{
   change: [item: NavItem];
@@ -444,22 +382,6 @@ $bw: 1px;
   display: flex;
   align-items: center;
   gap: var(--ao-spacing-md);
-}
-
-/* 头部文本按钮（批量管理 / 全部清空） */
-.header-action-btn {
-  padding: 0;
-  border: none;
-  background: none;
-  font-size: var(--ao-font-size-sm);
-  color: var(--ao-color-text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color var(--ao-duration-fast) var(--ao-ease-in-out);
-
-  &:hover {
-    color: var(--ao-color-primary);
-  }
 }
 
 .content-body {
