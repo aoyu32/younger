@@ -3,7 +3,11 @@
     <header>
       <LayoutHeader />
     </header>
-    <main>
+    <main
+      :style="{
+        paddingTop: $route.path === '/profile' ? '5px' : 'var(-ao-spacing-sm)',
+      }"
+    >
       <router-view />
     </main>
     <footer>

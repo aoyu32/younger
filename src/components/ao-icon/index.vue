@@ -49,6 +49,7 @@ const iconStyle = computed(() => {
   justify-content: center;
   transition: color 0.2s;
   color: var(--icon-color);
+  cursor: pointer;
   &:hover {
     color: var(--icon-hover-color);
   }

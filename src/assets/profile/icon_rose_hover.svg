@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 130" fill="none">
+  <defs>
+    <linearGradient id="fade" x1="0" x2="600" y1="0" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0"    stop-color="#00b5b5" stop-opacity="0"/>
+      <stop offset="0.10" stop-color="#00b5b5" stop-opacity="0.7"/>
+      <stop offset="0.30" stop-color="#00b5b5" stop-opacity="1"/>
+      <stop offset="0.88" stop-color="#00b5b5" stop-opacity="1"/>
+      <stop offset="1"    stop-color="#00b5b5" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- 玫瑰：显式长度，起点无残留 -->
+    <g id="rose">
+      <path d="M7,-6.5 C10.5,-3 10.5,2.5 7,5.5 C3.5,8.5 -2.5,8.5 -6,5.5 C-9.5,2.5 -9.5,-2.5 -6,-5.5"
+            stroke-width="0.6" fill="none" stroke-linecap="butt"
+            stroke-dasharray="44" stroke-dashoffset="44">
+        <animate attributeName="stroke-dashoffset" from="44" to="0"
+                 dur="0.32s" begin="0.72s" fill="freeze"
+                 calcMode="spline" keyTimes="0;1" keySplines="0.25 0 0.2 1"/>
+      </path>
+      <path d="M-4,-4.5 C-1,-6 3.5,-5 5,-2 C6.5,1 5,4.5 2.5,5.5"
+            stroke-width="0.5" fill="none" stroke-linecap="butt" opacity="0.85"
+            stroke-dasharray="24" stroke-dashoffset="24">
+        <animate attributeName="stroke-dashoffset" from="24" to="0"
+                 dur="0.26s" begin="0.88s" fill="freeze"
+                 calcMode="spline" keyTimes="0;1" keySplines="0.25 0 0.2 1"/>
+      </path>
+      <path d="M0.5,-2 C2.2,-1.5 2.8,0.5 1.8,2 C0.8,3.5 -1.5,3.5 -2.5,2 C-3.5,0.5 -2.8,-1.8 -1,-2.5"
+            stroke-width="0.5" fill="none" stroke-linecap="butt" opacity="0.95"
+            stroke-dasharray="18" stroke-dashoffset="18">
+        <animate attributeName="stroke-dashoffset" from="18" to="0"
+                 dur="0.22s" begin="1.02s" fill="freeze"
+                 calcMode="spline" keyTimes="0;1" keySplines="0.25 0 0.2 1"/>
+      </path>
+      <circle r="0.55" fill="#00b5b5" opacity="0">
+        <animate attributeName="opacity" from="0" to="1"
+                 dur="0.16s" begin="1.16s" fill="freeze"
+                 calcMode="spline" keyTimes="0;1" keySplines="0.25 0 0.2 1"/>
+      </circle>
+    </g>
+
+    <!-- 叶子 -->
+    <g id="leaf">
+      <path d="M0,0 C3,-4 8,-5 12,-3 C8,1 3,2 0,0Z" stroke-width="0.4" fill="none" opacity="0.7"/>
+      <path d="M0,0 L10,-3" stroke-width="0.22" opacity="0.4"/>
+    </g>
+  </defs>
+
+  <!-- ① 枝干：0.70s 一气呵成，dasharray 贴实际长度，缓出曲线 -->
+  <path d="M 15,96
+           C 95,86 155,100 235,90
+           C 315,80 375,98 394,92
+           C 420,89 440,89 458,90
+           C 478,92 490,104 483,114
+           C 476,123 460,118 460,108
+           C 460,100 470,98 475,104"
+        stroke="url(#fade)" stroke-width="0.9" stroke-linecap="round" fill="none"
+        stroke-dasharray="560" stroke-dashoffset="560">
+    <animate attributeName="stroke-dashoffset" from="560" to="0"
+             dur="0.70s" fill="freeze"
+             calcMode="spline" keyTimes="0;1" keySplines="0.25 0 0.2 1"/>
+  </path>
+
+  <!-- ② 花茎：0.58s 起，与枝干末端重叠 0.12s -->
+  <path d="M 394,92 C 402,80 404,60 410,44"
+        stroke="#00b5b5" stroke-width="0.9" stroke-linecap="round" fill="none"
+        stroke-dasharray="70" stroke-dashoffset="70">
+    <animate attributeName="stroke-dashoffset" from="70" to="0"
+             dur="0.22s" begin="0.58s" fill="freeze"
+             calcMode="spline" keyTimes="0;1" keySplines="0.25 0 0.2 1"/>
+  </path>
+
+  <!-- ③ 茎上叶子：0.70s 淡入（花茎已画过它） -->
+  <use href="#leaf" transform="translate(400,70) rotate(-40) scale(0.85)" stroke="#00b5b5" opacity="0">
+    <animate attributeName="opacity" from="0" to="1"
+             dur="0.18s" begin="0.70s" fill="freeze"
+             calcMode="spline" keyTimes="0;1" keySplines="0.25 0 0.2 1"/>
+  </use>
+
+  <!-- ④ 玫瑰：0.72s 起逐圈绘制，与花茎重叠 -->
+  <g transform="translate(410,42) scale(1.7)">
+    <use href="#rose" stroke="#00b5b5"/>
+  </g>
+</svg>

@@ -1,0 +1,176 @@
+<svg viewBox="0 -10 1200 130" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="auto" fill="none">
+  <defs>
+    <!-- 主藤渐变：两端浅灰 → 中间主色青 -->
+    <linearGradient id="vineGrad" x1="0" x2="1200" y1="55" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0"    stop-color="#b2b1b1" stop-opacity="0"/>
+      <stop offset="0.10" stop-color="#b2b1b1" stop-opacity="0.7"/>
+      <stop offset="0.50" stop-color="#00b5b5" stop-opacity="1"/>
+      <stop offset="0.90" stop-color="#b2b1b1" stop-opacity="0.7"/>
+      <stop offset="1"    stop-color="#b2b1b1" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- 灰色基础层渐变 -->
+    <linearGradient id="grayGrad" x1="0" x2="1200" y1="55" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0"    stop-color="#b2b1b1" stop-opacity="0"/>
+      <stop offset="0.10" stop-color="#b2b1b1" stop-opacity="0.7"/>
+      <stop offset="0.50" stop-color="#b2b1b1" stop-opacity="1"/>
+      <stop offset="0.90" stop-color="#b2b1b1" stop-opacity="0.7"/>
+      <stop offset="1"    stop-color="#b2b1b1" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- 玫瑰描边渐变 -->
+    <linearGradient id="roseGrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#00b5b5"/>
+      <stop offset="1" stop-color="#00e5e5"/>
+    </linearGradient>
+
+    <!-- 柔光滤镜 -->
+    <filter id="softGlow" x="-300%" y="-300%" width="700%" height="700%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+
+    <!-- 遮罩：从两端向中间生长 -->
+    <mask id="revealMask" maskUnits="userSpaceOnUse" x="0" y="-20" width="1200" height="160">
+      <rect x="0" y="-20" width="1200" height="160" fill="black"/>
+      <rect x="0" y="-20" height="160" fill="white">
+        <animate attributeName="width" values="0;600;600" keyTimes="0;0.45;1" dur="8s" repeatCount="indefinite"
+          calcMode="spline" keySplines="0.4 0 0.2 1;0 0 1 1"/>
+      </rect>
+      <rect y="-20" height="160" fill="white">
+        <animate attributeName="x"     values="1200;600;600" keyTimes="0;0.45;1" dur="8s" repeatCount="indefinite"
+          calcMode="spline" keySplines="0.4 0 0.2 1;0 0 1 1"/>
+        <animate attributeName="width" values="0;600;600"    keyTimes="0;0.45;1" dur="8s" repeatCount="indefinite"
+          calcMode="spline" keySplines="0.4 0 0.2 1;0 0 1 1"/>
+      </rect>
+    </mask>
+
+    <!-- 主藤路径（幅度 ±5） -->
+    <path id="vinePath" d="M0,55
+      C50,55 70,50 130,50
+      C190,50 210,60 270,60
+      C330,60 350,50 410,50
+      C470,50 490,60 550,60
+      C610,60 630,50 690,50
+      C750,50 770,60 830,60
+      C890,60 910,50 970,50
+      C1030,50 1050,55 1200,55"/>
+
+    <!-- 抽象玫瑰：三圈弧线 + 螺旋花心（线条更细） -->
+    <g id="rose">
+      <path d="M7,-6.5 C10.5,-3 10.5,2.5 7,5.5 C3.5,8.5 -2.5,8.5 -6,5.5 C-9.5,2.5 -9.5,-2.5 -6,-5.5"
+            stroke-width="0.6" fill="none" stroke-linecap="round"/>
+      <path d="M-4,-4.5 C-1,-6 3.5,-5 5,-2 C6.5,1 5,4.5 2.5,5.5"
+            stroke-width="0.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+      <path d="M0.5,-2 C2.2,-1.5 2.8,0.5 1.8,2 C0.8,3.5 -1.5,3.5 -2.5,2 C-3.5,0.5 -2.8,-1.8 -1,-2.5"
+            stroke-width="0.5" fill="none" stroke-linecap="round" opacity="0.95"/>
+      <circle r="0.55" opacity="0.9"/>
+    </g>
+
+    <!-- 叶子 -->
+    <g id="leaf">
+      <path d="M0,0 C3,-4 8,-5 12,-3 C8,1 3,2 0,0Z" stroke-width="0.4" fill="none" opacity="0.65"/>
+      <path d="M0,0 L10,-3" stroke-width="0.22" opacity="0.35"/>
+    </g>
+  </defs>
+
+  <!-- ==================== 灰色基础层 ==================== -->
+  <g>
+    <use href="#vinePath" xlink:href="#vinePath" stroke="url(#grayGrad)" stroke-width="0.8" stroke-linecap="round"/>
+
+    <!-- 上枝 -->
+    <path d="M130,50 C140,44 138,32 130,26" stroke="#b2b1b1" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+    <path d="M410,50 C420,43 418,30 410,24" stroke="#b2b1b1" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+    <path d="M690,50 C700,44 698,33 690,26" stroke="#b2b1b1" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+    <path d="M970,50 C980,43 978,30 970,24" stroke="#b2b1b1" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- 下枝 -->
+    <path d="M270,60 C280,66 278,78 270,84" stroke="#b2b1b1" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+    <path d="M550,60 C560,67 558,79 550,86" stroke="#b2b1b1" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+    <path d="M830,60 C840,66 838,78 830,84" stroke="#b2b1b1" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- 灰色花朵 -->
+    <use href="#rose" xlink:href="#rose" transform="translate(130,26) scale(0.78)" stroke="#b2b1b1"/>
+    <use href="#rose" xlink:href="#rose" transform="translate(410,24) scale(0.85)" stroke="#b2b1b1"/>
+    <use href="#rose" xlink:href="#rose" transform="translate(690,26) scale(0.78)" stroke="#b2b1b1"/>
+    <use href="#rose" xlink:href="#rose" transform="translate(970,24) scale(0.82)" stroke="#b2b1b1"/>
+    <use href="#rose" xlink:href="#rose" transform="translate(270,84) scale(0.78)" stroke="#b2b1b1"/>
+    <use href="#rose" xlink:href="#rose" transform="translate(550,86) scale(0.85)" stroke="#b2b1b1"/>
+    <use href="#rose" xlink:href="#rose" transform="translate(830,84) scale(0.78)" stroke="#b2b1b1"/>
+
+    <!-- 灰色叶子 -->
+    <use href="#leaf" xlink:href="#leaf" transform="translate(134,39) rotate(-30) scale(0.7)" stroke="#b2b1b1"/>
+    <use href="#leaf" xlink:href="#leaf" transform="translate(414,38) rotate(-30) scale(0.7)" stroke="#b2b1b1"/>
+    <use href="#leaf" xlink:href="#leaf" transform="translate(694,39) rotate(-30) scale(0.7)" stroke="#b2b1b1"/>
+    <use href="#leaf" xlink:href="#leaf" transform="translate(974,38) rotate(-30) scale(0.7)" stroke="#b2b1b1"/>
+    <use href="#leaf" xlink:href="#leaf" transform="translate(274,72) rotate(45) scale(0.7)" stroke="#b2b1b1"/>
+    <use href="#leaf" xlink:href="#leaf" transform="translate(554,74) rotate(45) scale(0.7)" stroke="#b2b1b1"/>
+    <use href="#leaf" xlink:href="#leaf" transform="translate(834,72) rotate(45) scale(0.7)" stroke="#b2b1b1"/>
+  </g>
+
+  <!-- ==================== 彩色层（展开 + 柔和淡出） ==================== -->
+  <g mask="url(#revealMask)">
+    <g>
+      <animate attributeName="opacity" values="1;1;1;0" keyTimes="0;0.45;0.70;1" dur="8s" repeatCount="indefinite"
+        calcMode="spline" keySplines="0 0 1 1;0 0 1 1;0.4 0 0.6 1"/>
+
+      <use href="#vinePath" xlink:href="#vinePath" stroke="url(#vineGrad)" stroke-width="0.8" stroke-linecap="round"/>
+
+      <!-- 上枝 -->
+      <path d="M130,50 C140,44 138,32 130,26" stroke="#00b5b5" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+      <path d="M410,50 C420,43 418,30 410,24" stroke="#00b5b5" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+      <path d="M690,50 C700,44 698,33 690,26" stroke="#00b5b5" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+      <path d="M970,50 C980,43 978,30 970,24" stroke="#00b5b5" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+
+      <!-- 下枝 -->
+      <path d="M270,60 C280,66 278,78 270,84" stroke="#00b5b5" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+      <path d="M550,60 C560,67 558,79 550,86" stroke="#00b5b5" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+      <path d="M830,60 C840,66 838,78 830,84" stroke="#00b5b5" stroke-width="0.45" stroke-linecap="round" opacity="0.7"/>
+
+      <!-- 彩色花朵（带轻微摇曳） -->
+      <g transform="translate(130,26) scale(0.78)">
+        <g><animateTransform attributeName="transform" type="rotate" values="-4;4;-4" dur="5s" repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <use href="#rose" xlink:href="#rose" stroke="url(#roseGrad)"/></g>
+      </g>
+      <g transform="translate(410,24) scale(0.85)">
+        <g><animateTransform attributeName="transform" type="rotate" values="-5;5;-5" dur="5.6s" repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <use href="#rose" xlink:href="#rose" stroke="url(#roseGrad)"/></g>
+      </g>
+      <g transform="translate(690,26) scale(0.78)">
+        <g><animateTransform attributeName="transform" type="rotate" values="4;-4;4" dur="5.2s" repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <use href="#rose" xlink:href="#rose" stroke="url(#roseGrad)"/></g>
+      </g>
+      <g transform="translate(970,24) scale(0.82)">
+        <g><animateTransform attributeName="transform" type="rotate" values="-4;4;-4" dur="5.4s" repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <use href="#rose" xlink:href="#rose" stroke="url(#roseGrad)"/></g>
+      </g>
+      <g transform="translate(270,84) scale(0.78)">
+        <g><animateTransform attributeName="transform" type="rotate" values="4;-4;4" dur="5.3s" repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <use href="#rose" xlink:href="#rose" stroke="url(#roseGrad)"/></g>
+      </g>
+      <g transform="translate(550,86) scale(0.85)">
+        <g><animateTransform attributeName="transform" type="rotate" values="-5;5;-5" dur="5.8s" repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <use href="#rose" xlink:href="#rose" stroke="url(#roseGrad)"/></g>
+      </g>
+      <g transform="translate(830,84) scale(0.78)">
+        <g><animateTransform attributeName="transform" type="rotate" values="4;-4;4" dur="5.1s" repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+          <use href="#rose" xlink:href="#rose" stroke="url(#roseGrad)"/></g>
+      </g>
+
+      <!-- 彩色叶子 -->
+      <use href="#leaf" xlink:href="#leaf" transform="translate(134,39) rotate(-30) scale(0.7)" stroke="#00b5b5"/>
+      <use href="#leaf" xlink:href="#leaf" transform="translate(414,38) rotate(-30) scale(0.7)" stroke="#00b5b5"/>
+      <use href="#leaf" xlink:href="#leaf" transform="translate(694,39) rotate(-30) scale(0.7)" stroke="#00b5b5"/>
+      <use href="#leaf" xlink:href="#leaf" transform="translate(974,38) rotate(-30) scale(0.7)" stroke="#00b5b5"/>
+      <use href="#leaf" xlink:href="#leaf" transform="translate(274,72) rotate(45) scale(0.7)" stroke="#00b5b5"/>
+      <use href="#leaf" xlink:href="#leaf" transform="translate(554,74) rotate(45) scale(0.7)" stroke="#00b5b5"/>
+      <use href="#leaf" xlink:href="#leaf" transform="translate(834,72) rotate(45) scale(0.7)" stroke="#00b5b5"/>
+    </g>
+  </g>
+</svg>
