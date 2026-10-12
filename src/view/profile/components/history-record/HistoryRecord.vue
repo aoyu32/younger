@@ -87,10 +87,6 @@ interface HistoryGroup {
   list: VideoHistoryItem[];
 }
 
-/* ============================================================
-   观看历史：视频数据取自 mock 视频列表（@/mock/videoLIst）
-   观看进度与观看时间暂为模拟值，接入接口后替换为请求结果即可
-   ============================================================ */
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
@@ -172,10 +168,6 @@ const groups = ref<HistoryGroup[]>([
   },
 ]);
 
-/* ============================================================
-    批量管理：勾选状态
-    ============================================================ */
-/** 已勾选的记录 id（进入批量管理后可多选） */
 const selectedIds = ref<string[]>([]);
 
 /** 勾选 / 取消勾选一条记录 */
@@ -208,11 +200,9 @@ function clearAll() {
   });
 }
 
-defineExpose({ clearAll });
-
 /* ============================================================
     时间线
-    ============================================================ */
+   ============================================================ */
 const rootRef = ref<HTMLElement>();
 const timelineRef = ref<HTMLElement>();
 const activeKey = ref(groups.value[0]?.key ?? '');
@@ -220,8 +210,7 @@ const sectionEls = new Map<string, HTMLElement>();
 let scrollContainer: HTMLElement | null = null;
 let rafId = 0;
 
-/** 每个圆点的高度（px），用于防堆叠重叠 */
-const ITEM_HEIGHT = 26;
+const ITEM_HEIGHT = 36;
 
 interface TimelineItem {
   key: string;
@@ -238,6 +227,50 @@ const activeGroups = computed(() =>
   groups.value.filter((group) => group.list.length > 0),
 );
 
+const allSelectedIds = computed(() =>
+  activeGroups.value.flatMap((group) => group.list.map((item) => item.id)),
+);
+
+/** 是否已全选 */
+const isAllSelected = computed(
+  () =>
+    allSelectedIds.value.length > 0 &&
+    selectedIds.value.length === allSelectedIds.value.length,
+);
+
+/** 全选 / 取消全选 */
+function toggleSelectAll() {
+  selectedIds.value = isAllSelected.value ? [] : [...allSelectedIds.value];
+}
+
+/** 删除勾选的历史记录（由父级「删除」按钮调用） */
+function deleteSelected() {
+  if (!selectedIds.value.length) return;
+  const selected = new Set(selectedIds.value);
+  groups.value = groups.value.map((group) => ({
+    ...group,
+    list: group.list.filter((video) => !selected.has(video.id)),
+  }));
+  selectedIds.value = [];
+  // 分组可能被清空，重算一次
+  nextTick(() => {
+    syncHeights();
+    updateTimeline();
+    updateActive();
+  });
+}
+
+/** 已勾选数量 */
+const selectedCount = computed(() => selectedIds.value.length);
+
+defineExpose({
+  clearAll,
+  toggleSelectAll,
+  isAllSelected,
+  selectedCount,
+  deleteSelected,
+});
+
 function setSectionRef(
   key: string,
   el: Element | ComponentPublicInstance | null,
@@ -246,7 +279,6 @@ function setSectionRef(
   else sectionEls.delete(key);
 }
 
-/** 向上冒泡查找最近的滚动容器（即 UserCenterTabs 内的 AoScrollbar） */
 function findScrollParent(el?: HTMLElement | null) {
   let parent = el?.parentElement ?? null;
   while (parent && parent !== document.body) {
@@ -263,17 +295,6 @@ function findScrollParent(el?: HTMLElement | null) {
   return null;
 }
 
-/**
- * 核心：根据内容区滚动位置，计算每个圆点的 top 值。
- *
- * 规则：
- *  1. 圆点初始跟随其对应分组的位置（相对时间线顶部）
- *  2. 当分组滚出滚动容器顶部（relToContainer <= 0）时，圆点钳制到 0 → 固定在轴顶
- *  3. 多个已固定的圆点用 lastBottom 依次向下堆叠，避免重叠
- *
- * 关键点：用 .timeline 自身的 rect 作为渲染参照（不用 containerRect），
- * 避免 sticky 位置变化导致的错位。
- */
 function updateTimeline() {
   const container = scrollContainer;
   const timelineEl = timelineRef.value;
@@ -295,7 +316,7 @@ function updateTimeline() {
     const relToTimeline = sectionRect.top - timelineRect.top;
 
     // 滚出顶部 → 固定到轴顶；否则跟随内容
-    let top = relToContainer <= 0 ? 0 : relToTimeline;
+    let top = relToContainer <= 0 ? 10 : relToTimeline;
 
     // 防堆叠重叠
     if (top < lastBottom) top = lastBottom;
@@ -419,20 +440,17 @@ onBeforeUnmount(() => {
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: var(--ao-spacing-xl);
-  /* ✅ 关键：底部不加 padding，保证父级 content-box 底部与 sticky 元素底部齐平 */
+  gap: 15px;
   padding: 20px 20px 0;
   box-sizing: border-box;
-  /* min-height 由 JS 动态设置 */
 }
 
 /* ========== 左侧时间线 ========== */
 .history-aside {
-  /* 关键：sticky 固定在滚动视口内，高度由 JS 动态设置 */
   position: sticky;
   top: 0;
   flex-shrink: 0;
-  width: 88px;
+  width: 82px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -442,7 +460,6 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
 
-  /* 顶部渐变遮罩：盖住 rail 超出第一个圆点的部分 */
   &::before {
     content: '';
     position: absolute;
@@ -557,13 +574,11 @@ onBeforeUnmount(() => {
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--ao-spacing-md) var(--ao-spacing-sm);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
   }
 }
 
-/* 空状态：绝对定位铺满内容区（父级高度为 min-height + auto，flex 无法撑满），
-   图标与文案整体水平垂直居中 */
 .history-empty {
   position: absolute;
   inset: 0;

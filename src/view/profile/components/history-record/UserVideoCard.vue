@@ -196,12 +196,11 @@ function handleCardClick() {
 
   .card-title {
     margin: 0;
-    font-size: var(--ao-font-size-sm);
+    font-size: 13px;
     font-weight: var(--ao-font-weight-normal);
     line-height: var(--ao-line-height-base);
     color: var(--ao-color-text-base);
     min-height: 2lh;
-
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -240,7 +239,6 @@ function handleCardClick() {
   }
 }
 
-/* 批量管理：封面右上角勾选框 */
 .card-check {
   position: absolute;
   top: var(--ao-spacing-xs);
