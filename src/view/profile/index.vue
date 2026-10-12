@@ -128,7 +128,7 @@ import { computed, ref } from 'vue';
 import UserInfoCard from './components/UserInfoCard.vue';
 import UserCenterTabs from './components/UserCenterTabs.vue';
 import HistoryRecord from './components/history-record/HistoryRecord.vue';
-import MyPurchases from './my-purchases/MyPurchases.vue';
+import MyPurchases from './components/my-purchases/MyPurchases.vue';
 import VideoCourse from './components/video-course/VideoCourse.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import bgUrl from '@/assets/green-rose-flower.jpg';
