@@ -1,10 +1,22 @@
 <template>
   <div class="my-purchases">
-    <div class="purchases-grid">
-      <MyPurchasesCard v-for="item in pagedList" :key="item.id" :item="item" />
+    <!-- 上：已购课程列表（grid 布局） -->
+    <div v-if="purchaseList.length" class="purchases-grid">
+      <MyPurchasesCard
+        v-for="item in pagedList"
+        :key="item.id"
+        :item="item"
+      />
     </div>
 
-    <div class="purchases-pagination">
+    <!-- 空状态 -->
+    <div v-else class="purchases-empty">
+      <img :src="emptyIcon" alt="" />
+      <p>没有购买的课程</p>
+    </div>
+
+    <!-- 下：分页 -->
+    <div v-if="purchaseList.length" class="purchases-pagination">
       <AoPagination
         v-model:current="current"
         :page-size="pageSize"
@@ -18,6 +30,7 @@
 import { computed, ref } from 'vue';
 import MyPurchasesCard from './MyPurchasesCard.vue';
 import type { PurchaseItem } from './MyPurchasesCard.vue';
+import emptyIcon from '@/assets/website/icon_empty.svg?url';
 import { categoryData } from '@/mock/videoLIst';
 
 defineOptions({ name: 'MyPurchases' });
@@ -65,6 +78,29 @@ const pagedList = computed(() => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px 15px;
+}
+
+/* 空状态：外层滚动容器（.ao-scrollbar）带有定位上下文，
+   绝对定位铺满内容区，图标与文案整体居中 */
+.purchases-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ao-spacing-md);
+  font-size: var(--ao-font-size-sm);
+  color: var(--ao-color-text-tertiary);
+
+  img {
+    width: 64px;
+    height: 64px;
+  }
+
+  p {
+    margin: 0;
+  }
 }
 
 .purchases-pagination {
