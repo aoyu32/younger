@@ -4,10 +4,14 @@
       <div class="card_image">
         <img :src="app.icon" alt="" />
       </div>
-      <div class="card-actions">
-        <slot name="actions">
-          <!-- .prevent 不能省：外层 router-link 是 <a href>，
-               .stop 阻止不了浏览器的默认跳转行为 -->
+      <div
+        class="card-actions"
+        :class="{ 'is-visible': actionsVisible }"
+      >
+        <!-- 操作区插槽（默认插槽）：父组件传入任意内容即可整体替换
+             下方的下载 / 收藏 / 分享 三个圆点按钮；不传则展示默认按钮。
+             插槽属性：app 当前应用数据，collected 卡片内部收藏态 -->
+        <slot :app="app" :collected="collected">
           <button
             type="button"
             class="action-dot action-dot--error"
@@ -33,7 +37,6 @@
         </slot>
       </div>
     </div>
-    <!-- 滑动面板容器：裁剪在卡片内，card_top / tooltip 不受影响 -->
     <div class="card_panels">
       <div class="card_bottom">
         <div class="bottom_name">
@@ -97,6 +100,11 @@ const props = defineProps({
       size: 0,
     }),
   },
+  /** 批量管理模式：开启后操作区始终可见（如复选框），不再依赖 hover 显隐 */
+  actionsVisible: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -105,7 +113,6 @@ const emit = defineEmits<{
   share: [app: AppInfo];
 }>();
 
-/** 是否已收藏：点亮黄色圆点，tooltip 同步变为「已收藏」 */
 const collected = ref(false);
 
 /** 收藏 / 取消收藏 */
@@ -159,6 +166,8 @@ const cardTagBgColor3 = brandMix(shade3, 20);
   position: relative;
   width: 100%;
   aspect-ratio: 180 / 145;
+  /* 建立尺寸查询容器：批量管理复选框用 cqh 相对整卡高度定位 */
+  container-type: size;
   background-color: var(--ao-color-bg-container);
   box-shadow: var(--ao-shadow-sm);
   border-radius: 10px;
@@ -205,14 +214,30 @@ const cardTagBgColor3 = brandMix(shade3, 20);
   .card-actions {
     position: absolute;
     top: 50%;
-    right: var(--ao-spacing-sm);
+    right: 15px;
     transform: translateY(-50%);
     z-index: 3;
     display: flex;
     align-items: center;
     gap: 14px;
     opacity: 0;
-    transition: opacity var(--ao-duration-fast) var(--ao-ease-in-out);
+    /* visibility 0s 过渡：退场时立即隐藏。否则退出批量管理的一瞬，
+       插槽兜底的三个圆点会渲染进正在淡出的容器，闪一下才消失 */
+    visibility: hidden;
+    transition:
+      opacity var(--ao-duration-fast) var(--ao-ease-in-out),
+      visibility 0s;
+
+    /* 批量管理等场景：强制常显 */
+    &.is-visible {
+      opacity: 1;
+      visibility: visible;
+      /* 对齐 hover 态圆点位置：hover 时 card_top 收缩至 25% 高度，
+         其中点即卡面 12.5%。cqh 相对整卡高度，card_top 收缩不影响，
+         hover 时复选框完全静止；不支持容器查询的浏览器回退为 25% */
+      top: 25%;
+      top: 12.5cqh;
+    }
   }
 
   .action-dot {
@@ -294,6 +319,7 @@ const cardTagBgColor3 = brandMix(shade3, 20);
   &:hover {
     .card-actions {
       opacity: 1;
+      visibility: visible;
     }
 
     .card_top {
