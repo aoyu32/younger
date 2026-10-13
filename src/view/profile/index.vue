@@ -77,6 +77,34 @@
               </button>
             </template>
           </template>
+          <!-- 我的收藏-应用APP：批量管理 -->
+          <template v-else-if="activeItem?.key === APP_COLLECT_KEY">
+            <button
+              type="button"
+              class="header-action-btn"
+              @click="appCollectBatchMode = !appCollectBatchMode"
+            >
+              {{ appCollectBatchMode ? '完成管理' : '批量管理' }}
+            </button>
+            <!-- 批量管理模式下：全选 / 删除 -->
+            <template v-if="appCollectBatchMode">
+              <button
+                type="button"
+                class="header-action-btn"
+                @click="appCollectRef?.toggleSelectAll()"
+              >
+                {{ appCollectRef?.isAllSelected ? '取消全选' : '全选' }}
+              </button>
+              <button
+                type="button"
+                class="header-action-btn"
+                :disabled="!appCollectRef?.selectedCount"
+                @click="openDeleteDialog('app-collect')"
+              >
+                删除
+              </button>
+            </template>
+          </template>
         </template>
 
         <template #default="{ activeItem }">
@@ -93,6 +121,12 @@
             v-else-if="activeItem?.key === VIDEO_COLLECT_KEY"
             ref="courseRef"
             :batch-mode="collectBatchMode"
+          />
+          <!-- 我的收藏-应用APP -->
+          <AppCollect
+            v-else-if="activeItem?.key === APP_COLLECT_KEY"
+            ref="appCollectRef"
+            :batch-mode="appCollectBatchMode"
           />
           <div v-else class="tab-content">
             <h3 class="tab-title">{{ activeItem?.title }}</h3>
@@ -113,7 +147,7 @@
       <!-- 批量删除选中项二次确认（历史记录 / 收藏视频共用） -->
       <AoDialog
         v-model="deleteDialogVisible"
-        :title="deleteTarget === 'collect' ? '取消收藏' : '删除观看记录'"
+        :title="deleteTarget === 'history' ? '删除观看记录' : '取消收藏'"
         confirm-text="删除"
         @confirm="handleConfirmDelete"
       >
@@ -130,6 +164,7 @@ import UserCenterTabs from './components/UserCenterTabs.vue';
 import HistoryRecord from './components/history-record/HistoryRecord.vue';
 import MyPurchases from './components/my-purchases/MyPurchases.vue';
 import VideoCourse from './components/video-course/VideoCourse.vue';
+import AppCollect from './components/app-collect/AppCollect.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import bgUrl from '@/assets/green-rose-flower.jpg';
 
@@ -139,6 +174,8 @@ const HISTORY_KEY = 'course-watching';
 const PURCHASED_KEY = 'course-purchased';
 /** 「我的收藏-视频课程」菜单 key：命中后内容区渲染 VideoCourse */
 const VIDEO_COLLECT_KEY = 'collect-video';
+/** 「我的收藏-应用APP」菜单 key：命中后内容区渲染 AppCollect */
+const APP_COLLECT_KEY = 'collect-app';
 
 /** 批量管理模式：开启后历史卡片右上角展示勾选框 */
 const batchMode = ref(false);
@@ -146,11 +183,14 @@ const batchMode = ref(false);
 /** 收藏视频批量管理模式：开启后收藏卡片右上角展示勾选框 */
 const collectBatchMode = ref(false);
 
+/** 收藏应用批量管理模式：开启后应用卡片操作区显示复选框 */
+const appCollectBatchMode = ref(false);
+
 /** 清空二次确认弹窗 */
 const clearDialogVisible = ref(false);
 
-/** 批量删除目标：history 历史记录 / collect 收藏视频 */
-const deleteTarget = ref<'history' | 'collect' | null>(null);
+/** 批量删除目标：history 历史记录 / collect 收藏视频 / app-collect 收藏应用 */
+const deleteTarget = ref<'history' | 'collect' | 'app-collect' | null>(null);
 
 const deleteDialogVisible = computed({
   get: () => deleteTarget.value !== null,
@@ -167,18 +207,23 @@ const deleteCount = computed(() => {
   if (deleteTarget.value === 'collect') {
     return courseRef.value?.selectedCount ?? 0;
   }
+  if (deleteTarget.value === 'app-collect') {
+    return appCollectRef.value?.selectedCount ?? 0;
+  }
   return 0;
 });
 
 /** 删除确认文案 */
-const deleteConfirmText = computed(() =>
-  deleteTarget.value === 'collect'
-    ? `确定要取消收藏选中的 ${deleteCount.value} 个视频吗？取消后不可恢复。`
-    : `确定要删除选中的 ${deleteCount.value} 条观看记录吗？删除后不可恢复。`,
-);
+const deleteConfirmText = computed(() => {
+  if (deleteTarget.value === 'history') {
+    return `确定要删除选中的 ${deleteCount.value} 条观看记录吗？删除后不可恢复。`;
+  }
+  const label = deleteTarget.value === 'collect' ? '视频' : '应用';
+  return `确定要取消收藏选中的 ${deleteCount.value} 个${label}吗？取消后不可恢复。`;
+});
 
 /** 打开删除确认弹窗 */
-function openDeleteDialog(target: 'history' | 'collect') {
+function openDeleteDialog(target: 'history' | 'collect' | 'app-collect') {
   deleteTarget.value = target;
 }
 
@@ -186,10 +231,13 @@ const historyRef = ref<InstanceType<typeof HistoryRecord>>();
 
 const courseRef = ref<InstanceType<typeof VideoCourse>>();
 
+const appCollectRef = ref<InstanceType<typeof AppCollect>>();
+
 const handleChange = (item: { key: string; title: string }) => {
   // 离开对应菜单时退出批量管理
   if (item.key !== HISTORY_KEY) batchMode.value = false;
   if (item.key !== VIDEO_COLLECT_KEY) collectBatchMode.value = false;
+  if (item.key !== APP_COLLECT_KEY) appCollectBatchMode.value = false;
   // 关闭可能打开的删除确认弹窗
   deleteTarget.value = null;
   console.log('当前选中：', item.title);
@@ -206,6 +254,9 @@ function handleClearHistory() {
 function handleConfirmDelete() {
   if (deleteTarget.value === 'history') historyRef.value?.deleteSelected();
   if (deleteTarget.value === 'collect') courseRef.value?.deleteSelected();
+  if (deleteTarget.value === 'app-collect') {
+    appCollectRef.value?.deleteSelected();
+  }
   deleteTarget.value = null;
 }
 </script>
