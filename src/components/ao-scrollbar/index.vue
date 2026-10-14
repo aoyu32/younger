@@ -92,7 +92,6 @@ const scrolling = ref(false);
 const draggingY = ref(false);
 const draggingX = ref(false);
 
-// 移动端没有 mouseenter，靠滚动事件短暂显示滚动条
 const SCROLL_VISIBLE_DURATION = 800;
 let hideTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -121,21 +120,30 @@ function update() {
   const wrap = wrapRef.value;
   if (!wrap) return;
 
-  // 容差 1px，避免子像素取整造成的 scrollWidth/clientWidth 误差被误判为溢出
   const hasOverflowY = wrap.scrollHeight > wrap.clientHeight + 1;
   const hasOverflowX = wrap.scrollWidth > wrap.clientWidth + 1;
   const heightPercentage = (wrap.clientHeight * 100) / wrap.scrollHeight;
   const widthPercentage = (wrap.clientWidth * 100) / wrap.scrollWidth;
 
-  // 内容未溢出时隐藏对应滚动条；最窄保底 20%，避免滑块太小
-  sizeHeight.value = hasOverflowY
-    ? `${Math.max(heightPercentage, 20)}%`
-    : '';
+  sizeHeight.value = hasOverflowY ? `${Math.max(heightPercentage, 20)}%` : '';
   sizeWidth.value = hasOverflowX ? `${Math.max(widthPercentage, 20)}%` : '';
 
-  // translate 百分比基于滑块自身尺寸：scrollTop / clientHeight * 100 恰好映射到轨道位置
-  moveY.value = (wrap.scrollTop * 100) / wrap.clientHeight;
-  moveX.value = (wrap.scrollLeft * 100) / wrap.clientWidth;
+  moveY.value = calcThumbMove(
+    wrap.scrollTop,
+    wrap.scrollHeight - wrap.clientHeight,
+    hasOverflowY ? Math.max(heightPercentage, 20) / 100 : 1,
+  );
+  moveX.value = calcThumbMove(
+    wrap.scrollLeft,
+    wrap.scrollWidth - wrap.clientWidth,
+    hasOverflowX ? Math.max(widthPercentage, 20) / 100 : 1,
+  );
+}
+
+/** 滚动位置 → translate 百分比（相对滑块自身尺寸） */
+function calcThumbMove(pos: number, maxScroll: number, thumbRatio: number) {
+  if (maxScroll <= 0) return 0;
+  return (pos / maxScroll) * ((1 - thumbRatio) / thumbRatio) * 100;
 }
 
 function handleScroll() {
