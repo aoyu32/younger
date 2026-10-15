@@ -198,6 +198,8 @@
           />
           <!-- 我的订单-会员开通 -->
           <VipOrder v-else-if="activeItem?.key === ORDER_VIP_KEY" />
+          <!-- 我的订单-购买课程 -->
+          <CourseOrder v-else-if="activeItem?.key === ORDER_COURSE_KEY" />
           <div v-else class="tab-content">
             <h3 class="tab-title">{{ activeItem?.title }}</h3>
           </div>
@@ -238,6 +240,7 @@ import AppCollect from './components/app-collect/AppCollect.vue';
 import WebsiteCollect from './components/website-collect/WebsiteCollect.vue';
 import NewsCollect from './components/news-collect/NewsCollect.vue';
 import VipOrder from './components/vip-order/VipOrder.vue';
+import CourseOrder from './components/course-order/CourseOrder.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import bgUrl from '@/assets/green-rose-flower.jpg';
 
@@ -255,6 +258,8 @@ const WEBSITE_COLLECT_KEY = 'collect-website';
 const POST_COLLECT_KEY = 'collect-post';
 /** 「我的订单-会员开通」菜单 key：命中后内容区渲染 VipOrder */
 const ORDER_VIP_KEY = 'order-vip';
+/** 「我的订单-购买课程」菜单 key：命中后内容区渲染 CourseOrder */
+const ORDER_COURSE_KEY = 'order-course';
 
 /** 批量管理模式：开启后历史卡片右上角展示勾选框 */
 const batchMode = ref(false);
