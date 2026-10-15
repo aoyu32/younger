@@ -13,6 +13,26 @@ export function formateDate(date?: Date | number | string | undefined): string {
 }
 
 /**
+ * 格式化日期为中文样式 yyyy年M月d日
+ * 纯 yyyy-MM-dd 字符串直接拆字段，避免 new Date('2001-12-28') 按 UTC 解析在部分时区差一天。
+ * @param date 日期字符串、日期对象或毫秒时间戳，空值返回空串
+ * @returns 例如 "2001年12月28日"
+ */
+export function formatDateCN(date?: Date | number | string | undefined): string {
+  if (date === undefined || date === '') return '';
+  if (typeof date === 'string') {
+    const matched = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
+    if (matched)
+      return `${Number(matched[1])}年${Number(matched[2])}月${Number(
+        matched[3],
+      )}日`;
+  }
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return '';
+  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+}
+
+/**
  * 格式化字节大小为可读单位，undefined 返回 "0 B"
  * @param bytes 字节数
  * @returns 例如 "1 KB", "1.4 MB"

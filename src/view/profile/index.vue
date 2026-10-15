@@ -161,6 +161,33 @@
               </button>
             </template>
           </template>
+          <!-- 个人信息-我的资料：查看态显示「编辑资料」，编辑态显示「取消 / 保存」 -->
+          <template v-else-if="activeItem?.key === PROFILE_KEY">
+            <template v-if="profileRef?.editing">
+              <button
+                type="button"
+                class="header-action-btn"
+                @click="profileRef?.cancelEdit()"
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                class="header-action-btn header-action-btn--primary"
+                @click="profileRef?.save()"
+              >
+                保存
+              </button>
+            </template>
+            <button
+              v-else
+              type="button"
+              class="header-action-btn"
+              @click="profileRef?.startEdit()"
+            >
+              编辑资料
+            </button>
+          </template>
         </template>
 
         <template #default="{ activeItem }">
@@ -200,6 +227,11 @@
           <VipOrder v-else-if="activeItem?.key === ORDER_VIP_KEY" />
           <!-- 我的订单-购买课程 -->
           <CourseOrder v-else-if="activeItem?.key === ORDER_COURSE_KEY" />
+          <!-- 个人信息-我的资料 -->
+          <ProfileInfo
+            v-else-if="activeItem?.key === PROFILE_KEY"
+            ref="profileRef"
+          />
           <div v-else class="tab-content">
             <h3 class="tab-title">{{ activeItem?.title }}</h3>
           </div>
@@ -241,6 +273,7 @@ import WebsiteCollect from './components/website-collect/WebsiteCollect.vue';
 import NewsCollect from './components/news-collect/NewsCollect.vue';
 import VipOrder from './components/vip-order/VipOrder.vue';
 import CourseOrder from './components/course-order/CourseOrder.vue';
+import ProfileInfo from './components/profile-info/ProfileInfo.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import bgUrl from '@/assets/green-rose-flower.jpg';
 
@@ -260,6 +293,8 @@ const POST_COLLECT_KEY = 'collect-post';
 const ORDER_VIP_KEY = 'order-vip';
 /** 「我的订单-购买课程」菜单 key：命中后内容区渲染 CourseOrder */
 const ORDER_COURSE_KEY = 'order-course';
+/** 「个人信息-我的资料」菜单 key：命中后内容区渲染 ProfileInfo */
+const PROFILE_KEY = 'profile';
 
 /** 批量管理模式：开启后历史卡片右上角展示勾选框 */
 const batchMode = ref(false);
@@ -345,6 +380,8 @@ const websiteCollectRef = ref<InstanceType<typeof WebsiteCollect>>();
 
 const newsCollectRef = ref<InstanceType<typeof NewsCollect>>();
 
+const profileRef = ref<InstanceType<typeof ProfileInfo>>();
+
 const handleChange = (item: { key: string; title: string }) => {
   // 离开对应菜单时退出批量管理
   if (item.key !== HISTORY_KEY) batchMode.value = false;
@@ -352,6 +389,8 @@ const handleChange = (item: { key: string; title: string }) => {
   if (item.key !== APP_COLLECT_KEY) appCollectBatchMode.value = false;
   if (item.key !== WEBSITE_COLLECT_KEY) websiteCollectBatchMode.value = false;
   if (item.key !== POST_COLLECT_KEY) newsCollectBatchMode.value = false;
+  // 离开「我的资料」时退出编辑态，丢弃未保存的改动
+  if (item.key !== PROFILE_KEY) profileRef.value?.cancelEdit();
   // 关闭可能打开的删除确认弹窗
   deleteTarget.value = null;
   console.log('当前选中：', item.title);
@@ -405,6 +444,15 @@ function handleConfirmDelete() {
     &:hover {
       color: var(--ao-color-text-disabled);
     }
+  }
+}
+
+/* 主操作（如「保存」）：常驻品牌色 */
+.header-action-btn--primary {
+  color: var(--ao-color-primary);
+
+  &:hover:not(:disabled) {
+    color: var(--ao-color-primary-hover);
   }
 }
 </style>
