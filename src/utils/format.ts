@@ -13,19 +13,22 @@ export function formateDate(date?: Date | number | string | undefined): string {
 }
 
 /**
- * 格式化日期为中文样式 yyyy年M月d日
+ * 格式化日期为中文样式 yyyy年M月d日（带时分时保留为「yyyy年M月d日 HH:mm」）
  * 纯 yyyy-MM-dd 字符串直接拆字段，避免 new Date('2001-12-28') 按 UTC 解析在部分时区差一天。
  * @param date 日期字符串、日期对象或毫秒时间戳，空值返回空串
- * @returns 例如 "2001年12月28日"
+ * @returns 例如 "2001年12月28日"、"2025年3月12日 09:24"
  */
 export function formatDateCN(date?: Date | number | string | undefined): string {
   if (date === undefined || date === '') return '';
   if (typeof date === 'string') {
-    const matched = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
-    if (matched)
-      return `${Number(matched[1])}年${Number(matched[2])}月${Number(
+    const matched = /^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}:\d{2}))?/.exec(date);
+    if (matched) {
+      const day = `${Number(matched[1])}年${Number(matched[2])}月${Number(
         matched[3],
       )}日`;
+      // 字符串里带时分（如接口返回的 yyyy-MM-dd HH:mm）时一并保留
+      return matched[4] ? `${day} ${matched[4]}` : day;
+    }
   }
   const d = new Date(date);
   if (Number.isNaN(d.getTime())) return '';

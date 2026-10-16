@@ -232,6 +232,12 @@
             v-else-if="activeItem?.key === PROFILE_KEY"
             ref="profileRef"
           />
+          <!-- 账号安全-账号信息 -->
+          <AccountInfo v-else-if="activeItem?.key === SECURITY_INFO_KEY" />
+          <!-- 账号安全-修改密码 -->
+          <ModifyPassword
+            v-else-if="activeItem?.key === SECURITY_PASSWORD_KEY"
+          />
           <div v-else class="tab-content">
             <h3 class="tab-title">{{ activeItem?.title }}</h3>
           </div>
@@ -274,6 +280,8 @@ import NewsCollect from './components/news-collect/NewsCollect.vue';
 import VipOrder from './components/vip-order/VipOrder.vue';
 import CourseOrder from './components/course-order/CourseOrder.vue';
 import ProfileInfo from './components/profile-info/ProfileInfo.vue';
+import AccountInfo from './components/account-info/AccountInfo.vue';
+import ModifyPassword from './components/modify-password/ModifyPassword.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import bgUrl from '@/assets/green-rose-flower.jpg';
 
@@ -295,6 +303,10 @@ const ORDER_VIP_KEY = 'order-vip';
 const ORDER_COURSE_KEY = 'order-course';
 /** 「个人信息-我的资料」菜单 key：命中后内容区渲染 ProfileInfo */
 const PROFILE_KEY = 'profile';
+/** 「账号安全-账号信息」菜单 key：命中后内容区渲染 AccountInfo */
+const SECURITY_INFO_KEY = 'security-info';
+/** 「账号安全-修改密码」菜单 key：命中后内容区渲染 ModifyPassword */
+const SECURITY_PASSWORD_KEY = 'security-password';
 
 /** 批量管理模式：开启后历史卡片右上角展示勾选框 */
 const batchMode = ref(false);
