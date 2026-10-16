@@ -11,7 +11,7 @@
       ></AoImage>
     </div>
     <div class="profile-tabs">
-      <UserCenterTabs @change="handleChange">
+      <UserCenterTabs ref="tabsRef" @change="handleChange">
         <!-- 历史记录：头部右侧操作区 -->
         <template #actions="{ activeItem }">
           <template v-if="activeItem?.key === HISTORY_KEY">
@@ -268,7 +268,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import UserInfoCard from './components/UserInfoCard.vue';
 import UserCenterTabs from './components/UserCenterTabs.vue';
 import HistoryRecord from './components/history-record/HistoryRecord.vue';
@@ -284,6 +285,12 @@ import AccountInfo from './components/account-info/AccountInfo.vue';
 import ModifyPassword from './components/modify-password/ModifyPassword.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import bgUrl from '@/assets/green-rose-flower.jpg';
+
+const route = useRoute();
+const router = useRouter();
+
+/** 左侧导航实例：外部跳转（如头部用户下拉的 ?tab=xxx）时需要主动激活某个菜单项 */
+const tabsRef = ref<InstanceType<typeof UserCenterTabs>>();
 
 /** 历史记录菜单 key：命中后内容区渲染 HistoryRecord */
 const HISTORY_KEY = 'course-watching';
@@ -393,6 +400,22 @@ const websiteCollectRef = ref<InstanceType<typeof WebsiteCollect>>();
 const newsCollectRef = ref<InstanceType<typeof NewsCollect>>();
 
 const profileRef = ref<InstanceType<typeof ProfileInfo>>();
+
+/**
+ * 应用地址栏 ?tab=xxx 指定的菜单项（头部用户下拉跳转时带过来）
+ * 应用后清掉参数：地址栏不残留，也保证再次点击同一项仍能触发
+ */
+function applyTabFromQuery() {
+  const tab = route.query.tab;
+  if (typeof tab !== 'string' || !tab) return;
+  tabsRef.value?.setActive(tab);
+  const query = { ...route.query };
+  delete query.tab;
+  router.replace({ query });
+}
+
+onMounted(applyTabFromQuery);
+watch(() => route.query.tab, applyTabFromQuery);
 
 const handleChange = (item: { key: string; title: string }) => {
   // 离开对应菜单时退出批量管理

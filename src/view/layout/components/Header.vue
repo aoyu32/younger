@@ -65,8 +65,14 @@
           </div>
           <div class="header-menu">
             <div class="menu-wrapper">
-              <div class="menu-item">开通会员</div>
-              <div class="menu-item">我的课程</div>
+              <div
+                v-for="menu in userMenus"
+                :key="menu.tab"
+                class="menu-item"
+                @click.stop="goProfile(menu.tab)"
+              >
+                {{ menu.title }}
+              </div>
               <div class="menu-item logout">退出登录</div>
             </div>
           </div>
@@ -88,6 +94,20 @@ defineOptions({
 
 // 响应式数据
 const isLogin = ref(true);
+
+// 用户下拉菜单：跳转到个人中心，并激活对应分组下的第一个菜单项
+// tab 传的是个人中心左侧导航的菜单 key，传分组 key（collect / security / order）时激活该分组第一项
+const userMenus = [
+  { title: '我的收藏', tab: 'collect' },
+  { title: '账号安全', tab: 'security' },
+  { title: '我的订单', tab: 'order' },
+  { title: '我的课程', tab: 'course-purchased' },
+];
+
+// 跳转个人中心指定菜单
+const goProfile = (tab) => {
+  router.push({ path: '/profile', query: { tab } });
+};
 
 const chLogoName = computed(() => {
   const name = routers.find((item) => item.path === '/home').meta.title;
@@ -299,7 +319,7 @@ const handleLogoClick = () => {
 
     &:hover {
       .header-menu {
-        max-height: 200px;
+        max-height: 260px;
         pointer-events: auto;
       }
     }
@@ -333,6 +353,9 @@ const handleLogoClick = () => {
       width: 100%;
       /* 修复：强制文字不换行 */
       white-space: nowrap;
+      cursor: pointer;
+      transition: background-color var(--ao-duration-fast)
+        var(--ao-ease-in-out);
 
       &:hover {
         background-color: var(--ao-gray-1);

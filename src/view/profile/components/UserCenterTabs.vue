@@ -213,6 +213,18 @@ function handleBreadcrumbClick(index: number) {
   if (!group) return;
   handleSelect(group.children?.[0] ?? group);
 }
+
+/**
+ * 通过菜单 key 激活导航项（外部跳转进入时使用）
+ * 传分组 key（如 collect）时激活该分组下的第一个二级项，与点击面包屑上级同一规则
+ */
+function setActive(key: string) {
+  const item = findItem(menuGroups, key);
+  if (!item) return;
+  handleSelect(item.children?.[0] ?? item);
+}
+
+defineExpose({ setActive });
 </script>
 
 <style scoped lang="scss">
