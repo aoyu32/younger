@@ -48,6 +48,17 @@
     min-height: 200px;
   }
 
+  /* smart-blue 主题的强调色改为品牌色：标题（含左竖条）、链接、加粗 */
+  :deep(.md-editor-preview.smart-blue-theme) {
+    --md-theme-heading-color: var(--ao-color-primary);
+    --md-theme-link-color: var(--ao-color-primary);
+
+    strong,
+    em strong {
+      color: var(--ao-color-primary);
+    }
+  }
+
   .empty-content {
     min-height: 500px;
     flex-direction: column;
