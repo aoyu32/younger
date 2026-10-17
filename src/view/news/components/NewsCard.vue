@@ -111,7 +111,7 @@ const formatNumber = (n: number): string => {
 
   .cover-img {
     flex-shrink: 0;
-    width: 120px;
+    width: 140px;
     height: 100%;
     border-radius: var(--ao-border-radius-sm);
     overflow: hidden;
@@ -172,7 +172,6 @@ const formatNumber = (n: number): string => {
     color: var(--ao-color-text-tertiary);
     flex-shrink: 0;
     margin-top: auto;
-    padding-top: 8px;
 
     .meta-item {
       display: inline-flex;
