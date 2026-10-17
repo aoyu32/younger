@@ -13,6 +13,7 @@
     <footer>
       <LayoutFooter />
     </footer>
+    <EdgeBar />
   </div>
 </template>
 <script setup lang="ts">
@@ -20,6 +21,7 @@ import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import LayoutHeader from '@/view/layout/components/Header.vue';
 import LayoutFooter from '@/view/layout/components/Footer.vue';
+import EdgeBar from '@/view/layout/components/EdgeBar.vue';
 
 // 组件名称
 defineOptions({
