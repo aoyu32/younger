@@ -98,9 +98,12 @@
   }
 
   &__btn {
-    padding: 5px 15px;
-    font-size: 14px;
-    border-radius: var(--ao-border-radius-sm);
+    /* 尺寸与弹窗内输入框（约 39px 高）保持同一量级 */
+    min-width: 80px;
+    height: 36px;
+    padding: 0 20px;
+    font-size: var(--ao-font-size-sm);
+    border-radius: var(--ao-border-radius-base);
     cursor: pointer;
     transition:
       color var(--ao-duration-fast) var(--ao-ease-in-out),
