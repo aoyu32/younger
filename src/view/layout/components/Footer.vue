@@ -101,7 +101,7 @@ const year = computed(() => new Date().getFullYear())
   width: var(--ao-container-max-width);
   height: auto;
   margin: 0 auto;
-  padding: calc(var(--ao-spacing-lg) + 2px) 0;
+  padding: 20px 0;
 }
 
 .footer_top {
