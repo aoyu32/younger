@@ -17,42 +17,27 @@
           {{ item.date }}
         </div>
         <div v-if="item.viewCount != null" class="meta-item">
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M8 3C4.5 3 1.5 5.5 0 8c1.5 2.5 4.5 5 8 5s6.5-2.5 8-5c-1.5-2.5-4.5-5-8-5z"
-              stroke="currentColor"
-              stroke-width="1.2"
-            />
-            <circle
-              cx="8"
-              cy="8"
-              r="2"
-              stroke="currentColor"
-              stroke-width="1.2"
-            />
-          </svg>
+          <AoImage
+            src="@/assets/news/icon_views.svg"
+            width="16px"
+            height="16px"
+          ></AoImage>
           {{ formatNumber(item.viewCount) }}
         </div>
         <div v-if="item.likeCount != null" class="meta-item">
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M8 14s-5-3.5-5-7a3 3 0 015-2 3 3 0 015 2c0 3.5-5 7-5 7z"
-              stroke="currentColor"
-              stroke-width="1.2"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <AoImage
+            src="@/assets/news/icon_like.svg"
+            width="16px"
+            height="16px"
+          ></AoImage>
           {{ formatNumber(item.likeCount) }}
         </div>
         <div v-if="item.collectCount != null" class="meta-item">
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M3 2h10v12l-5-3-5 3V2z"
-              stroke="currentColor"
-              stroke-width="1.2"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <AoImage
+            src="@/assets/news/icon_favorite.svg"
+            width="16px"
+            height="16px"
+          ></AoImage>
           {{ formatNumber(item.collectCount) }}
         </div>
       </div>
@@ -96,9 +81,9 @@ const formatNumber = (n: number): string => {
 .news-card {
   display: flex;
   gap: 12px;
-  padding: 12px;
+  padding:12px 10px;
   background: var(--ao-color-bg-container);
-  border: 1px solid var(--ao-color-border);
+  // border: 1px solid var(--ao-color-border);
   border-radius: var(--ao-border-radius-lg);
   cursor: pointer;
   box-sizing: border-box;
@@ -114,8 +99,6 @@ const formatNumber = (n: number): string => {
       var(--ao-lime-6) 45%,
       var(--ao-color-border)
     );
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transform: translateY(-1px);
 
     .cover-img img {
       transform: scale(1.04);
@@ -152,7 +135,7 @@ const formatNumber = (n: number): string => {
   }
 
   .title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: var(--ao-font-weight-semibold);
     line-height: 1.4;
     color: var(--ao-color-text-base);
@@ -169,7 +152,7 @@ const formatNumber = (n: number): string => {
   }
 
   .content-part {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
     color: var(--ao-color-text-tertiary);
     display: -webkit-box;
@@ -185,10 +168,11 @@ const formatNumber = (n: number): string => {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--ao-color-text-tertiary);
     flex-shrink: 0;
-    margin-top: 8px;
+    margin-top: auto;
+    padding-top: 8px;
 
     .meta-item {
       display: inline-flex;

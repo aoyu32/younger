@@ -178,7 +178,7 @@ const handleItemClick = (id: string | number) => {
         }
 
         .content {
-          font-size: var(--ao-font-size-xs);
+          font-size: 13px;
           color: var(--ao-color-text-tertiary);
           overflow: hidden;
           text-overflow: ellipsis;

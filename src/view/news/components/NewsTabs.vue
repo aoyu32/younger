@@ -206,7 +206,6 @@ watch(
   overflow: hidden;
   flex: 1;
   min-width: 0;
-  /* 让第一个 tab 激活时的白色背景也能跟随 header 的左上圆角 */
   border-top-left-radius: inherit;
 }
 
@@ -217,7 +216,7 @@ watch(
   justify-content: center;
   padding: 0 20px;
   height: 50px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
   color: var(--ao-color-text-tertiary);
   cursor: pointer;
@@ -341,7 +340,8 @@ watch(
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  grid-auto-rows: 106px;
+  /* 行高按内容算：12px 内边距 ×2 + 标题 21px + 间距 2px + 摘要 2 行 39px + meta 24px ≈ 120px */
+  grid-auto-rows: 120px;
 
   @media (max-width: 720px) {
     grid-template-columns: 1fr;

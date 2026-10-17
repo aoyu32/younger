@@ -178,7 +178,7 @@ const handleItemClick = (id: string | number) => {
         gap: 4px;
 
         .course-name {
-          font-size: var(--ao-font-size-sm);
+          font-size: 15px;
           font-weight: var(--ao-font-weight-medium);
           color: var(--ao-color-text-base);
           overflow: hidden;
@@ -187,7 +187,7 @@ const handleItemClick = (id: string | number) => {
         }
 
         .course-desc {
-          font-size: var(--ao-font-size-xs);
+          font-size: 13px;
           color: var(--ao-color-text-tertiary);
           overflow: hidden;
           text-overflow: ellipsis;
