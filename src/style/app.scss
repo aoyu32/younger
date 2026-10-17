@@ -15,6 +15,15 @@
   font-display: swap;
 }
 
+@font-face {
+  /* 鼎猎西大（文件名含括号，url 已加引号包裹） */
+  font-family: 'DingLieXida';
+  src: url('../assets/fonts/dingliexidafont-20250329V2)-2.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---------- 全局重置 ---------- */
 *,
 *::before,
