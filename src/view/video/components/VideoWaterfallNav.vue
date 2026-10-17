@@ -1,5 +1,20 @@
 <template>
   <div class="video-waterfall-nav">
+    <!-- 国潮背景:上半部分祥云 + 右上角太阳 -->
+    <!-- <AoImage
+      class="sky-bg"
+      src="@/assets/video/icon_cloud_sun.svg"
+      width="100%"
+      height="50%"
+    /> -->
+    <!-- 国潮水纹背景:单排贴底,高度占组件一半 -->
+    <AoImage
+      class="wave-bg"
+      src="@/assets/video/icon_wave_band.svg"
+      width="100%"
+      height="50%"
+    />
+
     <div class="nav-list">
       <div
         v-for="(item, index) in menuItems"
@@ -34,7 +49,7 @@
     </div>
 
     <!-- 右下角草书水印 -->
-    <span class="signature" aria-hidden="true">快速导航</span>
+    <span class="signature" aria-hidden="true">导航</span>
   </div>
 </template>
 
@@ -98,23 +113,74 @@ const activeFilters = reactive<Record<string, string>>({
   position: relative;
   width: 100%;
   padding: 12px 16px 16px;
-  background-color: var(--ao-gray-0);
   border-radius: var(--ao-border-radius-xl);
-  border: var(--ao-border-width-thin) solid var(--ao-color-border);
   box-sizing: border-box;
+  /* 按容器圆角裁切水纹背景，杜绝背景图在圆角处溢出 */
+  overflow: hidden;
 
-  background-image:
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--ao-gray-4) 25%, transparent) 0.5px,
-      transparent 0.5px
-    ),
-    linear-gradient(
-      color-mix(in srgb, var(--ao-gray-4) 25%, transparent) 0.5px,
-      transparent 0.5px
-    );
-  background-size: 24px 24px;
-  background-position: -1px -1px;
+  /* 1px 渐变边框（真边框方案）：边框透明，由双层背景填充 ——
+     border-box 层 = 径向渐变（圆心在底边中点：底边最亮、沿两侧向上渐浅、
+     顶部收在浅品牌色），在透明边框处透出为 1px 渐变边框；
+     padding-box 层 = 卡片底色。
+     真边框随 border-radius 原生渲染，圆角处不会断线 */
+  border: 1px solid transparent;
+  /* 亮一档的品牌色：主色混一点亮青（随主色令牌联动） */
+  $brand-bright: color-mix(in srgb, var(--ao-color-primary) 70%, #00e6ff);
+  background:
+    /* 卡片底色（最上层，盖住内部） */
+    linear-gradient(var(--ao-gray-0), var(--ao-gray-0)) padding-box,
+    /* 品牌色径向渐变：底边中点最亮，沿两侧向上渐隐，约到一半高度消失
+       （单个渐变场，圆角处无接缝） */
+    radial-gradient(
+      120% 150% at 50% 100%,
+      #{$brand-bright} 0%,
+      #{color-mix(in srgb, $brand-bright 60%, transparent)} 40%,
+      transparent 70%
+    )
+      border-box,
+    /* 最底层：整圈原边框灰 —— 上半部分与顶部就是它 */
+    linear-gradient(var(--ao-color-border), var(--ao-color-border)) border-box;
+}
+
+/* 祥云 + 太阳:贴顶靠右(太阳始终在右上角),高度占组件一半 */
+.sky-bg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+  object-position: right top;
+  border-radius: var(--ao-border-radius-xl) var(--ao-border-radius-xl) 0 0;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* 水纹背景图:单排贴底,高度占组件一半,透明底、纯线条、无缝
+   调高度改 height;调线色改 svg 里的 fill(当前 #e3e7eb);想更淡可调 opacity */
+.wave-bg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+  object-position: right bottom; /* 与 sky-bg 同样靠右对齐,云和浪的相对位置固定 */
+  border-radius: 0 0 calc(var(--ao-border-radius-xl) - 1px) calc(var(--ao-border-radius-xl) - 1px);
+  opacity: 1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* 内容盖在水纹上面 */
+.nav-list,
+.filter {
+  position: relative;
+  z-index: 1;
 }
 
 /* ================= 导航区 ================= */
@@ -292,14 +358,16 @@ const activeFilters = reactive<Record<string, string>>({
   position: absolute;
   right: 20px;
   bottom: 16px;
-  font-family: var(--ao-font-family-cao);
-  font-size: 28px;
+  /* 右下角水印字体与横幅使用同一装饰体（同字号下显小，故放大补偿） */
+  font-family: var(--ao-font-family-dinglie);
+  font-size: 44px;
   font-weight: 400;
   line-height: 1;
   letter-spacing: 6px;
-  color: var(--ao-gray-4);
+  color: var(--ao-gray-5);
   opacity: 0.5;
   pointer-events: none;
   user-select: none;
+  z-index: 1;
 }
 </style>
