@@ -549,6 +549,8 @@ let scrollTriggers: ScrollTrigger[] = [];
 // 监听文档内容高度变化，触发 ScrollTrigger 重算
 let mdResizeObserver: ResizeObserver | null = null;
 let mdResizeTimer = 0;
+// setupDownloadPin 里被滚动动画改写过内联样式的全局头部，卸载时要还原
+let pinnedHeaderEl: HTMLElement | null = null;
 
 const scrollAnimation = () => {
   scrollTriggers.forEach((trigger) => trigger.kill());
@@ -578,7 +580,7 @@ const scrollAnimation = () => {
 const setupDownloadPin = () => {
   const introSectionEl = document.querySelector('.intro-section');
   const innerWrapperEl = document.querySelector('.intro-wrapper');
-  const headerEl = document.querySelector('.header');
+  const headerEl = document.querySelector('.header') as HTMLElement;
   const mdEl = document.querySelector('.app-intro-md') as HTMLElement;
   const mdInner = mdScrollInnerRef.value as HTMLElement;
   const introBtns = document.querySelector('.intro-btns') as HTMLElement;
@@ -591,6 +593,10 @@ const setupDownloadPin = () => {
     console.warn('setupDownloadPin: 缺少必要元素，跳过');
     return;
   }
+
+  // 记录被改写内联样式的头部（注意 querySelector('.header') 命中的是布局全局头部），
+  // 离开页面时在 onBeforeUnmount 里还原，避免返回其他页面后宽度被内联样式卡死
+  pinnedHeaderEl = headerEl;
 
   gsap.set(mdInner, { y: 0 });
   gsap.set(innerWrapperEl, {
@@ -948,6 +954,14 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', handleKeydown);
 
   document.body.style.overflow = '';
+
+  // 还原滚动动画改写过的全局头部内联样式（width / padding），
+  // 否则返回视频详情等页面后头部宽度被 1200px 卡住，盖掉宽屏变量
+  if (pinnedHeaderEl) {
+    gsap.killTweensOf(pinnedHeaderEl);
+    gsap.set(pinnedHeaderEl, { clearProps: 'width,padding' });
+    pinnedHeaderEl = null;
+  }
 });
 
 watch(

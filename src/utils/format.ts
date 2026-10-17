@@ -71,3 +71,52 @@ export function formatCount(
     converted % 1 === 0 ? converted.toFixed(0) : converted.toFixed(1);
   return `${formatted}${autoUnit}`;
 }
+
+/**
+ * 格式化计数为中文单位（万 / 亿），undefined 返回 "0"
+ * @param num 数值
+ * @returns 例如 "1.7万"、"2.3亿"、"842"
+ */
+export function formatCountCN(num?: number | undefined): string {
+  if (num === undefined) return '0';
+  const abs = Math.abs(num);
+  const convert = (base: number) => {
+    const value = num / base;
+    return value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
+  };
+  if (abs >= 100000000) return `${convert(100000000)}亿`;
+  if (abs >= 10000) return `${convert(10000)}万`;
+  return String(num);
+}
+
+/**
+ * 格式化时长（秒）为 mm:ss / hh:mm:ss
+ * @param seconds 秒数，空值或非正数返回空串
+ * @returns 例如 "05:30"、"1:02:05"
+ */
+export function formatDuration(seconds?: number | undefined): string {
+  if (!seconds || seconds <= 0) return '';
+  const total = Math.floor(seconds);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const rest = total % 60;
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return hours > 0
+    ? `${hours}:${pad(minutes)}:${pad(rest)}`
+    : `${pad(minutes)}:${pad(rest)}`;
+}
+
+/**
+ * 格式化时长（秒）为中文样式
+ * @param seconds 秒数，空值按 0 处理
+ * @returns 例如 "2小时3分5秒"、"18分48秒"、"0秒"
+ */
+export function formatDurationCN(seconds?: number | undefined): string {
+  const total = Math.max(0, Math.floor(seconds ?? 0));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const rest = total % 60;
+  if (!hours && !minutes) return `${rest}秒`;
+  const first = hours ? `${hours}小时` : '';
+  return `${first}${minutes}分${rest}秒`;
+}
