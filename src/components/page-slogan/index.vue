@@ -31,11 +31,11 @@ const props = defineProps({
   background-color: var(--ao-gray-2);
   padding: 16px 10px;
   margin-bottom: 15px;
-  font-family: var(--ao-font-family-ali);
+  font-family: var(--ao-font-family-dinglie);
   color: var(--ao-gray-7);
   border-radius: var(--ao-border-radius-base);
-  font-size: var(--ao-font-size-lg);
-  font-family: var(--ao-font-family-cao);
+  /* 装饰体字面占比比常规字体小，同 px 会显小，放大一档补偿 */
+  font-size: var(--ao-font-size-xl);
   span {
     font-size: var(--ao-font-size-base);
   }
