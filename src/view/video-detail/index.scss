@@ -1,44 +1,250 @@
-.video-container {
-  min-height: 100vh;
-  display: flex;
-  gap: 40px;
-}
+.video-detail {
+  /* 右侧信息栏宽度 */
+  --video-side-width: 420px;
 
-.video-wrapper {
-  width: 100%;
-}
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--video-side-width);
+  grid-template-rows: auto auto;
+  column-gap: var(--ao-spacing-xl);
+  row-gap: var(--ao-spacing-md);
+  min-width: 1080px;
+  padding: var(--ao-spacing-md) 0 var(--ao-spacing-xxl);
 
-.video-info {
-  width: 100%;
-  padding: 20px 0 35px 0;
-  gap: 20px;
-  h3 {
-    font-weight: var(--ao-font-weight-medium);
-    font-size: 22px;
-    flex-shrink: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  &__head {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-  .meta {
+
+  &__title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: var(--ao-font-size-xl);
+    font-weight: var(--ao-font-weight-medium);
+    line-height: var(--ao-line-height-tight);
+    color: var(--ao-color-text-base);
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ao-spacing-xs) var(--ao-spacing-lg);
+    margin-top: var(--ao-spacing-sm);
+    font-size: var(--ao-font-size-xs);
+    color: var(--ao-color-text-tertiary);
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: var(--ao-spacing-xxs);
+    }
+  }
+
+  .author-card {
+    grid-column: 2;
+    grid-row: 1;
     display: flex;
     align-items: center;
-    gap: 20px;
-    color: #9499a0;
-    font-size: var(--ao-font-size-sm);
+    gap: var(--ao-spacing-sm);
+    padding: var(--ao-spacing-sm) var(--ao-spacing-md);
+    border-radius: var(--ao-border-radius-lg);
+    background-color: var(--ao-gray-1);
+
+    &__avatar {
+      flex-shrink: 0;
+    }
+
+    &__detail {
+      min-width: 0;
+    }
+
+    &__name {
+      overflow: hidden;
+      font-size: var(--ao-font-size-base);
+      font-weight: var(--ao-font-weight-medium);
+      color: var(--ao-color-text-base);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    &__bio {
+      margin-top: 2px;
+      overflow: hidden;
+      font-size: var(--ao-font-size-xs);
+      color: var(--ao-color-text-tertiary);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
 
-  .meta-item {
-    gap: var(--ao-spacing-xxs);
+  /* 第二行左列 */
+  &__content {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
   }
-}
 
-.video-footer {
-  gap: 30px;
-  padding-top: 30px;
-  justify-content: space-between;
+  &__player {
+    width: 100%;
+    border-radius: var(--ao-border-radius-lg);
+    overflow: hidden;
+    background-color: #000000;
+    box-shadow: var(--ao-shadow-sm);
+  }
 
-  .recommend {
-    flex: 1;
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ao-spacing-sm);
+    margin-top: var(--ao-spacing-md);
+    padding: var(--ao-spacing-xs);
+    border: var(--ao-border-width-thin) solid var(--ao-color-border-secondary);
+    border-radius: var(--ao-border-radius-lg);
+
+    .action-btns {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--ao-spacing-xs);
+    }
+
+    .action-item {
+      display: flex;
+      align-items: center;
+      gap: var(--ao-spacing-xs);
+      height: 36px;
+      padding: 0 var(--ao-spacing-sm);
+      border: none;
+      border-radius: var(--ao-border-radius-base);
+      background-color: transparent;
+      font-family: inherit;
+      font-size: var(--ao-font-size-sm);
+      color: var(--ao-color-text-secondary);
+      cursor: pointer;
+      transition: background-color var(--ao-duration-fast) var(--ao-ease-out);
+
+      &:hover {
+        background-color: var(--ao-gray-2);
+      }
+
+      /* 按钮之间的竖分割线 */
+      & + .action-item::before {
+        content: '';
+        width: 1px;
+        height: 14px;
+        margin-right: var(--ao-spacing-xs);
+        background-color: var(--ao-color-divider);
+      }
+
+      &__text {
+        font-variant-numeric: tabular-nums;
+      }
+
+      &__icon {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        color: var(--ao-color-text-tertiary);
+        transition: color var(--ao-duration-fast) var(--ao-ease-out);
+      }
+
+      /* 图标随按钮状态变色（注意不能写 &__icon：& 会展开成「按钮内的 __actions」，
+         编出来永远匹配不到，之前图标不变色就是这里的问题） */
+      &--like:hover .action-item__icon,
+      &--like.is-active .action-item__icon {
+        color: #f05050;
+      }
+
+      &--favorite:hover .action-item__icon,
+      &--favorite.is-active .action-item__icon {
+        color: #f0a030;
+      }
+
+      &--share:hover .action-item__icon {
+        color: #4090f0;
+      }
+
+      &.is-active {
+        font-weight: var(--ao-font-weight-medium);
+      }
+
+      &--like.is-active {
+        color: #f05050;
+      }
+
+      &--favorite.is-active {
+        color: #f0a030;
+      }
+    }
+  }
+
+  /* 标签组：左侧标签，最多 8 个，单个最多显示 4 个字后省略 */
+  &__tags {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--ao-spacing-xs);
+
+    .tag-item {
+      /* 默认完整显示；区域放不下时被压缩出省略号（overflow 重置 flex 最小尺寸后才允许收缩） */
+      padding: 4px 10px;
+      min-width: 0;
+      overflow: hidden;
+      font-size: var(--ao-font-size-sm);
+      color: var(--ao-color-text-secondary);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: default;
+      background-color: var(--ao-gray-2);
+      border-radius: var(--ao-border-radius-sm);
+    }
+  }
+
+  /* ---------- 详细介绍 ---------- */
+  &__description {
+    display: block;
+    margin-top: var(--ao-spacing-lg);
+  }
+
+  /* ---------- 评论 ---------- */
+  &__comments {
+    margin-top: var(--ao-spacing-md);
+    border-top: var(--ao-border-width-thin) solid var(--ao-color-divider);
+  }
+
+  /* 第二行右列 */
+  &__side {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ao-spacing-lg);
+  }
+
+  /* 相关推荐区块标题，与 VideoDescription / VideoChapters 内的标题保持一致 */
+  .side-title {
+    font-size: var(--ao-font-size-lg);
+    font-weight: var(--ao-font-weight-medium);
+    color: var(--ao-color-text-base);
+  }
+
+  /* ---------- 相关推荐 ---------- */
+  &__related {
+    /* 推荐列表自身带 20px 内边距，这里收紧到标题下方 */
+    .video-recommend {
+      padding: var(--ao-spacing-sm) 0 0;
+    }
+
+    /* 侧栏封面缩小一圈，给标题留出宽度（列表内部元素需要 :deep 才能命中） */
+    :deep(.video-recommend .recommend-item .cover) {
+      width: 150px;
+    }
   }
 }

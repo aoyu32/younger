@@ -8,6 +8,7 @@
   --ao-font-family-code: 'SF Mono', Consolas, 'Liberation Mono', monospace;
   --ao-font-family-ali: 'AlimamaFangYuanTi', sans-serif;
   --ao-font-family-cao: 'LiuJianMaoCao', sans-serif;
+--ao-font-family-dinglie: 'DingLieXida', 'LiuJianMaoCao', sans-serif;
 
   --ao-font-size-xs: 12px; /* 辅助说明、标签 */
   --ao-font-size-sm: 14px; /* 次要文本、按钮 */
@@ -93,6 +94,7 @@
   /* ========== 10. 布局相关（Layout） ========== */
   --ao-grid-gutter: var(--ao-spacing-lg); /* 栅格间距，默认 24px */
   --ao-container-max-width: 1200px; /* 内容区域最大宽度 */
+  --ao-container-max-width-wide: 1680px; /* 宽屏页面（如视频详情页）内容最大宽度 */
 
   /* ========== 头部栏高度 ========== */
   --ao-header-height-sm: 48px;

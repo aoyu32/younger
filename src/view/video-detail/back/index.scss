@@ -1,0 +1,44 @@
+.video-container {
+  min-height: 100vh;
+  display: flex;
+  gap: 40px;
+}
+
+.video-wrapper {
+  width: 100%;
+}
+
+.video-info {
+  width: 100%;
+  padding: 20px 0 35px 0;
+  gap: 20px;
+  h3 {
+    font-weight: var(--ao-font-weight-medium);
+    font-size: 22px;
+    flex-shrink: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #9499a0;
+    font-size: var(--ao-font-size-sm);
+  }
+
+  .meta-item {
+    gap: var(--ao-spacing-xxs);
+  }
+}
+
+.video-footer {
+  gap: 30px;
+  padding-top: 30px;
+  justify-content: space-between;
+
+  .recommend {
+    flex: 1;
+  }
+}

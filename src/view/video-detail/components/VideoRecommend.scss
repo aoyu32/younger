@@ -18,15 +18,14 @@
       margin-right: var(--ao-spacing-sm);
       flex-shrink: 0;
       position: relative;
+      /* 圆角 + 裁切，图片和悬停遮罩都用容器兜圆角 */
+      border-radius: var(--ao-border-radius-base);
+      overflow: hidden;
 
       &:hover {
         .overlay {
           opacity: 1;
         }
-      }
-
-      :deep(.ao-image img) {
-        border-radius: var(--ao-border-radius-sm);
       }
 
       .overlay {
@@ -40,8 +39,7 @@
         justify-content: center;
         bottom: 0;
         background-color: #00000047;
-        border-radius: var(--ao-border-radius-sm);
-        transition: all 0.5s ease-out;
+        transition: opacity 0.5s ease-out;
       }
     }
   }

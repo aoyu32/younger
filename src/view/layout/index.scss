@@ -6,6 +6,15 @@
   position: relative;
   gap: var(--ao-spacing-md);
 
+  /* 宽屏页面（视频详情页）：头部内容与主内容一起加宽；
+     窄屏时按窗口自适应，左右各留 50px 边距，避免出现横向滚动 */
+  &.layout--wide {
+    --ao-container-max-width: min(
+      var(--ao-container-max-width-wide),
+      calc(100% - 100px)
+    );
+  }
+
   header {
     position: fixed;
     top: 0;

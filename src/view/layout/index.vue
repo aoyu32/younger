@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div class="layout" :class="{ 'layout--wide': isWidePage }">
     <header>
       <LayoutHeader />
     </header>
@@ -16,7 +16,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import LayoutHeader from '@/view/layout/components/Header.vue';
 import LayoutFooter from '@/view/layout/components/Footer.vue';
 
@@ -24,6 +25,11 @@ import LayoutFooter from '@/view/layout/components/Footer.vue';
 defineOptions({
   name: 'Layout',
 });
+
+const route = useRoute();
+
+/** 宽屏页面：视频详情页需要更宽的头部内容与主内容区 */
+const isWidePage = computed(() => route.name === 'video-detail');
 
 // 响应式主题状态
 const currentTheme = ref('light');

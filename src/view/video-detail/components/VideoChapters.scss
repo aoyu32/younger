@@ -1,0 +1,260 @@
+.video-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ao-spacing-sm);
+  /* 整块最高不超过播放器高度（页面用 ResizeObserver 实测注入），溢出时章节列表内部滚动 */
+  min-height: 0;
+  max-height: var(--video-player-height, none);
+
+  /* 付费信息用的 VIP 金色系：取自开通会员钻石图标的渐变（#f9d976 → #e9b64b → #a87b3e） */
+  --gold-light: #f9d976;
+  --gold-base: #e9b64b;
+  --gold-deep: #a87b3e;
+  --gold-text: #b3803a;
+  --gold-border: rgba(201, 153, 74, 0.45);
+  --gold-bg: rgba(233, 182, 75, 0.12);
+  --gold-bg-hover: rgba(233, 182, 75, 0.18);
+
+  &__title {
+    flex-shrink: 0;
+    display: flex;
+    align-items: baseline;
+    padding-bottom: 10px;
+    gap: var(--ao-spacing-xs);
+    font-size: var(--ao-font-size-lg);
+    font-weight: var(--ao-font-weight-medium);
+    color: var(--ao-color-text-base);
+  }
+
+  /* 付费信息卡片：无章节的视频只显示这一部分 */
+  &__pay {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--ao-spacing-xs);
+    padding: 10px 14px;
+    border-radius: var(--ao-border-radius-lg);
+    background-color: var(--ao-gray-1);
+  }
+
+  /* 付费 / 免费标签（warning 功能色 / 品牌色） */
+  .pay-tag {
+    flex-shrink: 0;
+    padding: 0 6px;
+    font-size: calc(var(--ao-font-size-xs) + 1px);
+    line-height: 20px;
+    border-radius: var(--ao-border-radius-xs);
+
+    &.is-paid {
+      color: var(--gold-text);
+      background-color: var(--gold-bg);
+      border: var(--ao-border-width-thin) solid var(--gold-border);
+    }
+
+    &.is-free {
+      color: var(--ao-color-primary);
+      background-color: rgba(0, 181, 181, 0.1);
+      border: var(--ao-border-width-thin) solid rgba(0, 181, 181, 0.25);
+    }
+  }
+
+  /* 付费说明文案 */
+  .pay-note {
+    font-size: calc(var(--ao-font-size-xs) + 1px);
+    color: var(--ao-color-text-tertiary);
+  }
+
+  /* 付费时的操作按钮：购买（实底，钻石图标同款金渐变） / 开通会员（描边） */
+  .pay-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ao-spacing-xs);
+    margin-left: auto;
+  }
+
+  .pay-btn {
+    flex-shrink: 0;
+    height: 26px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--ao-border-radius-sm);
+    /* 与开通会员钻石图标同色系的金色（取渐变中间值） */
+    background-color: var(--gold-base);
+    font-family: inherit;
+    font-size: var(--ao-font-size-xs);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color var(--ao-duration-fast) var(--ao-ease-out);
+
+    &:hover {
+      background-color: #d69a3c;
+    }
+
+    &.is-vip {
+      background: none;
+      color: var(--gold-text);
+      border: var(--ao-border-width-thin) solid var(--gold-border);
+
+      &:hover {
+        background-color: var(--gold-bg-hover);
+      }
+    }
+  }
+
+  /* 章节卡片：随付费信息一起受最高限高约束，列表在卡片内滚动 */
+  &__card {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    /* 左内边距给标题和行，右侧留 0 让滚动条贴到卡片边缘 */
+    padding: var(--ao-spacing-sm) 0 0 var(--ao-spacing-sm);
+    border-radius: var(--ao-border-radius-lg);
+    background-color: var(--ao-gray-1);
+  }
+
+  &__count {
+    font-size: var(--ao-font-size-xs);
+    font-weight: var(--ao-font-weight-normal);
+    color: var(--ao-color-text-tertiary);
+  }
+
+  &__scroll {
+    height: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 14px;
+    /* 列表内容离滚动条留一点距离 */
+    padding-right: var(--ao-spacing-sm);
+  }
+}
+
+.chapter-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ao-spacing-sm);
+  padding: 10px 12px;
+  border-radius: var(--ao-border-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--ao-duration-fast) var(--ao-ease-out);
+
+  &:hover {
+    background-color: var(--ao-gray-2);
+  }
+
+  /* 当前播放章节：不做底色，只高亮标题文字 */
+  &.is-current .chapter-row__title {
+    color: var(--ao-color-primary);
+  }
+
+  /* 序号（+ 播放中图标）：与标题文字第一行顶对齐 */
+  &__lead {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: 20px;
+  }
+
+  &__playing {
+    flex-shrink: 0;
+    /* 14px 图标在 20px 行高里居中 */
+    margin-top: 3px;
+  }
+
+  /* 播放中图标：占据序号位置 */
+  &__playing {
+    flex-shrink: 0;
+    /* 14px 图标在 20px 行高里居中 */
+    margin-top: 3px;
+  }
+
+  /* 序号：不补零、不加粗，弱化中性色 */
+  &__no {
+    font-size: var(--ao-font-size-sm);
+    line-height: 20px;
+    min-width: 20px;
+    text-align: center;
+    color: var(--ao-color-text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: var(--ao-font-size-sm);
+    line-height: 20px;
+    color: var(--ao-color-text-base);
+  }
+
+  /* 元信息：时长 */
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--ao-spacing-xxs);
+    margin-top: 5px;
+    font-size: var(--ao-font-size-xs);
+    color: var(--ao-color-text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 可试看的章节：纯文本，品牌色 */
+  &__trial {
+    flex-shrink: 0;
+    align-self: center;
+    font-size: var(--ao-font-size-xs);
+    color: var(--ao-color-primary);
+  }
+
+  /* 锁图标：两行内容里保持垂直居中 */
+  .chapter-row > img {
+    align-self: center;
+  }
+
+}
+
+/* 章节分组头：点击收起 / 展开下面的视频 */
+.chapter-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ao-spacing-xs);
+  padding: 10px 12px;
+  border-radius: var(--ao-border-radius-sm);
+  font-size: var(--ao-font-size-sm);
+  line-height: 20px;
+  color: var(--ao-color-text-base);
+  cursor: pointer;
+  transition: background-color var(--ao-duration-fast) var(--ao-ease-out);
+
+  &:hover {
+    background-color: var(--ao-gray-2);
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    transition: transform var(--ao-duration-fast) var(--ao-ease-out);
+  }
+
+  &.is-open &__arrow {
+    transform: rotate(90deg);
+  }
+
+  &__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}

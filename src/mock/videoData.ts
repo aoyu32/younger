@@ -1,19 +1,74 @@
 const minioVideoUrl = (filename: string) =>
   `${import.meta.env.VITE_MINIO_ADDRESS}/younger/video/${filename}`;
 
+/** 示例作者（全部 mock 视频共用同一个作者） */
+const mockAuthor = {
+  id: 1,
+  name: 'AI 助手',
+  bio: '专注 AI 前沿内容创作，长期分享大模型、Agent 与多模态方向的落地实践经验。',
+};
+
 export const videoData = [
   {
     id: 1,
     title: '2025 AI 发展趋势：大模型、Agent 与多模态应用全景',
     description:
       '全面解析2025年AI领域的最新发展趋势，涵盖大模型、Agent技术和多模态应用的前沿动态，助你把握未来科技脉搏。',
+    isPaid: true,
+    price: 29.9,
+    detail: `## 课程介绍
+
+本节课程围绕 **2025 年 AI 发展的三条主线** 展开，帮助你建立完整的行业认知框架。
+
+### 你将学到
+
+1. 大模型：从参数规模竞赛，转向推理能力与成本优化
+2. Agent：工具调用、多智能体协作成为落地重点
+3. 多模态：图像 / 语音 / 视频的统一建模与工程实践
+
+### 适合人群
+
+- 想快速了解 AI 行业全景的学习者
+- 正在做 AI 应用选型的产品 / 研发同学
+
+> 课程配套资料可在「我的课程」中下载，购买后永久回看。`,
+    chapters: [
+      {
+        id: 1,
+        title: '第一章 · 大模型的演进',
+        children: [
+          { id: 11, title: '课程导学', duration: 168, free: true },
+          { id: 12, title: '1.1 从参数规模到推理能力', duration: 302, free: true },
+          { id: 13, title: '1.2 成本结构与推理优化', duration: 318 },
+          { id: 14, title: '1.3 开源与闭源模型对比', duration: 300 },
+        ],
+      },
+      {
+        id: 2,
+        title: '第二章 · Agent 落地实践',
+        children: [
+          { id: 21, title: '2.1 工具调用与函数编排', duration: 402 },
+          { id: 22, title: '2.2 多智能体协作模式', duration: 396 },
+          {
+            id: 23,
+            title: '2.3 长期记忆与检索',
+            duration: 422,
+            children: [
+              { id: 231, title: '2.3.1 向量库选型', duration: 210 },
+              { id: 232, title: '2.3.2 记忆压缩策略', duration: 212 },
+            ],
+          },
+          { id: 24, title: '课程总结与资料下载', duration: 246 },
+        ],
+      },
+    ],
     tags: ['AI', '大模型', 'Agent', '多模态'],
     repostAllow: true,
     publishTime: '2025-01-02',
     isHot: true,
     isRecommended: true,
     isNew: true,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 16842,
       likeCount: 842,
@@ -33,13 +88,37 @@ export const videoData = [
     title: '用 ChatGPT 提升效率：提示词设计与工作流搭建实战',
     description:
       '深入讲解如何利用 ChatGPT 设计高效提示词，并搭建自动化工作流，全面提升日常办公与开发效率。',
+    chapters: [
+      {
+        id: 1,
+        title: '第一章 · 开场与基础',
+        children: [
+          { id: 11, title: '开场：为什么提示词值得专门学', duration: 152 },
+          { id: 12, title: '提示词与模型的误解', duration: 366 },
+        ],
+      },
+      {
+        id: 2,
+        title: '第二章 · 提示词设计的四步法',
+        children: [
+          { id: 21, title: '角色设定与任务边界', duration: 268 },
+          { id: 22, title: '结构化输出与格式约束', duration: 296 },
+          { id: 23, title: '少样本示例（Few-shot）', duration: 296 },
+        ],
+      },
+      {
+        id: 3,
+        title: '第三章 · 工作流实战',
+        children: [{ id: 31, title: '用工作流串起日常工作', duration: 540 }],
+      },
+    ],
     tags: ['AI', 'ChatGPT', '提示词设计', '工作流'],
     repostAllow: true,
     publishTime: '2024-12-18',
     isHot: true,
     isRecommended: false,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 24561,
       likeCount: 1228,
@@ -65,7 +144,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 9821,
       likeCount: 491,
@@ -91,7 +170,7 @@ export const videoData = [
     isHot: true,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 30211,
       likeCount: 1510,
@@ -117,7 +196,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 15432,
       likeCount: 771,
@@ -143,7 +222,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 11890,
       likeCount: 594,
@@ -169,7 +248,7 @@ export const videoData = [
     isHot: true,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 27110,
       likeCount: 1355,
@@ -195,7 +274,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 8901,
       likeCount: 445,
@@ -221,7 +300,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 12944,
       likeCount: 647,
@@ -247,7 +326,7 @@ export const videoData = [
     isHot: true,
     isRecommended: false,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 22317,
       likeCount: 1115,
@@ -273,7 +352,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 8012,
       likeCount: 400,
@@ -299,7 +378,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 17662,
       likeCount: 883,
@@ -325,7 +404,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 9640,
       likeCount: 482,
@@ -351,7 +430,7 @@ export const videoData = [
     isHot: true,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 31550,
       likeCount: 1577,
@@ -377,7 +456,7 @@ export const videoData = [
     isHot: false,
     isRecommended: false,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 7123,
       likeCount: 356,
@@ -403,7 +482,7 @@ export const videoData = [
     isHot: false,
     isRecommended: true,
     isNew: false,
-    author: { id: 1, name: 'AI 助手' },
+    author: mockAuthor,
     meta: {
       playCount: 18801,
       likeCount: 940,
