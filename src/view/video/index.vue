@@ -24,6 +24,8 @@
       </div>
       <div class="nav-wrapper">
         <VideoWaterfallNav v-model="activeNavItem" :menu-items="navList" />
+        <!-- 瀑布流导航滚出视口后，悬浮在右侧的同数据分类导航 -->
+        <VideoSideNav v-model="activeNavItem" :menu-items="navList" />
       </div>
       <div class="video-list">
         <div class="video-item" v-for="item in videoData">
@@ -54,6 +56,7 @@ import { categoryData } from '@/mock/videoLIst';
 import VipVideoCard from '../home/components/VipVideoCard.vue';
 import VideoSwipper from './components/VideoSwipper.vue';
 import VideoWaterfallNav from './components/VideoWaterfallNav.vue';
+import VideoSideNav from './components/VideoSideNav.vue';
 import type { MenuItem } from './components/VideoWaterfallNav.vue';
 import { videoData } from '@/mock/videoData';
 import VideoPlayer from '@/components/video-player/index.vue';
