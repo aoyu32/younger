@@ -1,0 +1,48 @@
+.totorial {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+}
+
+.totorial-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.totorial-sidebar {
+  width: 280px;
+  flex: none;
+  align-self: stretch;
+}
+
+.sidebar-inner {
+  position: sticky;
+  top: calc(var(--ao-header-height-lg) + var(--ao-spacing-sm));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: calc(100vh - 100px);
+  overflow: auto;
+}
+
+.content-end {
+  width: 100%;
+  height: 1px;
+}
+
+.pager-enter-active,
+.pager-leave-active {
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.pager-enter-from,
+.pager-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
+}
