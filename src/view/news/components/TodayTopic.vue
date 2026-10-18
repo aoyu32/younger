@@ -1,11 +1,9 @@
 <template>
-  <div class="today-topic">
+  <div class="today-topic" @click="goTopic">
     <div class="card-header">
       <h3>今日<span>话题</span></h3>
       <div class="page-btns">
-        <span class="action-btn" @click="handleJoin"
-          >点击加入今日话题讨论吧</span
-        >
+        <span class="action-btn">点击加入今日话题讨论吧</span>
       </div>
     </div>
 
@@ -24,12 +22,36 @@
       </div>
       <div class="comment-list" v-if="comments.length > 0">
         <div class="comment-item" v-for="comment in comments" :key="comment.id">
-          <div class="comment-avatar"></div>
+          <div class="comment-avatar">
+            <AoImage
+              v-if="comment.avatar"
+              :src="comment.avatar"
+              width="32px"
+              height="32px"
+              circle
+            />
+          </div>
           <div class="comment-details">
             <div class="comment-user">{{ comment.user }}</div>
-            <div class="comment-text">{{ comment.text }}</div>
+            <div class="comment-body">
+              <div class="comment-text" v-if="comment.text">
+                {{ comment.text }}
+              </div>
+              <div class="comment-like">已获 {{ comment.likes }} 赞</div>
+            </div>
+            <div
+              class="comment-imgs"
+              v-if="comment.images && comment.images.length > 0"
+            >
+              <div
+                class="comment-img"
+                v-for="(image, index) in comment.images"
+                :key="index"
+              >
+                <AoImage :src="image" width="100%" height="100%" fit="cover" />
+              </div>
+            </div>
           </div>
-          <div class="comment-like">已获 {{ comment.likes }} 赞</div>
         </div>
       </div>
       <div class="empty-comment" v-else>
@@ -51,6 +73,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import AoImage from '@/components/ao-image/index.vue';
+const router = useRouter();
 const smileList = [
   '◕‿◕',
   '✿◠‿◠',
@@ -81,13 +106,20 @@ const props = defineProps<{
   content: string;
   date: string;
   peopleCount: string;
-  comments: Array<{ id: number; user: string; text: string; likes: number }>;
+  comments: Array<{
+    id: number | string;
+    user: string;
+    text: string;
+    likes: number;
+    avatar?: string;
+    images?: string[];
+  }>;
 }>();
 
 const hasImages = ref(false);
 
-const handleJoin = () => {
-  console.log('加入今日话题讨论');
+const goTopic = () => {
+  router.push({ name: 'topic' });
 };
 
 onMounted(() => {
@@ -213,24 +245,52 @@ onMounted(() => {
 
         .comment-details {
           flex: 1;
+          min-width: 0;
           .comment-user {
             font-size: var(--ao-font-size-sm);
             font-weight: var(--ao-font-weight-semibold);
             color: var(--ao-color-text-base);
             margin-bottom: 4px;
           }
-          .comment-text {
-            font-size: var(--ao-font-size-xs);
-            color: var(--ao-color-text-tertiary);
-          }
-        }
 
-        .comment-like {
-          font-size: var(--ao-font-size-xs);
-          color: var(--ao-color-text-tertiary);
-          flex-shrink: 0;
-          margin-left: 12px;
-          white-space: nowrap;
+          .comment-body {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+
+            .comment-text {
+              max-width: 75%;
+              font-size: var(--ao-font-size-xs);
+              line-height: 1.5;
+              color: var(--ao-color-text-tertiary);
+            }
+
+            .comment-like {
+              margin-left: auto;
+              font-size: var(--ao-font-size-xs);
+              line-height: 1.5;
+              color: var(--ao-color-text-tertiary);
+              flex-shrink: 0;
+              white-space: nowrap;
+            }
+          }
+
+          .comment-imgs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 75%;
+            margin-top: 8px;
+
+            .comment-img {
+              width: 100px;
+              height: 70px;
+              flex-shrink: 0;
+              border-radius: var(--ao-border-radius-sm);
+              overflow: hidden;
+              background: var(--ao-gray-4);
+            }
+          }
         }
       }
     }

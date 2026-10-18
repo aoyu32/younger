@@ -1,0 +1,25 @@
+.topic {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.topic-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  height: calc(100vh - var(--ao-header-height-lg) - var(--ao-spacing-sm) * 2);
+  overflow: hidden;
+  background-color: var(--ao-color-bg-layout);
+}
+
+.topic-sidebar {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 340px;
+  height: calc(100vh - var(--ao-header-height-lg) - var(--ao-spacing-sm) * 2);
+  overflow: hidden;
+  background-color: var(--ao-color-bg-layout);
+}

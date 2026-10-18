@@ -1,7 +1,11 @@
 <template>
   <div
     class="layout"
-    :class="{ 'layout--wide': isWidePage, 'layout--totorial': isTotorialPage }"
+    :class="{
+      'layout--wide': isWidePage,
+      'layout--totorial': isTotorialPage,
+      'layout--topic': isTopicPage,
+    }"
   >
     <header>
       <LayoutHeader />
@@ -13,7 +17,7 @@
     >
       <router-view />
     </main>
-    <footer>
+    <footer v-if="!isTopicPage">
       <LayoutFooter />
     </footer>
     <EdgeBar />
@@ -33,13 +37,16 @@ defineOptions({
 
 const route = useRoute();
 
-/** 宽屏页面：视频详情页、教程页需要更宽的头部内容与主内容区 */
+/** 宽屏页面：视频详情页、教程页、今日话题页需要更宽的头部内容与主内容区 */
 const isWidePage = computed(() =>
-  ['video-detail', 'totorial'].includes(String(route.name)),
+  ['video-detail', 'totorial', 'topic'].includes(String(route.name)),
 );
 
 /** 教程页内容宽度：1500px */
 const isTotorialPage = computed(() => route.name === 'totorial');
+
+/** 今日话题页内容宽度：1340px */
+const isTopicPage = computed(() => route.name === 'topic');
 
 // 响应式主题状态
 const currentTheme = ref('light');

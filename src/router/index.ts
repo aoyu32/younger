@@ -55,6 +55,15 @@ const routes = [
         },
       },
       {
+        name: 'topic',
+        path: '/topic',
+        component: () => import('@/view/topic/index.vue'),
+        meta: {
+          title: '今日话题',
+          menu: false,
+        },
+      },
+      {
         name: 'app-detail',
         path: '/app/:id',
         component: () => import('@/view/app-detail/index.vue'),

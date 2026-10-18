@@ -20,6 +20,11 @@
     --ao-container-max-width-wide: 1500px;
   }
 
+  /* 今日话题页：内容宽度 1440px */
+  &.layout--topic {
+    --ao-container-max-width-wide: 1440px;
+  }
+
   header {
     position: fixed;
     top: 0;

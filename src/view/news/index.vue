@@ -12,7 +12,7 @@
               :content="topicContent"
               :date="topicDate"
               :people-count="peopleCount"
-              :comments="commentList"
+              :comments="topicMessages"
             />
           </div>
           <div class="line">
@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useTopic } from '@/store/module/topic';
 import PageSlogan from '@/components/page-slogan/index.vue';
 import TodayTopic from './components/TodayTopic.vue';
 import NewsListCard from './components/NewsListCard.vue';
@@ -66,14 +67,24 @@ import NewsTabs from './components/NewsTabs.vue';
 
 const router = useRouter();
 
-const topicContent = ref(
-  '今天我们来聊一聊 AI 生成内容（AIGC）对内容创作领域的影响。你是否感受到了 AI 带来的效率提升？或者担心它取代创意工作？欢迎分享你的观点！',
+const { latestTopic } = useTopic();
+
+const topicContent = computed(() => latestTopic.value?.title ?? '');
+const topicDate = computed(() => latestTopic.value?.date ?? '');
+const peopleCount = computed(() =>
+  String(latestTopic.value?.participants ?? 0),
 );
 
-const topicDate = ref('2026-09-09');
-const peopleCount = ref('1.2k');
-
-const commentList = ref([]);
+const topicMessages = computed(() =>
+  (latestTopic.value?.messages ?? []).slice(0, 2).map((message) => ({
+    id: message.id,
+    user: message.user.name,
+    avatar: message.user.avatar,
+    text: message.content?.trim() ?? '',
+    images: message.images ?? [],
+    likes: message.likes ?? 0,
+  })),
+);
 
 const newNewsList = ref([
   {
