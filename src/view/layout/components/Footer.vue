@@ -92,7 +92,7 @@ const year = computed(() => new Date().getFullYear())
 .footer {
   width: 100%;
   height: auto;
-  margin-top: calc(var(--ao-spacing-lg) + 6px);
+  margin-top: 20px;
   background-color: var(--ao-color-bg-layout);
   border-top: var(--ao-border-width-thin) solid var(--ao-color-border);
 }

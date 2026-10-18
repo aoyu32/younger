@@ -15,6 +15,11 @@
     );
   }
 
+  /* 教程页：内容宽度 1500px */
+  &.layout--totorial {
+    --ao-container-max-width-wide: 1500px;
+  }
+
   header {
     position: fixed;
     top: 0;

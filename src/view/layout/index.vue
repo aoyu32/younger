@@ -1,11 +1,14 @@
 <template>
-  <div class="layout" :class="{ 'layout--wide': isWidePage }">
+  <div
+    class="layout"
+    :class="{ 'layout--wide': isWidePage, 'layout--totorial': isTotorialPage }"
+  >
     <header>
       <LayoutHeader />
     </header>
     <main
       :style="{
-        paddingTop: $route.path === '/profile' ? '5px' : 'var(-ao-spacing-sm)',
+        paddingTop: `${mainPaddingTop}px`,
       }"
     >
       <router-view />
@@ -30,8 +33,13 @@ defineOptions({
 
 const route = useRoute();
 
-/** 宽屏页面：视频详情页需要更宽的头部内容与主内容区 */
-const isWidePage = computed(() => route.name === 'video-detail');
+/** 宽屏页面：视频详情页、教程页需要更宽的头部内容与主内容区 */
+const isWidePage = computed(() =>
+  ['video-detail', 'totorial'].includes(String(route.name)),
+);
+
+/** 教程页内容宽度：1500px */
+const isTotorialPage = computed(() => route.name === 'totorial');
 
 // 响应式主题状态
 const currentTheme = ref('light');
@@ -40,6 +48,12 @@ const currentTheme = ref('light');
 const setTheme = () => {
   document.documentElement.setAttribute('data-theme', currentTheme.value);
 };
+
+/** 主内容区上内边距：个人中心 5px、其他页面 12px */
+const mainPaddingTop = computed(() => {
+  if (route.path === '/profile') return 5;
+  return 12;
+});
 
 // 生命周期：挂载后设置主题
 onMounted(() => {
