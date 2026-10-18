@@ -14,7 +14,7 @@ defineOptions({
 
 const props = defineProps({
   icon: {
-    type: String,
+    type: [String, Object],
     default: undefined,
   },
   color: {
