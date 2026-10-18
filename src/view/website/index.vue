@@ -296,6 +296,7 @@ onMounted(() => {
     smoothWheel: true,
     orientation: 'vertical',
     gestureOrientation: 'vertical',
+    respectReducedMotion: false,
   });
   const raf = (time: number) => {
     lenis?.raf(time);

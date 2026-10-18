@@ -874,6 +874,7 @@ const initLenis = () => {
     infinite: false,
     orientation: 'vertical',
     gestureOrientation: 'vertical',
+    respectReducedMotion: false,
   });
 
   function raf(time: number) {
