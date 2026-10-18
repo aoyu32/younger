@@ -81,6 +81,7 @@ withDefaults(defineProps<Props>(), {
 
 <style scoped lang="scss">
 .website-card {
+  --card-line-fade: 28px; // L 形边框两端渐变的长度
   width: 100%;
   height: 100%;
   position: relative;
@@ -88,6 +89,7 @@ withDefaults(defineProps<Props>(), {
 }
 
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,16 +105,59 @@ withDefaults(defineProps<Props>(), {
     transform var(--ao-duration-base) var(--ao-ease-in-out);
 }
 
+/* hover：小卡片不带阴影、不带整圈边框，只在朝向间隔的两侧画两条直线 */
 .website-card:hover .card {
+  z-index: 1001; // 盖在展开面板之上
   transform: translateY(-4px);
-  box-shadow: var(--ao-shadow-lg);
+  box-shadow: none;
   border-color: transparent;
+  background-color: var(--ao-gray-0); // 与面板同色
 }
 
-.website-card:hover .hover-card {
+/*
+ * 一整条 L 形边框（带圆角，不断开）：
+ * 竖边从面板顶边一直画到右下圆角，横边从圆角一直画到面板侧边，两端都到头
+ * 右下角的圆角与小卡片自身圆角（10px）重合
+ */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--ao-border-width-thin)); // 与小卡片外沿完全重合
+  border-right: var(--ao-border-width-thin) solid var(--ao-color-border);
+  border-bottom: var(--ao-border-width-thin) solid var(--ao-color-border);
+  border-bottom-right-radius: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ao-duration-base) var(--ao-ease-in-out);
+
+  /* 两个远端（竖边顶部、横边末端）逐渐变浅：两层渐变相乘 */
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0, #000 var(--card-line-fade)),
+    linear-gradient(to right, transparent 0, #000 var(--card-line-fade));
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0, #000 var(--card-line-fade)),
+    linear-gradient(to right, transparent 0, #000 var(--card-line-fade));
+  mask-composite: intersect;
+}
+
+.website-card:hover .card::before {
   opacity: 1;
-  pointer-events: auto;
-  transform: scale(1) translateY(-4px);
+}
+
+/* 向左展开：镜像，竖边在左，圆角在左下 */
+.website-card.is-left .card::before {
+  border-right: none;
+  border-left: var(--ao-border-width-thin) solid var(--ao-color-border);
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 10px;
+  /* 镜像：横边末端在右侧 */
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0, #000 var(--card-line-fade)),
+    linear-gradient(to left, transparent 0, #000 var(--card-line-fade));
+  mask-image:
+    linear-gradient(to bottom, transparent 0, #000 var(--card-line-fade)),
+    linear-gradient(to left, transparent 0, #000 var(--card-line-fade));
 }
 
 .card-icon {
@@ -152,30 +197,19 @@ withDefaults(defineProps<Props>(), {
   pointer-events: none;
   transform: scale(0.6);
   transform-origin: top left;
+  background-color: var(--ao-gray-0); // 整块铺底，填满左上角缺口
+  border-radius: var(--ao-border-radius-lg);
   transition:
     opacity 0.25s ease,
     transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1),
     filter 0.3s ease;
-  border-radius: var(--ao-border-radius-lg);
-
-  &::before {
-    content: '';
-    position: absolute;
-    width: var(--ao-border-radius-lg);
-    height: var(--ao-border-radius-lg);
-    top: calc(50% - var(--ao-border-radius-lg));
-    left: calc(50% - var(--ao-border-radius-lg));
-    background: radial-gradient(
-      circle at 0 0,
-      transparent calc(var(--ao-border-radius-lg) - 1px),
-      var(--ao-gray-0) var(--ao-border-radius-lg)
-    );
-  }
 }
 
 .website-card:hover .hover-card {
   opacity: 1;
   pointer-events: auto;
+  transform: scale(1) translateY(-4px);
+  // 阴影只出现在整个面板的外轮廓
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
 }
 
@@ -189,41 +223,16 @@ withDefaults(defineProps<Props>(), {
 .website-card.is-left .hover-card-right {
   right: auto;
   left: 0;
-  border-top-left-radius: var(--ao-border-radius-lg);
-  border-top-right-radius: var(--ao-border-radius-lg);
-  border-bottom-right-radius: var(--ao-border-radius-lg);
-  border-bottom-left-radius: var(--ao-border-radius-lg);
 }
 
-.website-card.is-left .hover-card-bottom {
-  border-top-left-radius: var(--ao-border-radius-lg);
-  border-top-right-radius: var(--ao-border-radius-lg);
-  border-bottom-right-radius: var(--ao-border-radius-lg);
-  border-bottom-left-radius: var(--ao-border-radius-lg);
-}
-
-.website-card.is-left .hover-card::before {
-  left: auto;
-  right: calc(50% - var(--ao-border-radius-lg));
-  background: radial-gradient(
-    circle at 100% 0,
-    transparent calc(var(--ao-border-radius-lg) - 1px),
-    var(--ao-gray-0) var(--ao-border-radius-lg)
-  );
-}
-
+/* 以下两块仅负责布局，背景和圆角由 .hover-card 统一提供 */
 .hover-card-right {
   width: 50%;
-  position: absolute;
   height: 100%;
-  background-color: var(--ao-gray-0);
-  border-top-left-radius: var(--ao-border-radius-lg);
+  position: absolute;
+  right: 0;
   display: flex;
   align-items: start;
-  right: 0;
-  border-top-left-radius: var(--ao-border-radius-lg);
-  border-top-right-radius: var(--ao-border-radius-lg);
-  border-bottom-right-radius: var(--ao-border-radius-lg);
 }
 
 .hover-card-bottom {
@@ -231,18 +240,13 @@ withDefaults(defineProps<Props>(), {
   height: 50%;
   position: absolute;
   bottom: 0;
-  background-color: var(--ao-gray-0);
-  border-top-left-radius: var(--ao-border-radius-lg);
-  border-bottom-left-radius: var(--ao-border-radius-lg);
-  border-bottom-right-radius: var(--ao-border-radius-lg);
   flex-direction: column;
 }
 
-/* ========== 新增内容样式（不影响原有样式） ========== */
+/* ========== 内容样式 ========== */
 /* 右侧按钮容器 */
 .right-content {
   width: 100%;
-
   display: flex;
   flex-direction: column;
   gap: 12px;
