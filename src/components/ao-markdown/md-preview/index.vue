@@ -30,4 +30,9 @@ const handleGetCatalog = (catalog: any) => {
   emit('get-catalog', catalog);
 };
 </script>
-<style lang="scss" scoped></style>
+
+<style lang="scss">
+.ao-markdown-wrapper .md-editor-preview .md-editor-code .md-editor-code-head {
+  z-index: 1;
+}
+</style>
