@@ -57,11 +57,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import PageSlogan from '@/components/page-slogan/index.vue';
 import TodayTopic from './components/TodayTopic.vue';
 import NewsListCard from './components/NewsListCard.vue';
 import HotCourseList from './components/HotCourseList.vue';
 import NewsTabs from './components/NewsTabs.vue';
+
+const router = useRouter();
 
 const topicContent = ref(
   '今天我们来聊一聊 AI 生成内容（AIGC）对内容创作领域的影响。你是否感受到了 AI 带来的效率提升？或者担心它取代创意工作？欢迎分享你的观点！',
@@ -188,7 +191,11 @@ const hotCourseList = ref([
 ]);
 
 const handleCourseClick = (id: string | number) => {
-  console.log('点击课程 ID:', id);
+  const course = hotCourseList.value.find((item) => item.id === id);
+  router.push({
+    name: 'totorial',
+    query: { chapter: String(id), title: course?.name ?? '' },
+  });
 };
 
 /* ================= 分类 Tab 列表 ================= */

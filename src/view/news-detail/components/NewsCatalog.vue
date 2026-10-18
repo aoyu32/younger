@@ -12,8 +12,12 @@
     </div>
 
     <div v-if="!catalog.length" class="catalog-empty">
-        <AoImage src="@/assets/news/icon_catalog.svg" width="40px" height="40px" />
-         <p>文章没有大纲</p>
+      <AoImage
+        src="@/assets/news/icon_catalog.svg"
+        width="40px"
+        height="40px"
+      />
+      <p>文章没有大纲</p>
     </div>
   </nav>
 </template>
@@ -85,7 +89,7 @@ onUnmounted(() => {
   transition: all 0.18s ease;
 
   &:hover {
-    background: #f0f4ff;
+    background: color-mix(in srgb, var(--ao-color-primary) 10%, transparent);
     .catalog-text {
       color: #333;
     }
@@ -96,11 +100,7 @@ onUnmounted(() => {
 
   &.active {
     border-left-color: var(--ao-color-primary);
-    background: color-mix(
-      in srgb,
-      var(--ao-color-primary) 8%,
-      transparent
-    );
+    background: color-mix(in srgb, var(--ao-color-primary) 8%, transparent);
 
     .catalog-indicator {
       opacity: 1;
