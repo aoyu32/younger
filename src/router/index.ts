@@ -90,6 +90,15 @@ const routes = [
           menu: false,
         },
       },
+      {
+        name: 'totorial',
+        path: '/totorial',
+        component: () => import('@/view/totorial/index.vue'),
+        meta: {
+          title: '文本教程',
+          menu: false,
+        },
+      },
     ],
   },
   {
