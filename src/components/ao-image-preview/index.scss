@@ -1,0 +1,97 @@
+.ao-image-preview {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ao-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+
+  &__stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+
+    &.is-zoomed {
+      cursor: grab;
+    }
+
+    &.is-dragging {
+      cursor: grabbing;
+    }
+  }
+
+  &__img {
+    max-width: 90vw;
+    max-height: 90vh;
+    user-select: none;
+    -webkit-user-drag: none;
+    transition: transform var(--ao-duration-fast) var(--ao-ease-out);
+  }
+
+  &__stage.is-dragging &__img {
+    transition: none;
+  }
+
+  &__toolbar {
+    position: fixed;
+    left: 50%;
+    bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: var(--ao-spacing-xs);
+    padding: 6px 10px;
+    border-radius: var(--ao-border-radius-full);
+    background-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(6px);
+    transform: translateX(-50%);
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--ao-border-radius-circle);
+    background: none;
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    transition:
+      color var(--ao-duration-fast) var(--ao-ease-in-out),
+      background-color var(--ao-duration-fast) var(--ao-ease-in-out);
+
+    &:hover:not(:disabled) {
+      color: var(--ao-gray-0);
+      background-color: rgba(255, 255, 255, 0.16);
+    }
+
+    &:disabled {
+      color: rgba(255, 255, 255, 0.3);
+      cursor: not-allowed;
+    }
+  }
+
+  /* 图标：fill 型与 stroke 型图标都跟随按钮文字色 */
+  &__icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+}
+
+.ao-image-preview-fade-enter-active,
+.ao-image-preview-fade-leave-active {
+  transition: opacity var(--ao-duration-fast) var(--ao-ease-in-out);
+}
+
+.ao-image-preview-fade-enter-from,
+.ao-image-preview-fade-leave-to {
+  opacity: 0;
+}
