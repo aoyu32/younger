@@ -1,6 +1,6 @@
 <template>
   <div class="video">
-    <PageSlogan content="看得见的教程，带得走的技能。" sub-content="教程中心" />
+    <PageSlogan content="看得懂的视频教程，学得会的人工智能。" sub-content="教程中心" />
     <div class="video-main">
       <div class="swipper-wrapper">
         <VideoSwipper />
@@ -59,7 +59,7 @@ import VideoWaterfallNav from './components/VideoWaterfallNav.vue';
 import VideoSideNav from './components/VideoSideNav.vue';
 import type { MenuItem } from './components/VideoWaterfallNav.vue';
 import { videoData } from '@/mock/videoData';
-import VideoPlayer from '@/components/video-player/index.vue';
+import VideoPlayer from '@/components/ao-video-player/index.vue';
 const activeNavItem = ref<string | number>('ai-paint');
 const navList = ref<MenuItem[]>([
   { id: 'all', label: '全部', icon: '' },

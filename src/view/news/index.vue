@@ -2,7 +2,7 @@
   <div class="news">
     <div class="slogan">
       <PageSlogan
-        content="查看最新AI资讯，跟随AI时代的发展脚本来发展自己。"
+        content="追踪 AI 前沿资讯，读懂正在发生的未来。"
         sub-content="AI资讯"
       />
       <div class="section-wrapper flex">

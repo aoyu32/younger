@@ -2,7 +2,7 @@
   <div class="app">
     <div class="slogan">
       <PageSlogan
-        content="学会使用一个APP，就是掌握一项新技能。 "
+        content="发现趁手的 AI 应用，让灵感更快落地。"
         sub-content="应用中心"
       />
     </div>
