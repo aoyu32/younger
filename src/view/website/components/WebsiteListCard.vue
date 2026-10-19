@@ -65,7 +65,17 @@
         ref="listWrapperRef"
         v-if="pagedData.length > 0"
       >
-        <div class="card-item" v-for="item in pagedData" :key="item.name">
+        <div
+          class="card-item"
+          v-for="(item, index) in pagedData"
+          :key="item.id ?? item.name"
+          :class="{
+            'is-selecting': editing,
+            'is-selected': isSelected(index),
+          }"
+          @click="handleCardClick(index)"
+        >
+          <span class="check" v-if="editing"></span>
           <div class="icon">
             <img :src="item.icon" alt="" />
           </div>
@@ -90,6 +100,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 interface WebsiteData {
+  id?: number | string;
   icon: string;
   name: string;
 }
@@ -101,6 +112,10 @@ const props = withDefaults(
     data: WebsiteData[];
     pageSize?: number;
     empty?: string;
+    /** 编辑模式：卡片右上角显示勾选框，点击卡片切换选中 */
+    editing?: boolean;
+    /** 选中的全局索引（相对 data） */
+    selected?: number[];
   }>(),
   {
     title: '标题',
@@ -113,13 +128,21 @@ const props = withDefaults(
     titlePos: 'left',
     pageSize: 12,
     empty: '暂无内容',
+    editing: false,
+    selected: () => [],
   },
 );
+
+const emit = defineEmits<{
+  'update:selected': [value: number[]];
+}>();
 
 // 与下方 .list-wrapper 的 grid 定义保持一致
 const GRID_MIN_COL = 128;
 const GRID_ROW_HEIGHT = 100;
 const GRID_GAP = 20;
+// 容器高度存在亚像素误差时，避免刚好差 1~2px 就少算一行/一列
+const GRID_TOLERANCE = 4;
 
 const listWrapperRef = ref<HTMLElement>();
 
@@ -138,6 +161,40 @@ const pagedData = computed(() => {
   return props.data.slice(start, start + dynamicPageSize.value);
 });
 
+/** 当前页第 index 项在完整 data 中的下标 */
+const dataIndex = (index: number) =>
+  (currentPage.value - 1) * dynamicPageSize.value + index;
+
+const isSelected = (index: number) => props.selected.includes(dataIndex(index));
+
+const handleCardClick = (index: number) => {
+  if (!props.editing) return;
+  const target = dataIndex(index);
+  const next = new Set(props.selected);
+  if (next.has(target)) {
+    next.delete(target);
+  } else {
+    next.add(target);
+  }
+  emit(
+    'update:selected',
+    [...next].sort((a, b) => a - b),
+  );
+};
+
+// 退出编辑模式时清空勾选
+watch(
+  () => props.editing,
+  (editing) => {
+    if (!editing) emit('update:selected', []);
+  },
+);
+
+// 页容量变化后全局下标会失效，清空勾选
+watch(dynamicPageSize, () => {
+  emit('update:selected', []);
+});
+
 function updatePageSize() {
   const el = listWrapperRef.value;
   if (!el) return;
@@ -148,11 +205,13 @@ function updatePageSize() {
     el.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
   const cols = Math.max(
     1,
-    Math.floor((width + GRID_GAP) / (GRID_MIN_COL + GRID_GAP)),
+    Math.floor((width + GRID_GAP + GRID_TOLERANCE) / (GRID_MIN_COL + GRID_GAP)),
   );
   const rows = Math.max(
     1,
-    Math.floor((height + GRID_GAP) / (GRID_ROW_HEIGHT + GRID_GAP)),
+    Math.floor(
+      (height + GRID_GAP + GRID_TOLERANCE) / (GRID_ROW_HEIGHT + GRID_GAP),
+    ),
   );
   dynamicPageSize.value = cols * rows;
 }
@@ -309,12 +368,13 @@ watch([dynamicPageSize, () => props.data.length], () => {
   height: 100%;
   flex-direction: column;
   gap: 15px;
-  p{
+  p {
     color: var(--ao-gray-7);
   }
 }
 
 .card-item {
+  position: relative;
   min-height: 100px;
   display: flex;
   flex-direction: column;
@@ -328,11 +388,53 @@ watch([dynamicPageSize, () => props.data.length], () => {
   cursor: pointer;
   transition:
     box-shadow var(--ao-duration-base) var(--ao-ease-in-out),
-    transform var(--ao-duration-base) var(--ao-ease-in-out);
+    transform var(--ao-duration-base) var(--ao-ease-in-out),
+    border-color var(--ao-duration-base) var(--ao-ease-in-out);
 
   &:hover {
     box-shadow: var(--ao-shadow-md);
     transform: translateY(calc(var(--ao-border-width-medium) * -1));
+  }
+
+  &.is-selecting:hover .check {
+    border-color: var(--ao-color-primary);
+  }
+
+  .check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    border: var(--ao-border-width-thin) solid var(--ao-color-border);
+    border-radius: 4px;
+    background-color: var(--ao-color-bg-container);
+    pointer-events: none;
+    transition:
+      background-color var(--ao-duration-base) var(--ao-ease-in-out),
+      border-color var(--ao-duration-base) var(--ao-ease-in-out);
+  }
+
+  &.is-selected {
+    border-color: var(--ao-color-primary);
+
+    .check {
+      border-color: var(--ao-color-primary);
+      background-color: var(--ao-color-primary);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 4px;
+        width: 5px;
+        height: 9px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
   }
 
   .icon {

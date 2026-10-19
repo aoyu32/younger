@@ -1,7 +1,7 @@
 <template>
   <div class="website">
     <PageSolgan
-      content="这里是你通往互联网的起点，收藏所有常用，让浏览更简单。"
+      content="常用网站一处收藏，智能时代的信息一站直达。"
       sub-content="网站导航"
     />
     <div class="website-main">
@@ -9,7 +9,9 @@
         <div class="history">
           <WebsiteListCard
             title="最近浏览"
-            :data="[]"
+            :data="historyList"
+            :editing="isEditHistory"
+            v-model:selected="historySelected"
             title-pos="left"
             empty="没有浏览历史~"
           >
@@ -20,12 +22,21 @@
                   hoverColor="red"
                   size="16px"
                   v-if="!isEditHistory"
-                  @click="isEditHistory = !isEditHistory"
+                  @click="toggleHistoryEdit"
                   color="#595959"
                 ></AoIcon>
                 <div class="actions flex-center" v-else>
-                  <div class="action-item del">全部删除</div>
-                  <div class="action-item close" @click="isEditHistory = false">
+                  <div class="action-item" @click="toggleHistoryAll">
+                    {{ historyAllSelected ? '取消全选' : '全选' }}
+                  </div>
+                  <div
+                    class="action-item del"
+                    :class="{ disabled: historySelected.length === 0 }"
+                    @click="deleteHistorySelected"
+                  >
+                    删除
+                  </div>
+                  <div class="action-item close" @click="closeHistoryEdit">
                     关闭
                   </div>
                 </div>
@@ -36,7 +47,9 @@
         <div class="collect">
           <WebsiteListCard
             title="我的收藏"
-            :data="webTools"
+            :data="collectList"
+            :editing="isEditCollect"
+            v-model:selected="collectSelected"
             title-pos="right"
             empty="没有收藏内容~"
           >
@@ -51,8 +64,17 @@
                   @click="showAddDialog = true"
                 ></AoIcon>
                 <div class="actions flex-center" v-else>
-                  <div class="action-item del">全部删除</div>
-                  <div class="action-item close" @click="isEditCollect = false">
+                  <div class="action-item" @click="toggleCollectAll">
+                    {{ collectAllSelected ? '取消全选' : '全选' }}
+                  </div>
+                  <div
+                    class="action-item del"
+                    :class="{ disabled: collectSelected.length === 0 }"
+                    @click="deleteCollectSelected"
+                  >
+                    删除
+                  </div>
+                  <div class="action-item close" @click="closeCollectEdit">
                     关闭
                   </div>
                 </div>
@@ -62,7 +84,7 @@
                   hoverColor="red"
                   color="#595959"
                   v-if="!isEditCollect"
-                  @click="isEditCollect = !isEditCollect"
+                  @click="toggleCollectEdit"
                 ></AoIcon>
               </div>
             </template>
@@ -106,7 +128,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import Lenis from 'lenis';
 import PageSolgan from '@/components/page-slogan/index.vue';
 import WebsiteListCard from './components/WebsiteListCard.vue';
-import { webTools } from '@/mock/webTools';
+import { useWebsite } from '@/store/module/website';
 import deleteIcon from '@/assets/website/icon_delete.svg';
 import addIcon from '@/assets/website/icon_add.svg';
 import AddWebsiteDialog from './components/AddWebsiteDialog.vue';
@@ -118,6 +140,71 @@ const isEditHistory = ref(false);
 const isEditCollect = ref(false);
 const showAddDialog = ref(false);
 const categorySectionRef = ref();
+
+const { historyList, collectList } = useWebsite();
+const historySelected = ref<number[]>([]);
+const collectSelected = ref<number[]>([]);
+
+const historyAllSelected = computed(
+  () =>
+    historyList.value.length > 0 &&
+    historySelected.value.length === historyList.value.length,
+);
+const collectAllSelected = computed(
+  () =>
+    collectList.value.length > 0 &&
+    collectSelected.value.length === collectList.value.length,
+);
+
+const toggleHistoryEdit = () => {
+  isEditHistory.value = !isEditHistory.value;
+  historySelected.value = [];
+};
+
+const closeHistoryEdit = () => {
+  isEditHistory.value = false;
+  historySelected.value = [];
+};
+
+const toggleHistoryAll = () => {
+  historySelected.value = historyAllSelected.value
+    ? []
+    : historyList.value.map((_, index) => index);
+};
+
+const deleteHistorySelected = () => {
+  if (historySelected.value.length === 0) return;
+  const selected = new Set(historySelected.value);
+  historyList.value = historyList.value.filter(
+    (_, index) => !selected.has(index),
+  );
+  historySelected.value = [];
+};
+
+const toggleCollectEdit = () => {
+  isEditCollect.value = !isEditCollect.value;
+  collectSelected.value = [];
+};
+
+const closeCollectEdit = () => {
+  isEditCollect.value = false;
+  collectSelected.value = [];
+};
+
+const toggleCollectAll = () => {
+  collectSelected.value = collectAllSelected.value
+    ? []
+    : collectList.value.map((_, index) => index);
+};
+
+const deleteCollectSelected = () => {
+  if (collectSelected.value.length === 0) return;
+  const selected = new Set(collectSelected.value);
+  collectList.value = collectList.value.filter(
+    (_, index) => !selected.has(index),
+  );
+  collectSelected.value = [];
+};
 
 // 默认选中第一个分组的第一个二级分类
 const firstGroup = websiteCategories[0];
@@ -292,7 +379,7 @@ const getStickyTop = () => {
 
 onMounted(() => {
   lenis = new Lenis({
-    lerp: 0.2, 
+    lerp: 0.2,
     smoothWheel: true,
     orientation: 'vertical',
     gestureOrientation: 'vertical',

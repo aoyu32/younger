@@ -72,6 +72,7 @@ defineExpose({
 
 <style scoped lang="scss">
 .add-website-form {
+  --input-focus-color: var(--ao-color-primary);
   display: flex;
   flex-direction: column;
   gap: 16px;

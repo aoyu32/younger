@@ -13,7 +13,8 @@
 
   .history,
   .collect {
-    min-height: 580px;
+    /* 固定高度：避免翻到条目较少的页时容器被内容撑缩，导致页容量反复重算 */
+    height: 584px;
 
     .action-btn {
       gap: 10px;
@@ -25,6 +26,12 @@
       cursor: pointer;
       color: var(--ao-gray-8);
       transition: all 0.2s ease-in-out;
+    }
+
+    .action-item.disabled {
+      color: var(--ao-gray-5);
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
     .del {
@@ -41,7 +48,7 @@
   }
 }
 
-.line{
+.line {
   margin: 50px 0;
 }
 
