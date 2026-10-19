@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: var(--ao-shadow-md);
+  box-shadow: var(--ao-shadow-sm);
 
   .top-section {
     display: flex;
