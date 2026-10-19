@@ -66,7 +66,11 @@
 
     <div class="video-detail__content">
       <div ref="playerRef" class="video-detail__player">
-        <VideoPlayer :src="video.video.url" :poster="video.video.cover" />
+        <VideoPlayer
+          :src="video.video.url"
+          :poster="video.video.cover"
+          :quality="qualityList"
+        />
       </div>
 
       <div class="video-detail__actions">
@@ -169,7 +173,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import VideoPlayer from '@/components/video-player/index.vue';
+import VideoPlayer from '@/components/ao-video-player/index.vue';
 import AoComment from '@/components/ao-comment/index.vue';
 import { videoData } from '@/mock/videoData';
 import { mockComments } from '@/mock/comment';
@@ -202,6 +206,15 @@ const video = computed(() => {
 });
 
 const chapterList = computed<VideoChapter[]>(() => video.value.chapters ?? []);
+
+/**
+ * 清晰度列表：默认高清。
+ * 目前 mock 只有一份源文件，超清先指向同一地址占位；接入真实地址后替换 src 即可。
+ */
+const qualityList = computed(() => [
+  { label: '高清', src: video.value.video.url },
+  { label: '超清', src: video.value.video.url },
+]);
 
 const playerRef = ref<HTMLElement>();
 const playerHeight = ref<number>();
