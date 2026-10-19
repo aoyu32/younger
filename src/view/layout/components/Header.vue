@@ -45,11 +45,13 @@
         ></AoImage>
         <span>开通会员</span>
       </div>
-      <div class="right_user" @click="$router.push('/profile')">
+      <div class="right_user" @click="handleUserClick">
         <div class="auth-box flex-center" v-if="!isLogin">
-          <div class="login" @click="router.push('/login')">登录</div>
+          <div class="login" @click.stop="router.push('/login')">登录</div>
           <div class="line"></div>
-          <div class="register" @click="router.push('/register')">注册</div>
+          <div class="register" @click.stop="router.push('/register')">
+            注册
+          </div>
         </div>
         <div class="user-info-box flex-center" v-else>
           <div class="user_avatar">
@@ -73,7 +75,9 @@
               >
                 {{ menu.title }}
               </div>
-              <div class="menu-item logout">退出登录</div>
+              <div class="menu-item logout" @click.stop="handleLogout">
+                退出登录
+              </div>
             </div>
           </div>
         </div>
@@ -83,8 +87,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUser } from '@/store/module/user';
 const router = useRouter();
 const routers = router.getRoutes();
 // 组件名称
@@ -93,7 +98,7 @@ defineOptions({
 });
 
 // 响应式数据
-const isLogin = ref(true);
+const { isLogin, logout } = useUser();
 
 // 用户下拉菜单：跳转到个人中心，并激活对应分组下的第一个菜单项
 // tab 传的是个人中心左侧导航的菜单 key，传分组 key（collect / security / order）时激活该分组第一项
@@ -107,6 +112,21 @@ const userMenus = [
 // 跳转个人中心指定菜单
 const goProfile = (tab) => {
   router.push({ path: '/profile', query: { tab } });
+};
+
+// 退出登录
+const handleLogout = () => {
+  logout();
+  if (router.currentRoute.value.path === '/profile') {
+    router.push('/home');
+  }
+};
+
+// 已登录时点击用户区进入个人中心
+const handleUserClick = () => {
+  if (isLogin.value) {
+    router.push('/profile');
+  }
 };
 
 const chLogoName = computed(() => {

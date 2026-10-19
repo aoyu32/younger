@@ -22,7 +22,7 @@
               </div>
             </div>
           </div>
-          <div class="logout-wrapper">退出登录</div>
+          <div class="logout-wrapper" @click="handleLogout">退出登录</div>
         </div>
       </div>
     </div>
@@ -31,6 +31,16 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUser } from '@/store/module/user';
+
+const router = useRouter();
+const { logout } = useUser();
+
+const handleLogout = () => {
+  logout();
+  router.push('/home');
+};
 
 const props = withDefaults(
   defineProps<{
