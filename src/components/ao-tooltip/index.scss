@@ -1,0 +1,137 @@
+$arrow-w: 20px;
+$arrow-h: 6px;
+$arrow-overlap: 0.5px;
+
+$ease-silk: cubic-bezier(0.32, 0.72, 0, 1);
+$slide: 10px;
+
+.ao-tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.ao-tooltip__content {
+  position: absolute;
+  z-index: var(--ao-z-tooltip);
+  width: max-content;
+  max-width: var(--ao-tooltip-max-width);
+  padding: 7px 10px;
+  border-radius: var(--ao-border-radius-base);
+  background-color: var(--ao-tooltip-bg);
+  color: var(--ao-tooltip-color);
+  font-size: var(--ao-font-size-xs);
+  font-weight: var(--ao-font-weight-medium);
+  line-height: 1.4;
+  word-break: break-word;
+  pointer-events: none;
+
+  filter: drop-shadow(0 4px 5px rgba(74, 74, 74, 0.058))
+    drop-shadow(0 1px 2px rgb(0 0 0 / 0.12));
+
+  opacity: 0;
+  visibility: hidden;
+  scale: 0.96;
+  translate: var(--ao-tooltip-from, 0 0);
+  transition:
+    opacity 0.2s ease,
+    scale 0.28s $ease-silk,
+    translate 0.28s $ease-silk,
+    visibility 0s linear 0.28s;
+
+  will-change: opacity, scale, translate;
+
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+    scale: 1;
+    translate: 0 0;
+    transition:
+      opacity 0.24s ease,
+      scale 0.42s $ease-silk,
+      translate 0.42s $ease-silk,
+      visibility 0s linear 0s;
+  }
+}
+
+// ---------- 箭头 ----------
+.ao-tooltip__arrow {
+  position: absolute;
+  display: block;
+  width: $arrow-w;
+  height: $arrow-h;
+  fill: var(--ao-tooltip-bg);
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.ao-tooltip__content--top {
+  bottom: calc(100% + var(--ao-tooltip-offset));
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: 50% calc(100% + #{$arrow-h});
+  --ao-tooltip-from: 0 #{$slide};
+
+  .ao-tooltip__arrow {
+    top: calc(100% - #{$arrow-overlap});
+    left: 50%;
+    transform: translateX($arrow-w * -0.5);
+  }
+}
+
+.ao-tooltip__content--bottom {
+  top: calc(100% + var(--ao-tooltip-offset));
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: 50% (-$arrow-h);
+  --ao-tooltip-from: 0 #{-$slide};
+
+  .ao-tooltip__arrow {
+    bottom: calc(100% - #{$arrow-overlap});
+    left: 50%;
+    transform-origin: 50% 50%;
+    transform: translateX($arrow-w * -0.5) rotate(180deg);
+  }
+}
+
+.ao-tooltip__content--left {
+  right: calc(100% + var(--ao-tooltip-offset));
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: calc(100% + #{$arrow-h}) 50%;
+  --ao-tooltip-from: #{$slide} 0;
+
+  .ao-tooltip__arrow {
+    top: 50%;
+    left: calc(100% - #{$arrow-overlap});
+    transform: translateY($arrow-w * 0.5) rotate(-90deg);
+  }
+}
+
+.ao-tooltip__content--right {
+  left: calc(100% + var(--ao-tooltip-offset));
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: (-$arrow-h) 50%;
+  --ao-tooltip-from: #{-$slide} 0;
+
+  .ao-tooltip__arrow {
+    top: 50%;
+    left: $arrow-overlap;
+    transform: translateY($arrow-w * -0.5) rotate(90deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ao-tooltip__content,
+  .ao-tooltip__content.is-visible {
+    scale: 1;
+    translate: 0 0;
+    transition:
+      opacity 0.1s linear,
+      visibility 0s linear 0.1s;
+  }
+
+  .ao-tooltip__content.is-visible {
+    transition: opacity 0.1s linear;
+  }
+}
