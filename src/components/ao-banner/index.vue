@@ -15,8 +15,9 @@
           class="carousel-item"
           v-for="(item, index) in carouselList"
           :key="index"
+          :style="{ backgroundImage: `url(${resolveFallback(index)})` }"
         >
-          <img :src="item.img" alt="" />
+          <img :src="item.img" alt="" @error="handleImageError($event, index)" />
         </div>
       </div>
       <div class="empty-img" v-else>
@@ -47,6 +48,10 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import prevIcon from './img/icon_left.svg?url';
 import nextIcon from './img/icon_right.svg?url';
 import emptyIcon from './img/icon_empty.svg?url';
+import bannerOne from '@/assets/banner/banner_1.jfif';
+import bannerTwo from '@/assets/banner/banner_2.jfif';
+
+const defaultBanners = [bannerOne, bannerTwo];
 
 // 定义组件名称
 defineOptions({
@@ -59,7 +64,25 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  fallback: {
+    type: [String, Array],
+    default: () => [bannerOne, bannerTwo],
+  },
 });
+
+const resolveFallback = (index) => {
+  if (Array.isArray(props.fallback)) {
+    if (!props.fallback.length) return defaultBanners[0];
+    return props.fallback[index % props.fallback.length];
+  }
+  return props.fallback || defaultBanners[0];
+};
+
+const applyFallback = (img, index) => {
+  if (!img || img.dataset.fallback) return;
+  img.dataset.fallback = '1';
+  img.src = resolveFallback(index);
+};
 
 // 响应式数据
 const carouselInnerRef = ref(null);
@@ -80,6 +103,18 @@ const carouselList = computed(() => {
 });
 
 // 方法
+const handleImageError = (event, index) => {
+  const img = event.target;
+  const failedSrc = img.getAttribute('src');
+  const inner = carouselInnerRef.value;
+  const images = inner ? inner.querySelectorAll('img') : [img];
+
+  images.forEach((item) => {
+    if (item.getAttribute('src') !== failedSrc) return;
+    applyFallback(item, index);
+  });
+};
+
 const handleMouseEnter = () => {
   startAutoplay(3000, false);
 };
@@ -129,6 +164,15 @@ const initCarousel = async () => {
   // 克隆首尾
   const first = inner.firstElementChild.cloneNode(true);
   const last = inner.lastElementChild.cloneNode(true);
+
+  const bindFallback = (node, index) => {
+    const img = node.querySelector('img');
+    if (!img) return;
+    img.addEventListener('error', () => applyFallback(img, index));
+  };
+
+  bindFallback(first, 0);
+  bindFallback(last, expected - 1);
 
   inner.appendChild(first);
   inner.insertBefore(last, inner.firstElementChild);
@@ -252,6 +296,9 @@ watch(carouselList, (newList) => {
     .carousel-item {
       flex: 0 0 100%;
       width: 100%;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
 
       img {
         width: 100%;
