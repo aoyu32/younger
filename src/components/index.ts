@@ -9,6 +9,8 @@ import AoScrollbar from './ao-scrollbar/index.vue';
 import AoDialog from './ao-dialog/index.vue';
 import AoPagination from './ao-pagination/index.vue';
 import AoImagePreview from './ao-image-preview/index.vue';
+import AoVideoPlayer from './ao-video-player/index.vue';
+import AoTooltip from './ao-tooltip/index.vue';
 
 const components = [
   AoIcon,
@@ -19,6 +21,8 @@ const components = [
   AoScrollbar,
   AoPagination,
   AoImagePreview,
+  AoVideoPlayer,
+  AoTooltip,
 ];
 export default {
   install(app: App) {
