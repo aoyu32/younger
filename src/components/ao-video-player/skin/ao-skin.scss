@@ -89,10 +89,6 @@
     }
 
     .art-mask .art-state {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
       width: auto;
       height: auto;
       padding: 10px 20px;
@@ -102,19 +98,6 @@
       .art-icon {
         width: 26px;
         height: 26px;
-      }
-
-      .ao-state-label {
-        display: none;
-        color: #ffffff;
-        font-size: 14px;
-        line-height: 1;
-        letter-spacing: 1px;
-        white-space: nowrap;
-      }
-
-      &.is-paused .ao-state-label {
-        display: inline;
       }
     }
 
@@ -216,6 +199,14 @@
 
 .ao-video-player--plain .art-video-player .art-bottom {
   display: none;
+}
+
+// 教程页 hero：只保留画面本身，悬停播放、离开暂停，不显示任何遮罩/提示
+.ao-video-player--hover .art-video-player {
+  .art-mask,
+  .art-notice {
+    display: none !important;
+  }
 }
 
 @media (max-width: 640px) {

@@ -8,11 +8,12 @@
     <video-player class="video-player">
       <media-container>
         <video
-          :src="src"
+          :src="currentSource"
           :autoplay="autoPlay"
           playsinline
           ref="videoRef"
           @click="togglePlay"
+          @error="handleVideoError"
           @seeked="handleVideoSeeked"
           @volumechange="handleVolumeChange"
           @canplay="handleCanPlay"
@@ -276,7 +277,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import '@videojs/html/video/player';
 import '@videojs/html/ui/buffering-indicator';
 import '@videojs/html/ui/time-slider';
@@ -295,6 +296,7 @@ import iconEnterPip from './icons/icon_enter_pip.svg?url';
 import iconExitPip from './icons/icon_exit_pip.svg?url';
 import iconFullscreen from './icons/icon_fullscreen.svg?url';
 import iconExitFullscreen from './icons/icon_exit_fullscreen.svg?url';
+import { getRandomDefaultVideo } from '@/utils/defaultVideo';
 
 defineOptions({
   name: 'ao-video-player',
@@ -327,6 +329,55 @@ const hasSetRate = ref(false);
 const isVideoLoading = ref(true);
 let hideTimer: ReturnType<typeof setTimeout> | null = null;
 let rateHideTimer: ReturnType<typeof setTimeout> | null = null;
+
+const currentSource = ref(props.src);
+// 当前使用的本地兜底视频；为空表示还未触发兜底
+let fallbackUrl = '';
+// 远程视频长时间没有加载出元数据时，也切到本地兜底
+const FALLBACK_TIMEOUT = 8000;
+let loadTimer: ReturnType<typeof setTimeout> | null = null;
+
+const clearLoadTimer = () => {
+  if (loadTimer) {
+    clearTimeout(loadTimer);
+    loadTimer = null;
+  }
+};
+
+const switchToFallback = () => {
+  const video = videoRef.value;
+  if (!video) return;
+  // 本地兜底也失败时不再替换，避免无限循环
+  if (fallbackUrl && currentSource.value === fallbackUrl) {
+    isVideoLoading.value = false;
+    return;
+  }
+  clearLoadTimer();
+  fallbackUrl = getRandomDefaultVideo();
+  currentSource.value = fallbackUrl;
+  isVideoLoading.value = true;
+  nextTick(() => video.load());
+};
+
+const startLoadTimer = () => {
+  clearLoadTimer();
+  if (fallbackUrl) return;
+  loadTimer = setTimeout(switchToFallback, FALLBACK_TIMEOUT);
+};
+
+const handleVideoError = () => {
+  clearLoadTimer();
+  switchToFallback();
+};
+
+watch(
+  () => props.src,
+  (src) => {
+    fallbackUrl = '';
+    currentSource.value = src;
+    startLoadTimer();
+  },
+);
 
 const togglePlay = () => {
   if (props.hoverPlay) return;
@@ -435,6 +486,7 @@ const handlePlay = () => {
 };
 
 const handleCanPlay = () => {
+  clearLoadTimer();
   isVideoLoading.value = false;
   const video = videoRef.value;
   if (video && video.paused) {
@@ -447,10 +499,12 @@ const handleWaiting = () => {
 };
 
 const handlePlaying = () => {
+  clearLoadTimer();
   isVideoLoading.value = false;
 };
 
 const handleLoadedMetadata = async () => {
+  clearLoadTimer();
   const video = videoRef.value;
   if (!video) return;
   if (props.autoPlay) {
@@ -470,9 +524,11 @@ onMounted(() => {
   if (!video) return;
   volumeDisplay.value = video.muted ? 0 : Math.round(video.volume * 100);
   document.addEventListener('click', handleClickOutside);
+  startLoadTimer();
 });
 
 onBeforeUnmount(() => {
+  clearLoadTimer();
   document.removeEventListener('click', handleClickOutside);
 });
 </script>

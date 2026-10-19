@@ -1,7 +1,10 @@
 <template>
   <div
     class="ao-video-player"
-    :class="{ 'ao-video-player--plain': !controls }"
+    :class="{
+      'ao-video-player--plain': !controls,
+      'ao-video-player--hover': hoverPlay,
+    }"
     ref="containerRef"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
@@ -61,33 +64,6 @@ const FALLBACK_TIMEOUT = 8000;
 let loadTimer: ReturnType<typeof setTimeout> | null = null;
 
 const toIcon = (svg: string) => svg.slice(svg.indexOf('<svg'));
-
-// hoverPlay 模式下，暂停后显示「暂停图标 + 文案」；首次进入仍显示播放图标
-let hasPlayed = false;
-let pauseStateEl: HTMLElement | null = null;
-let pauseStateIcon: HTMLElement | null = null;
-
-const updatePauseIndicator = (paused: boolean) => {
-  if (!props.hoverPlay || !pauseStateEl) return;
-  const showPause = paused && hasPlayed;
-  pauseStateEl.classList.toggle('is-paused', showPause);
-  if (pauseStateIcon) {
-    pauseStateIcon.innerHTML = toIcon(showPause ? iconPause : iconPlay);
-  }
-};
-
-const handleVideoPlay = () => {
-  hasPlayed = true;
-  updatePauseIndicator(false);
-};
-
-const handleVideoPause = () => {
-  updatePauseIndicator(true);
-  if (props.hoverPlay && instance.value) {
-    // hoverPlay 的暂停提示统一放在画面中央，隐藏左上角临时通知
-    instance.value.notice.show = '';
-  }
-};
 
 const rateControl: NonNullable<Option['controls']>[number] = {
   name: 'playbackRate',
@@ -235,20 +211,6 @@ const createPlayer = () => {
   layoutControls();
 
   instance.value = player;
-  if (props.hoverPlay) {
-    pauseStateEl = containerRef.value.querySelector('.art-state');
-    pauseStateIcon =
-      pauseStateEl?.querySelector<HTMLElement>('.art-icon-state') ?? null;
-    if (pauseStateEl) {
-      const label = document.createElement('span');
-      label.className = 'ao-state-label';
-      label.textContent = '暂停';
-      pauseStateEl.appendChild(label);
-    }
-    updatePauseIndicator(false);
-  }
-  player.on('video:play', handleVideoPlay);
-  player.on('video:pause', handleVideoPause);
   player.on('video:error', handleVideoError);
   player.on('video:loadedmetadata', clearLoadTimer);
   player.on('video:canplay', clearLoadTimer);
@@ -266,9 +228,7 @@ const handleMouseLeave = () => {
   if (!player || !props.hoverPlay) return;
   player.pause();
   player.currentTime = 0;
-  player.mask.show = true;
   player.notice.show = '';
-  updatePauseIndicator(true);
 };
 
 const blockClick = (event: MouseEvent) => {
@@ -294,8 +254,6 @@ watch(
   (url) => {
     if (instance.value && url) {
       fallbackUrl = '';
-      hasPlayed = false;
-      updatePauseIndicator(false);
       instance.value.option.url = url;
       instance.value.url = url;
       startLoadTimer();
