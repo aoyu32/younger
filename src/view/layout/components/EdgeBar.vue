@@ -1,19 +1,50 @@
 <template>
   <!-- 固定在视口右侧下方的简约快捷栏：客服 / 微信 / QQ / 反馈 / 返回顶部（到底部才出现） -->
   <div v-if="show" class="edge-bar">
-    <div
-      v-for="item in items"
-      :key="item.key"
-      class="edge-item"
-      :title="item.label"
-      @click="handleClick(item)"
-    >
-      <ao-image :src="item.icon" width="22px" height="22px" fit="contain" />
-    </div>
-    <Transition name="top-item">
-      <div v-if="showTop" class="edge-item" title="返回顶部" @click="scrollToTop">
-        <ao-image :src="topItem.icon" width="22px" height="22px" fit="contain" />
+    <template v-for="item in items" :key="item.key">
+      <div v-if="item.qr" class="edge-qr-wrap">
+        <div class="edge-item" @click="handleClick(item)">
+          <ao-image :src="item.icon" width="22px" height="22px" fit="contain" />
+        </div>
+        <div class="qr-pop">
+          <p class="qr-title">
+            扫码添加<span class="qr-key">{{ item.qrLabel }}</span>参与讨论吧
+          </p>
+          <div class="qr-box">
+            <ao-image
+              :src="item.qr"
+              width="160px"
+              height="160px"
+              fit="contain"
+            />
+            <span class="qr-logo">
+              <ao-image
+                :src="item.icon"
+                width="18px"
+                height="18px"
+                fit="contain"
+              />
+            </span>
+          </div>
+        </div>
       </div>
+      <ao-tooltip v-else :content="item.label" placement="left">
+        <div class="edge-item" @click="handleClick(item)">
+          <ao-image :src="item.icon" width="22px" height="22px" fit="contain" />
+        </div>
+      </ao-tooltip>
+    </template>
+    <Transition name="top-item">
+      <ao-tooltip v-if="showTop" content="返回顶部" placement="left">
+        <div class="edge-item" @click="scrollToTop">
+          <ao-image
+            :src="topItem.icon"
+            width="22px"
+            height="22px"
+            fit="contain"
+          />
+        </div>
+      </ao-tooltip>
     </Transition>
   </div>
 </template>
@@ -36,18 +67,36 @@ type EdgeItem = {
   key: string;
   label: string;
   icon: string;
+  qr?: string;
+  qrLabel?: string;
 };
 
 /** 图标传路径字符串，由 AoImage 内部解析 */
 const items: EdgeItem[] = [
   { key: 'kefu', label: '客服', icon: '@/assets/layout/icon_kefu.svg' },
-  { key: 'wechat', label: '微信', icon: '@/assets/layout/icon_wechat.svg' },
-  { key: 'qq', label: 'QQ', icon: '@/assets/layout/icon_qq.svg' },
+  {
+    key: 'wechat',
+    label: '微信',
+    icon: '@/assets/layout/icon_wechat.svg',
+    qr: '@/assets/layout/qrcode_wechat.png',
+    qrLabel: '微信',
+  },
+  {
+    key: 'qq',
+    label: 'QQ',
+    icon: '@/assets/layout/icon_qq.svg',
+    qr: '@/assets/layout/qrcode_qq.png',
+    qrLabel: 'QQ群',
+  },
   { key: 'feedback', label: '反馈', icon: '@/assets/layout/icon_feedback.svg' },
 ];
 
 /* 返回顶部：滚动到接近底部时才显示 */
-const topItem: EdgeItem = { key: 'top', label: '返回顶部', icon: '@/assets/layout/icon_back_top.svg' };
+const topItem: EdgeItem = {
+  key: 'top',
+  label: '返回顶部',
+  icon: '@/assets/layout/icon_back_top.svg',
+};
 const showTop = ref(false);
 
 const onScroll = () => {
@@ -57,7 +106,6 @@ const onScroll = () => {
   showTop.value = toBottom <= 150;
 };
 
-/** 平滑滚回顶部：rAF 手写缓动（原生 behavior:'smooth' 在部分环境会被禁用导致瞬移） */
 const scrollToTop = () => {
   const el = document.scrollingElement ?? document.documentElement;
   const startY = el.scrollTop;
@@ -67,7 +115,6 @@ const scrollToTop = () => {
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
   let cancelled = false;
 
-  /* 用户主动滚动（滚轮/拖动/触摸）时取消动画 */
   const cancel = () => {
     cancelled = true;
   };
@@ -119,7 +166,89 @@ onBeforeUnmount(() => {
   padding: 10px 5px;
   border-radius: var(--ao-border-radius-lg);
   background-color: var(--ao-gray-0);
-  border: 1px solid var(--ao-color-border);
+  box-shadow: var(--ao-shadow-sm);
+}
+
+.edge-qr-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-pop {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  z-index: 1;
+  width: 180px;
+  padding: 10px 10px 8px;
+  border-radius: var(--ao-border-radius-lg);
+  background-color: var(--ao-gray-0);
+  box-shadow: var(--ao-shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.96);
+  transform-origin: right center;
+  transition:
+    opacity var(--ao-duration-fast) var(--ao-ease-in-out),
+    transform var(--ao-duration-fast) var(--ao-ease-in-out),
+    visibility var(--ao-duration-fast) var(--ao-ease-in-out);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -12px;
+    width: 12px;
+    height: 100%;
+  }
+
+  .qr-title {
+    margin: 0 0 6px;
+    color: var(--ao-gray-9);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .qr-key {
+    color: var(--ao-color-primary);
+    font-weight: 600;
+  }
+
+  .qr-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 160px;
+    height: 160px;
+  }
+
+  .qr-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    background-color: var(--ao-gray-0);
+    box-shadow: 0 0 0 3px var(--ao-gray-0);
+    transform: translate(-50%, -50%);
+  }
+}
+
+.edge-qr-wrap:hover .qr-pop {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
 }
 
 .edge-item {
@@ -138,7 +267,6 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 返回顶部项出入场：淡入 + 下浮 */
 .top-item-enter-active,
 .top-item-leave-active {
   transition:
