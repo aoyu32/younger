@@ -20,10 +20,19 @@
         ></textarea>
         <!-- 图片预览区域 -->
         <div v-if="imgList?.length" class="image-preview-list">
-          <div v-for="img in imgList" :key="img.id" class="preview-item">
+          <div
+            v-for="(img, imgIndex) in imgList"
+            :key="img.id"
+            class="preview-item"
+            @click="openPreview(imgIndex)"
+          >
             <img :src="img.url" alt="预览" />
-            <div class="remove-btn" @click="removeImage(img.id)">
-              <img :src="iconRemove" alt="" />
+            <div class="remove-btn">
+              <img
+                :src="iconRemove"
+                alt=""
+                @click.stop="removeImage(img.id)"
+              />
             </div>
           </div>
         </div>
@@ -74,6 +83,12 @@
         @close="showEmojiPicker = false"
       />
     </div>
+
+    <AoImagePreview
+      v-model="previewVisible"
+      :images="previewImageUrls"
+      :start-index="previewIndex"
+    />
   </div>
 </template>
 
@@ -104,6 +119,14 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const showUploadBtn = computed(() => handleUpload);
 const imgList = ref<ImageItem[]>([]);
+const previewVisible = ref(false);
+const previewIndex = ref(0);
+const previewImageUrls = computed(() => imgList.value.map((img) => img.url));
+
+const openPreview = (index: number) => {
+  previewIndex.value = index;
+  previewVisible.value = true;
+};
 
 const canSend = computed(() => {
   return text.value.trim().length > 0 || imgList.value.length > 0;

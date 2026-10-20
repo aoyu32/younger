@@ -28,6 +28,7 @@
         overflow: hidden;
         border: 1px solid #e9ecef;
         background-color: #f8f9fa;
+        cursor: zoom-in;
 
         img {
           width: 100%;
@@ -51,11 +52,12 @@
           align-items: center;
           justify-content: center;
           backdrop-filter: blur(4px);
-          cursor: pointer;
+          cursor: zoom-in;
           transition: background-color 0.2s ease-in-out;
           img {
             width: 20px;
             height: 20px;
+            cursor: pointer;
           }
 
           &:hover {

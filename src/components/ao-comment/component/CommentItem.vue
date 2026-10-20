@@ -31,6 +31,7 @@
             v-for="(img, idx) in comment.images"
             :key="idx"
             class="image-wrapper"
+            @click="openPreview(idx)"
           >
             <img :src="img.url" :alt="`图片${idx + 1}`" />
           </div>
@@ -99,6 +100,12 @@
         </div>
       </div>
     </div>
+
+    <AoImagePreview
+      v-model="previewVisible"
+      :images="previewImageUrls"
+      :start-index="previewIndex"
+    />
   </div>
 </template>
 
@@ -137,8 +144,18 @@ const showReplyInput = ref(false);
 const replyText = ref('');
 const replyImages = ref<any[]>([]);
 const isExpanded = ref(false);
+const previewVisible = ref(false);
+const previewIndex = ref(0);
 
 const replies = computed(() => props.comment.replies || []);
+const previewImageUrls = computed(() =>
+  (props.comment.images ?? []).map((img) => img.url),
+);
+
+const openPreview = (index: number) => {
+  previewIndex.value = index;
+  previewVisible.value = true;
+};
 
 const formattedDate = computed(() => {
   const date = new Date(props.comment.createdAt);

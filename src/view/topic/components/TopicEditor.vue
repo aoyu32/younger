@@ -16,13 +16,18 @@
         </button>
       </div>
       <div v-if="images.length" class="editor-images">
-        <div v-for="(img, index) in images" :key="img.id" class="image-item">
+        <div
+          v-for="(img, index) in images"
+          :key="img.id"
+          class="image-item"
+          @click="openPreview(index)"
+        >
           <img :src="img.url" alt="" />
           <button
             type="button"
             class="image-remove"
             title="移除图片"
-            @click="removeImage(index)"
+            @click.stop="removeImage(index)"
           >
             <AoIcon :icon="closeIcon" :size="10" />
           </button>
@@ -77,6 +82,12 @@
         @close="showEmoji = false"
       />
     </div>
+
+    <AoImagePreview
+      v-model="previewVisible"
+      :images="previewImageUrls"
+      :start-index="previewIndex"
+    />
   </div>
 </template>
 
@@ -116,6 +127,8 @@ const emit = defineEmits<{
 
 const text = ref('');
 const images = ref<EditorImage[]>([]);
+const previewVisible = ref(false);
+const previewIndex = ref(0);
 const showEmoji = ref(false);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const fileRef = ref<HTMLInputElement | null>(null);
@@ -123,6 +136,12 @@ const fileRef = ref<HTMLInputElement | null>(null);
 const canSend = computed(
   () => text.value.trim().length > 0 || images.value.length > 0,
 );
+const previewImageUrls = computed(() => images.value.map((item) => item.url));
+
+const openPreview = (index: number) => {
+  previewIndex.value = index;
+  previewVisible.value = true;
+};
 
 const adjustHeight = () => {
   const el = textareaRef.value;
@@ -343,6 +362,7 @@ onBeforeUnmount(() => {
   position: relative;
   width: 80px;
   height: 60px;
+  cursor: zoom-in;
 
   img {
     display: block;
