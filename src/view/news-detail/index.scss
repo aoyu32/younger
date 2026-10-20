@@ -68,29 +68,36 @@
 }
 
 .content-footer {
+  gap: 20px;
   padding: 30px 0 10px 0;
 
   .labels {
+    flex: 1;
+    min-width: 0;
     gap: 10px;
 
     .label {
+      flex-shrink: 0;
       padding: 5px 0;
     }
 
+    /* 与视频详情页标签保持一致：默认完整显示，空间不足时才收缩省略 */
     .label-item {
-      border-radius: var(--ao-border-radius-base);
-      padding: 5px 15px;
+      padding: 4px 10px;
+      min-width: 0;
+      border-radius: var(--ao-border-radius-sm);
       background-color: #a6a6a62c;
-      max-width: 70px;
-      color: #5e5e5e;
-      text-overflow: ellipsis;
+      font-size: var(--ao-font-size-sm);
+      color: var(--ao-color-text-secondary);
       white-space: nowrap;
+      text-overflow: ellipsis;
       overflow: hidden;
     }
   }
 }
 
 .actions {
+  flex-shrink: 0;
   gap: 15px;
 
   .action-item {

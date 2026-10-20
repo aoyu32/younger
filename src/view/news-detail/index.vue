@@ -6,16 +6,13 @@
           <h1>{{ data?.title }}</h1>
           <div class="news-meta flex-x">
             <div class="meta-item flex-center">
-              <AoIcon :icon="authorIcon" :size="14" />
-              <span> {{ data?.author.name }}</span>
+              作者：{{ data?.author.name }}
             </div>
             <div class="meta-item flex-center date">
-              <AoIcon :icon="dateIcon" :size="14" />
-              <span> {{ data?.publishDate }}</span>
+              发布日期：{{ data?.publishDate }}
             </div>
             <div class="meta-item flex-center views">
-              <AoIcon :icon="viewsIcon" :size="14" />
-              <span> {{ formatCount(data?.views) }}</span>
+              浏览量：{{ formatCount(data?.views) }}
             </div>
           </div>
         </div>
@@ -34,6 +31,7 @@
                   class="label-item"
                   v-for="(item, index) in data.tags.slice(0, 5)"
                   :key="index"
+                  :title="item"
                 >
                   {{ item }}
                 </div>
@@ -116,12 +114,9 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { formatCount } from '@/utils/format';
 import AoMarkdown from '@/components/ao-markdown/index.vue';
-import { newsData } from '@/mock/news';
+import { allNewsData, newsData } from '@/mock/news';
 import AoComment from '@/components/ao-comment/index.vue';
 import { mockComments } from '@/mock/comment.js';
-import authorIcon from '@/assets/news/icon_author.svg';
-import dateIcon from '@/assets/news/icon_date.svg';
-import viewsIcon from '@/assets/news/icon_views.svg';
 import likeIcon from '@/assets/news/icon_like.svg';
 import favoriteIcon from '@/assets/news/icon_favorite.svg';
 import shareIcon from '@/assets/news/icon_share.svg';
@@ -134,7 +129,7 @@ const router = useRouter();
 const id = computed(() => route.params.id);
 
 const data = computed(() =>
-  newsData.find((item) => item.id === Number(id.value)),
+  allNewsData.find((item) => item.id === Number(id.value)),
 );
 const commentsList = ref(mockComments);
 const catalogList = ref();

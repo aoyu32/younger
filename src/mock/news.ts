@@ -1,6 +1,7 @@
 import { aiImagePool } from './aiImages';
+import { aiNewsData } from './aiNews';
 
-export const newsData = [
+const legacyNewsData = [
   {
     id: 1,
     title: 'OpenAI发布GPT-5模型，性能提升显著',
@@ -276,3 +277,8 @@ Devin 拥有独立的开发环境，可自主编写完整的前后端项目，�
 目前，多家头部内容平台已完成系统升级，并开始清理历史未标注内容。部分创作者担忧标识会影响流量推荐，但监管部门明确表示，标识不会降低正常曝光权重，反而会因透明度提升而获得更多信任。该新规被视为全球 AI 内容治理的重要参考范例。`,
   },
 ];
+
+export const newsData = legacyNewsData;
+
+/** 资讯列表页与详情页使用的完整数据（包含新增的 AI 分类资讯） */
+export const allNewsData = [...legacyNewsData, ...aiNewsData];
