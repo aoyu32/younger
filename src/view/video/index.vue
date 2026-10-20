@@ -27,13 +27,16 @@
         <!-- 瀑布流导航滚出视口后，悬浮在右侧的同数据分类导航 -->
         <VideoSideNav v-model="activeNavItem" :menu-items="navList" />
       </div>
-      <div class="video-list">
-        <div class="video-item" v-for="item in videoData">
-          <VipVideoCard :data="item" />
+      <!-- 「全部」下把所有分类视频合并成一组展示，不再重复展示分类区块 -->
+      <div class="video-list" v-if="activeNavItem === 'all'">
+        <div class="video-item" v-for="item in allVideoList" :key="item.id">
+          <router-link :to="`/video/${item.id}`">
+            <VipVideoCard :data="item" />
+          </router-link>
         </div>
       </div>
       <VideoSection
-        v-for="data in categoryData"
+        v-for="data in filteredCategoryData"
         :title="data.category"
         :sub-title="data.categoryDesc"
         :items="data.list"
@@ -49,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import PageSlogan from '@/components/page-slogan/index.vue';
 import VideoSection from './components/VideoSection.vue';
 import { categoryData } from '@/mock/videoLIst';
@@ -58,26 +61,31 @@ import VideoSwipper from './components/VideoSwipper.vue';
 import VideoWaterfallNav from './components/VideoWaterfallNav.vue';
 import VideoSideNav from './components/VideoSideNav.vue';
 import type { MenuItem } from './components/VideoWaterfallNav.vue';
-import { videoData } from '@/mock/videoData';
 import VideoPlayer from '@/components/ao-video-player/index.vue';
-const activeNavItem = ref<string | number>('ai-paint');
+const activeNavItem = ref<string | number>('all');
+/** 分类导航与 mock 分组数据同源：全部 + categoryData 的真实分类，不会出现点了却没数据的分类 */
 const navList = ref<MenuItem[]>([
   { id: 'all', label: '全部', icon: '' },
-  { id: 'ai-paint', label: 'AI绘画', icon: '' },
-  { id: 'ai-video', label: 'AI视频制作', icon: '' },
-  { id: 'vibe-coding', label: 'VibeCoding', icon: '' },
-  { id: 'cursor', label: 'Cursor教程', icon: '' },
-  { id: 'chatgpt', label: 'ChatGPT', icon: '' },
-  { id: 'claude', label: 'Claude', icon: '' },
-  { id: 'stable-diffusion', label: 'Stable Diffusion', icon: '' },
-  { id: 'midjourney', label: 'Midjourney', icon: '' },
-  { id: 'suno', label: 'Suno音乐', icon: '' },
-  { id: 'runway', label: 'Runway', icon: '' },
-  { id: 'comfyui', label: '大模型与基础技术', icon: '' },
-  { id: 'comfyui', label: 'AI 应用与工具', icon: '' },
-  { id: 'comfyui', label: '多模态与 AIGC', icon: '' },
-  { id: 'comfyui', label: '智能体与自动化', icon: '' },
+  ...categoryData.map(
+    (data): MenuItem => ({ id: data.category, label: data.category, icon: '' }),
+  ),
 ]);
+/** 「全部」下合并所有分类视频，并按 id 去重 */
+const allVideoList = computed(() =>
+  Array.from(
+    new Map(
+      categoryData
+        .flatMap((data) => data.list)
+        .map((item) => [item.id, item]),
+    ).values(),
+  ),
+);
+/** 点击某分类时只展示该分类的视频区块 */
+const filteredCategoryData = computed(() =>
+  activeNavItem.value === 'all'
+    ? []
+    : categoryData.filter((data) => data.category === activeNavItem.value),
+);
 </script>
 
 <style scoped lang="scss">

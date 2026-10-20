@@ -93,7 +93,8 @@
     width: 100%;
     border-radius: var(--ao-border-radius-lg);
     overflow: hidden;
-    background-color: #000000;
+    // 圆角由播放器自身处理；这里保持透明，避免黑底在抗锯齿边缘露出深色描边
+    background-color: transparent;
     box-shadow: var(--ao-shadow-sm);
   }
 

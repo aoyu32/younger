@@ -311,7 +311,7 @@ const handleCommentSend = (data: { text: string; images: ImageItem[] }) => {
     user: {
       id: 0,
       name: '当前用户',
-      avatar: 'https://picsum.photos/50/50?random=2',
+      avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=video-user-2',
     },
     content: data.text,
     images: data.images,
@@ -340,7 +340,7 @@ const handleCommentReplySend = (data: {
     user: {
       id: 0,
       name: '当前用户',
-      avatar: 'https://picsum.photos/50/50?random=3',
+      avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=video-user-3',
     },
     content: data.text,
     images: data.images,
