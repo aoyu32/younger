@@ -31,10 +31,10 @@
 </template>
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import img1 from '@/assets/1.png';
-import img2 from '@/assets/2.png';
-import img3 from '@/assets/3.png';
-import img4 from '@/assets/4.png';
+import img1 from '@/assets/ai/ai-dashboard.jpg';
+import img2 from '@/assets/ai/robot-assistant.jpg';
+import img3 from '@/assets/ai/ai-chip.jpg';
+import img4 from '@/assets/ai/generative-art.jpg';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';

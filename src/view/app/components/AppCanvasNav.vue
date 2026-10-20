@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { aiAppCatalog } from '@/mock/aiCatalog';
 
 const emit = defineEmits(['item-click']);
 
@@ -38,23 +39,15 @@ const indicatorClass = ref('');
 const INDICATOR_SIZE = 8; // 三角形宽度
 const EDGE_MARGIN = 6; // 靠边时与容器边缘的距离
 
-const navList = ref([
-  { icon: '', name: 'AI应用', to: '/AI应用', active: false },
-  { icon: '', name: '网络加速', to: '/网络加速', active: false },
-  { icon: '', name: '桌面美化', to: '/桌面美化', active: false },
-  { icon: '', name: '浏览器', to: '/浏览器', active: false },
-  { icon: '', name: '谷歌产品', to: '/谷歌产品', active: false },
-  { icon: '', name: '云盘存储', to: '/云盘存储', active: false },
-  { icon: '', name: '下载工具', to: '/下载工具', active: false },
-  { icon: '', name: '移动互联', to: '/移动互联', active: false },
-  { icon: '', name: '桌面美化', to: '/桌面美化', active: false },
-  { icon: '', name: '浏览器', to: '/浏览器', active: false },
-  { icon: '', name: '谷歌产品', to: '/谷歌产品', active: false },
-  { icon: '', name: '云盘存储', to: '/云盘存储', active: false },
-  { icon: '', name: '下载工具', to: '/下载工具', active: false },
-  { icon: '', name: '移动互联', to: '/移动互联', active: false },
-  { icon: '', name: '社交沟通', to: '/社交沟通', active: false },
-]);
+// 分类与应用目录保持同源，新增分类后导航和图谱会自动同步
+const navList = ref(
+  Array.from(new Set(aiAppCatalog.map((app) => app.category))).map((name) => ({
+    icon: '',
+    name,
+    to: `/${name}`,
+    active: false,
+  })),
+);
 
 // 默认激活第一个
 const activeIndex = ref(0);

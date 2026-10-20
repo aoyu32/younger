@@ -26,9 +26,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Video } from '@/api/type/video';
+import aiBrain from '@/assets/ai/ai-brain.jpg';
 
-const FALLBACK_COVER =
-  'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60';
+const FALLBACK_COVER = aiBrain;
 
 defineOptions({
   name: 'VideoCard',
