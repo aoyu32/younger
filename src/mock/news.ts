@@ -1,8 +1,10 @@
+import { aiImagePool } from './aiImages';
+
 export const newsData = [
   {
     id: 1,
     title: 'OpenAI发布GPT-5模型，性能提升显著',
-    cover: 'https://picsum.photos/id/1015/800/450',
+    cover: aiImagePool[0],
     author: { id: 101, name: '李浩然' },
     publishDate: '2026-05-09 16:30',
     views: 12500000,
@@ -68,7 +70,7 @@ GPT-5 实现了真正意义上的原生多模态，支持文本、图像、音�
   {
     id: 2,
     title: '谷歌推出全新AI助手Gemini Ultra版本',
-    cover: 'https://picsum.photos/id/106/800/450',
+    cover: aiImagePool[1],
     author: { id: 102, name: '王思睿' },
     publishDate: '2026-05-08 22:15',
     views: 980000,
@@ -90,7 +92,7 @@ Gemini Ultra 已在部分国家和地区开启测试，早期用户反馈称其�
   {
     id: 3,
     title: '微软将AI技术深度整合到Office套件',
-    cover: 'https://picsum.photos/id/201/800/450',
+    cover: aiImagePool[2],
     author: { id: 103, name: '张薇' },
     publishDate: '2026-05-07 18:00',
     views: 87000,
@@ -112,7 +114,7 @@ Gemini Ultra 已在部分国家和地区开启测试，早期用户反馈称其�
   {
     id: 4,
     title: 'Meta开源最新大语言模型Llama 3',
-    cover: 'https://picsum.photos/id/251/800/450',
+    cover: aiImagePool[3],
     author: { id: 104, name: '赵一鸣' },
     publishDate: '2026-05-06 17:45',
     views: 76000,
@@ -136,7 +138,7 @@ Meta 同时发布了配套工具链 Llama Toolkit，包括模型压缩、量化�
   {
     id: 5,
     title: '百度文心一言4.0正式上线，支持多模态',
-    cover: 'https://picsum.photos/id/180/800/450',
+    cover: aiImagePool[4],
     author: { id: 105, name: '陈雅' },
     publishDate: '2026-05-06 00:20',
     views: 65000,
@@ -158,7 +160,7 @@ Meta 同时发布了配套工具链 Llama Toolkit，包括模型压缩、量化�
   {
     id: 6,
     title: '苹果被曝研发家用AI机器人，可自主导航',
-    cover: 'https://picsum.photos/id/133/800/450',
+    cover: aiImagePool[5],
     author: { id: 106, name: '刘星辰' },
     publishDate: '2026-05-04 19:30',
     views: 132000,
@@ -180,7 +182,7 @@ Meta 同时发布了配套工具链 Llama Toolkit，包括模型压缩、量化�
   {
     id: 7,
     title: '英伟达发布新一代AI芯片B200，算力翻倍',
-    cover: 'https://picsum.photos/id/1074/800/450',
+    cover: aiImagePool[6],
     author: { id: 107, name: '杨光' },
     publishDate: '2026-05-03 15:00',
     views: 245000,
@@ -204,7 +206,7 @@ Blackwell 架构引入了第五代 Tensor Core 和全新的 FP6 精度格式，�
   {
     id: 8,
     title: '特斯拉Optimus机器人开始在工厂内测',
-    cover: 'https://picsum.photos/id/1060/800/450',
+    cover: aiImagePool[7],
     author: { id: 108, name: '周瑞' },
     publishDate: '2026-05-02 21:10',
     views: 189000,
@@ -228,7 +230,7 @@ Optimus 目前搭载特斯拉自研的 FSD 芯片和视觉神经网络，通过�
   {
     id: 9,
     title: '全球首款AI编程助手Devin开放公测',
-    cover: 'https://picsum.photos/id/201/800/450',
+    cover: aiImagePool[8],
     author: { id: 109, name: '吴迪' },
     publishDate: '2026-05-01 23:40',
     views: 112000,
@@ -252,7 +254,7 @@ Devin 拥有独立的开发环境，可自主编写完整的前后端项目，�
   {
     id: 10,
     title: 'AI生成内容标识新规实施，平台需明确标注',
-    cover: 'https://picsum.photos/id/870/800/450',
+    cover: aiImagePool[9],
     author: { id: 110, name: '林芳' },
     publishDate: '2026-04-30 20:00',
     views: 97000,

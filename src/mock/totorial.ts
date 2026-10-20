@@ -3,13 +3,13 @@ import type { TutorialCourse, TutorialGroup } from '@/view/totorial/types';
 export const totorialCourseName = '大模型应用开发实战';
 
 export const totorialCourses: TutorialCourse[] = [
-  { id: 'llm-app', title: '大模型应用开发实战', learners: 12680 },
-  { id: 'vue3-ui', title: 'Vue 3 组件库从 0 到 1', learners: 8420 },
-  { id: 'ts-advanced', title: 'TypeScript 类型体操进阶', learners: 15600 },
-  { id: 'node-service', title: 'Node.js 服务端实战', learners: 6320 },
-  { id: 'engineer', title: '前端工程化与构建优化', learners: 21800 },
-  { id: 'ai-design', title: 'AI 绘画与设计工作流', learners: 9500 },
-  { id: 'algorithm', title: '数据结构与算法精讲', learners: 42600 },
+  { id: 'llm-app', title: '大模型应用开发实战', learners: 28640 },
+  { id: 'prompt-engineering', title: '提示词工程从入门到精通', learners: 19280 },
+  { id: 'rag', title: 'RAG 知识库实战', learners: 15760 },
+  { id: 'agent', title: 'AI Agent 开发指南', learners: 13420 },
+  { id: 'aigc', title: 'AIGC 视觉创作工作流', learners: 21800 },
+  { id: 'multimodal', title: '多模态大模型应用', learners: 11650 },
+  { id: 'ai-product', title: 'AI 产品经理实战', learners: 9860 },
 ];
 
 const code = (lang: string, body: string) => '```' + lang + '\n' + body + '\n```';
@@ -21,721 +21,773 @@ export const totorialGroups: TutorialGroup[] = [
     children: [
       {
         id: 'quick-start',
-        title: '快速开始',
+        title: '课程导学与学习路线',
         content: `
-本节带你完成从安装到运行第一个项目的全部流程，大约需要 10 分钟。
+欢迎来到 **大模型应用开发实战**。这门课程不讲空泛的概念，而是围绕一个可以真正上线的 AI 应用，把大模型、提示词、RAG、Agent 和工程化串起来。
 
+## 你会完成什么
+
+课程结束时，你将拥有一个具备以下能力的完整项目：
+
+- 能读取企业文档并回答问题的知识库助手
+- 支持流式输出、引用来源和多轮对话
+- 接入工具调用，能查询数据库和调用外部 API
+- 有基础的评测、日志、限流和成本统计
+
+## 学习路线
+
+| 阶段 | 主题 | 产出 |
+| --- | --- | --- |
+| 1 | 环境与 API | 跑通第一次模型调用 |
+| 2 | 提示词工程 | 稳定可复用的提示词模板 |
+| 3 | RAG | 可检索、可引用的知识库 |
+| 4 | Agent | 能规划并调用工具的智能体 |
+| 5 | 多模态 | 图片、视频、语音工作流 |
+| 6 | 工程化 | 可部署、可观测、可控制成本 |
+
+## 学习建议
+
+1. **先跑通，再理解**：每节代码都建议亲手运行一次。
+2. **保留实验记录**：提示词、模型参数和评测结果都记下来。
+3. **不要只追求效果**：延迟、成本、稳定性同样是产品指标。
+
+> 本课程示例默认使用兼容 OpenAI 协议的接口，你可以替换成任意支持该协议的大模型服务。
+`,
+      },
+      {
+        id: 'environment',
+        title: '开发环境与 API Key',
+        content: `
 ## 环境准备
 
-需要 Node.js 18 以上版本，建议使用 pnpm 作为包管理器。执行下面的命令确认环境：
+建议使用 Python 3.11+ 或 Node.js 20+。本课程后端示例以 Python 为主，前端使用 Vue 3。
 
-${code('bash', 'node -v\npnpm -v')}
+${code('bash', 'python -m venv .venv\nsource .venv/bin/activate\npip install openai python-dotenv fastapi uvicorn')}
 
-如果版本过低，建议先升级 Node.js，再重新安装依赖。
+Windows PowerShell 激活虚拟环境：
 
-## 创建项目
+${code('powershell', '.venv\\Scripts\\Activate.ps1')}
 
-执行下面的命令初始化一个空项目：
+## 配置 API Key
 
-${code('bash', 'pnpm create younger-app my-app\ncd my-app\npnpm dev')}
+不要把密钥写进代码。创建 \`.env\` 文件：
 
-启动成功后终端会输出本地地址，浏览器打开即可看到初始页面。
+${code('bash', 'OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx\nOPENAI_BASE_URL=https://api.openai.com/v1\nMODEL_NAME=gpt-4.1-mini')}
 
-## 目录结构
+读取配置：
 
-创建完成后目录大致如下：
+${code('python', 'import os\nfrom dotenv import load_dotenv\n\nload_dotenv()\n\napi_key = os.environ["OPENAI_API_KEY"]\nbase_url = os.environ.get("OPENAI_BASE_URL")\nmodel = os.environ.get("MODEL_NAME", "gpt-4.1-mini")')}
 
-- src 源码目录，业务代码都写在这里
-- public 静态资源，构建时原样拷贝
-- package.json 依赖与脚本声明
-- vite.config.ts 构建配置
+## 选择模型
 
-### 常用脚本
+- **强推理任务**：选择推理能力更强的模型，成本较高
+- **日常问答**：选择中小模型，延迟和成本更友好
+- **批量处理**：优先考虑离线批处理接口
+- **本地隐私场景**：使用 Ollama 等本地推理方案
 
-| 命令 | 说明 |
-| --- | --- |
-| pnpm dev | 启动开发服务 |
-| pnpm build | 生产构建 |
-| pnpm preview | 预览构建产物 |
-| pnpm lint | 代码检查 |
+## 安全提醒
 
-## 下一步
-
-建议先阅读「布局与容器」，了解页面骨架的组织方式，再进入核心概念部分。
+- \`.env\` 必须加入 \`.gitignore\`
+- 不要把密钥写进前端代码或提交到仓库
+- 生产环境使用服务端代理，不要让浏览器直连模型
 `,
       },
       {
-        id: 'layout',
-        title: '布局与容器',
+        id: 'first-call',
+        title: '第一次调用大模型',
         content: `
-介绍页面骨架、容器宽度与宽屏适配的组织方式。
+## 最小可用示例
 
-## 基础布局
+${code('python', 'from openai import OpenAI\nimport os\n\nclient = OpenAI(\n    api_key=os.environ["OPENAI_API_KEY"],\n    base_url=os.environ.get("OPENAI_BASE_URL"),\n)\n\nresponse = client.chat.completions.create(\n    model=os.environ.get("MODEL_NAME", "gpt-4.1-mini"),\n    messages=[\n        {"role": "system", "content": "你是一名严谨的技术助教。"},\n        {"role": "user", "content": "用三句话解释什么是 RAG。"},\n    ],\n    temperature=0.3,\n)\n\nprint(response.choices[0].message.content)')}
 
-页面默认采用纵向流式布局，头部与内容区共用同一个容器宽度变量，改一处即可整体变宽：
+## 消息角色
 
-${code('scss', '.layout {\n  --ao-container-max-width: min(1440px, calc(100% - 100px));\n}')}
+| 角色 | 作用 | 建议 |
+| --- | --- | --- |
+| system | 设定身份、边界和输出格式 | 稳定、简洁、可复用 |
+| user | 当前任务与输入 | 背景、目标、约束写清楚 |
+| assistant | 历史回复 | 多轮对话时保留 |
+| tool | 工具调用结果 | 由后端写入，不要伪造 |
 
-内容区左右至少保留 50px 的安全边距，避免在窄屏上贴边。
+## 关键参数
 
-## 宽屏适配
+- \`temperature\`：越低越稳定，事实问答建议 0～0.3
+- \`max_tokens\`：限制输出长度，控制成本
+- \`stream\`：流式输出，改善首字延迟
+- \`response_format\`：需要 JSON 时启用结构化输出
 
-某些页面（视频详情、教程正文）需要更宽的内容区，为布局追加宽屏修饰类即可：
+## 常见错误
 
-${code('vue', '<div class="layout layout--wide">...</div>')}
-
-### 断点说明
-
-| 断点 | 行为 |
-| --- | --- |
-| <= 768px | 单列布局，隐藏侧栏 |
-| 768 - 1440px | 常规容器 |
-| > 1440px | 宽屏容器 |
-
-## 栅格与间距
-
-间距统一使用设计令牌，不要在业务里写魔法数字：
-
-- 8px 元素内紧凑间距
-- 12px 卡片内边距
-- 24px 栅格间距
-
-### 垂直节奏
-
-标题与正文之间的间距由 markdown 主题统一定义，正文容器不需要额外设置。
-`,
-      },
-      {
-        id: 'convention',
-        title: '目录与约定',
-        content: `
-统一的目录划分与命名约定，可以显著降低协作成本。
-
-## 目录划分
-
-- view 页面级组件，一个页面一个目录
-- components 通用组件，与业务无关
-- mock 静态数据
-- style 全局变量与重置样式
-- router 路由与菜单配置
-
-## 命名约定
-
-组件文件使用大驼峰，页面目录使用小写短横线；CSS 类名统一使用短横线连接。
-
-### 组件命名
-
-| 类型 | 示例 |
-| --- | --- |
-| 通用组件 | AoMessage |
-| 页面组件 | video-detail |
-| 局部组件 | TutorialSideNav |
-
-## 样式约定
-
-组件样式一律使用 scoped，全局变量通过 CSS 自定义属性透传，避免样式泄漏。
-
-${code('scss', '.tutorial-side-nav {\n  background-color: var(--ao-gray-2);\n}')}
-
-## 提交约定
-
-提交信息使用「类型: 描述」的形式，例如 feat、fix、style、refactor。
+1. **401**：密钥无效或没有正确加载 \`.env\`
+2. **404**：模型名或 base_url 不匹配
+3. **429**：触发限流，需要退避重试
+4. **上下文超限**：先压缩历史消息或做检索裁剪
 `,
       },
     ],
   },
   {
-    id: 'concept',
-    title: '核心概念',
+    id: 'prompt',
+    title: '提示词工程',
     children: [
       {
-        id: 'reactivity',
-        title: '响应式基础',
+        id: 'prompt-structure',
+        title: '结构化提示词',
         content: `
-理解响应式是写好组合式 API 的前提。
+## 一个稳定的提示词结构
 
-## 基本用法
+推荐使用「角色 + 任务 + 上下文 + 约束 + 输出格式」五段式：
 
-使用 ref 声明基础类型的响应式数据，使用 reactive 声明对象：
+${code('text', '角色：你是一名资深前端工程师\n任务：审查下面的 Vue 组件代码\n上下文：项目使用 Vue 3 + TypeScript + Pinia\n约束：只指出会导致运行时错误或明显性能问题的地方\n输出格式：按「问题 / 原因 / 修改建议」三列输出 Markdown 表格')}
 
-${code('ts', 'const count = ref(0);\nconst state = reactive({ list: [] });')}
+## 为什么结构化有效
 
-在模板中访问 ref 会自动解包，在脚本中需要显式访问 .value。
+- 模型知道**自己是谁**，减少角色漂移
+- 任务边界清晰，避免答非所问
+- 约束条件把开放生成变成可控任务
+- 输出格式让结果可以被程序继续处理
 
-## 派生状态
+## 常用约束
 
-凡是能由其他状态推导出来的数据，都应该使用 computed，而不是重复维护一份：
+- 字数限制：不超过 300 字
+- 语言风格：面向非技术读者
+- 事实要求：不确定时明确说不知道
+- 引用要求：给出原文段落或链接
+- 安全要求：不输出个人隐私和密钥
 
-${code('ts', 'const total = computed(() => list.value.length);')}
+## 反例与改进
 
-## 侦听变化
+**反例**：帮我写一个产品介绍。
 
-### watch 与 watchEffect
-
-- watch 需要显式声明依赖，适合执行副作用
-- watchEffect 自动收集依赖，适合简单场景
-- 组件卸载时框架会自动停止侦听
-
-| API | 依赖来源 | 是否立即执行 |
-| --- | --- | --- |
-| watch | 显式声明 | 否 |
-| watchEffect | 自动收集 | 是 |
-
-## 常见陷阱
-
-直接给对象整体赋值会替换引用，深层结构变更需要保证响应式代理没有被破坏。
+**改进**：你是 B2B SaaS 市场文案。为「AI 会议纪要工具」写一段 120 字中文介绍，面向 50 人以下创业团队，突出「自动提取待办」和「支持中文」两个卖点，不要使用夸张形容词。
 `,
       },
       {
-        id: 'component',
-        title: '组件与属性',
+        id: 'few-shot',
+        title: 'Few-shot 与思维链',
         content: `
-组件是页面复用的基本单位，属性与事件构成了组件的对外接口。
+## Few-shot：用示例定义标准
 
-## 声明属性
+当任务规则难以用文字说清时，给 2～5 个高质量示例通常比长篇解释更有效。
 
-使用类型声明的方式定义属性，并为可选属性提供默认值：
+${code('text', '请把用户反馈分类为：功能建议 / 故障问题 / 付费咨询 / 其他。\n\n示例 1：\n输入：能不能支持导出 PDF？\n输出：功能建议\n\n示例 2：\n输入：今天登录一直提示网络错误\n输出：故障问题\n\n示例 3：\n输入：企业版怎么收费？\n输出：付费咨询\n\n现在分类：生成图片时一直卡在 99%')}
 
-${code('ts', 'const props = withDefaults(defineProps<{ title?: string }>(), {\n  title: \'\',\n});')}
+## 思维链提示
 
-## 事件与双向绑定
+对推理任务，可以要求模型先列步骤再给结论：
 
-子组件通过 emit 通知父组件，配合 v-model 可以实现双向绑定。
+${code('text', '请先列出已知条件、需要计算的中间量和最终判断依据，\n最后用一句话给出结论。不要在结论前省略推理过程。')}
 
-### 透传属性
+注意：思维链适合数学、逻辑和复杂决策，不适合简单分类任务，会增加延迟和成本。
 
-未声明为 props 的属性会自动透传到根元素，禁用时需要显式配置。
+## 让示例更可靠
 
-## 插槽
+- 示例要覆盖边界情况，而不只是典型情况
+- 输入输出格式必须完全一致
+- 不要把错误示例混进去
+- 示例数量不是越多越好，3～5 个通常足够
 
-- 默认插槽用于主要内容
-- 具名插槽用于结构中的多个位置
-- 作用域插槽用于把子组件的数据交给父级渲染
+## 结构化输出
 
-## 性能建议
+需要程序解析时，直接要求 JSON，并使用模型提供的结构化输出能力：
 
-组件的渲染开销主要来自重复创建，拆分过细反而会增加通信成本，建议按业务区块拆分。
+${code('json', '{\n  "category": "功能建议",\n  "confidence": 0.92,\n  "reason": "用户希望增加导出能力"\n}')}
 `,
       },
       {
-        id: 'composables',
-        title: '组合式函数',
+        id: 'prompt-eval',
+        title: '提示词评测与版本管理',
         content: `
-组合式函数用于抽取可复用的有状态逻辑，命名统一以 use 开头。
+## 提示词也是代码
 
-## 编写方式
+提示词应该像代码一样被管理：
 
-${code('ts', 'export function useCounter(initial = 0) {\n  const count = ref(initial);\n  const inc = () => (count.value += 1);\n  return { count, inc };\n}')}
+- 存入版本库
+- 有明确的变更记录
+- 用固定测试集回归
+- 上线前比较效果、延迟和成本
 
-函数内部可以使用全部组合式 API，调用方必须在 setup 顶层调用。
+## 建立小型评测集
 
-## 使用场景
+准备 30～100 条真实输入，覆盖典型和边界场景：
 
-- 请求封装：加载状态、错误处理、重试
-- 滚动与尺寸监听：统一注册与卸载
-- 本地存储：序列化与跨标签同步
+| 字段 | 说明 |
+| --- | --- |
+| input | 用户原始输入 |
+| expected | 期望结果或评分标准 |
+| tags | 场景标签 |
+| difficulty | 简单 / 中等 / 困难 |
 
-### 注意事项
+## 自动评分示例
 
-不要在普通函数或回调里调用组合式函数，否则无法绑定到组件实例。
+${code('python', 'def exact_match(pred: str, expected: str) -> float:\n    return 1.0 if pred.strip() == expected.strip() else 0.0\n\ndef contains_all(pred: str, keywords: list[str]) -> float:\n    hit = sum(1 for k in keywords if k in pred)\n    return hit / len(keywords)')}
 
-## 与混入的对比
+对于开放式回答，可以组合使用：
 
-组合式函数来源清晰、可叠加使用，并且可以明确返回值，是混入的推荐替代方案。
-`,
-      },
-      {
-        id: 'lifecycle',
-        title: '生命周期',
-        content: `
-组件从创建到销毁经历若干阶段，每个阶段都有对应的钩子。
+- 规则匹配：关键词、JSON 字段、长度
+- 模型评分：让另一个模型按 rubric 打分
+- 人工抽检：每周检查低分和高风险样本
 
-## 常用钩子
+## 版本记录模板
 
-- onMounted 挂在到文档后执行，适合发起请求
-- onUpdated 更新后执行，谨慎使用以免死循环
-- onBeforeUnmount 卸载前执行，用于清理定时器与监听
-
-## 清理副作用
-
-${code('ts', 'onMounted(() => window.addEventListener(\'resize\', onResize));\nonBeforeUnmount(() => window.removeEventListener(\'resize\', onResize));')}
-
-凡是手动注册的监听、定时器、观察器，都必须在卸载时释放。
-
-### 服务端渲染
-
-服务端渲染环境下只有 beforeCreate 与 created 会执行，避免在 setup 中直接访问 window。
-
-## 执行顺序
-
-父组件先完成创建，子组件挂载完成后父组件才触发 mounted，卸载时顺序相反。
+${code('text', 'prompt_id: support-reply\nversion: v3\nchange: 增加退款政策引用要求\nmodel: gpt-4.1-mini\ntemperature: 0.2\neval_score: 0.87\nlatency_p95: 1.8s\nowner: ai-team')}
 `,
       },
     ],
   },
   {
-    id: 'advanced',
-    title: '进阶使用',
+    id: 'rag',
+    title: 'RAG 知识库',
     children: [
       {
-        id: 'theme',
-        title: '主题与变量',
+        id: 'rag-pipeline',
+        title: 'RAG 全流程',
         content: `
-主题通过 CSS 变量驱动，覆盖变量即可完成换肤。
+## RAG 解决什么问题
 
-## 颜色变量
+大模型的训练数据有截止时间，也不知道你的企业内部文档。RAG（Retrieval-Augmented Generation）先从知识库检索相关资料，再把资料放进上下文让模型回答。
 
-- 主色 primary
-- 文本 base、secondary、tertiary
-- 背景 gray-0、gray-2
+## 标准流程
 
-## 圆角与阴影
+1. **文档接入**：PDF、Word、网页、数据库
+2. **解析清洗**：去页眉页脚、表格转文本、保留标题层级
+3. **切分**：按语义或标题切成合适大小的 chunk
+4. **向量化**：用 Embedding 模型把文本转成向量
+5. **存储**：写入向量数据库，并保留原文和元数据
+6. **检索**：根据问题召回 Top-K 相关内容
+7. **重排**：用重排模型提升相关性
+8. **生成**：把资料和问题一起交给大模型
+9. **引用**：返回答案时标注来源
 
-统一使用设计令牌，避免在业务里写魔法数字：
+## 一个常见误区
 
-${code('scss', '.card {\n  border-radius: var(--ao-border-radius-lg);\n  box-shadow: var(--ao-shadow-sm);\n}')}
+RAG 的效果瓶颈通常不在模型，而在**文档解析和切分**。如果 chunk 本身语义不完整，再强的模型也答不好。
 
-### 暗色主题
+## 最小项目结构
 
-通过根节点的 data-theme 属性切换，变量作用域内会自动继承。
-
-| 变量 | 亮色 | 暗色 |
-| --- | --- | --- |
-| --ao-color-text-base | #1f2329 | #f5f6f7 |
-| --ao-gray-2 | #f5f6f7 | #22262b |
-
-## 组件级覆盖
-
-在组件根节点重新声明变量，可以只影响当前组件，但要注意权重与继承范围。
+${code('text', 'rag-demo/\n  data/          原始文档\n  chunks/        切分结果\n  index/         向量索引\n  ingest.py      入库脚本\n  query.py       检索问答\n  eval.py        评测脚本')}
 `,
       },
       {
-        id: 'store',
-        title: '状态管理',
+        id: 'embedding',
+        title: 'Embedding 与向量库',
         content: `
-跨页面共享的数据建议集中管理，避免层层透传。
+## Embedding 是什么
 
-## 何时需要
+Embedding 把文本映射成高维向量，语义相近的文本在向量空间中距离更近。它让「关键词不匹配但意思相近」的内容也能被检索到。
 
-- 用户信息、登录态
-- 全局配置、主题
-- 跨页面缓存的列表数据
+## 切分策略
 
-## 组织方式
+- 按标题层级优先切分
+- 单块 300～800 字，保留 10%～20% 重叠
+- 表格和代码块尽量保持完整
+- 每个 chunk 保存来源、页码、标题等元数据
 
-${code('ts', 'export const useUserStore = defineStore(\'user\', () => {\n  const profile = ref(null);\n  async function fetch() {\n    profile.value = await api.getProfile();\n  }\n  return { profile, fetch };\n});')}
+${code('python', 'def split_by_heading(text: str, max_len: int = 600):\n    paragraphs = [p.strip() for p in text.split("\\n\\n") if p.strip()]\n    chunks, current = [], ""\n    for p in paragraphs:\n        if len(current) + len(p) > max_len and current:\n            chunks.append(current)\n            current = p\n        else:\n            current = f"{current}\\n\\n{p}".strip()\n    if current:\n        chunks.append(current)\n    return chunks')}
 
-组合式写法与组件内的逻辑完全一致，便于迁移。
+## 向量库选择
 
-### 持久化
-
-需要持久化的字段单独声明，避免把临时状态写进本地存储。刷新后要重新校验有效期。
-
-## 常见问题
-
-- 不要在 store 中直接操作 DOM
-- 请求失败要回滚状态，避免界面与后端不一致
-`,
-      },
-      {
-        id: 'router-advanced',
-        title: '路由进阶',
-        content: `
-介绍路由参数、权限与滚动行为的处理方式。
-
-## 路由参数
-
-查询参数适合可分享的状态，路径参数适合资源标识：
-
-${code('ts', 'router.push({ path: \'/totorial\', query: { chapter: id } });')}
-
-## 权限控制
-
-在全局前置守卫中校验登录态与角色，不通过时重定向到登录页。
-
-### 菜单联动
-
-菜单配置与路由表放在一起维护，标记为不展示的路由不会出现在导航中。
-
-## 滚动行为
-
-切换章节后需要回到顶部，同时保留浏览器前进后退时的位置：
-
-${code('ts', 'scrollBehavior(to, from, saved) {\n  return saved ?? { top: 0 };\n}')}
-
-## 命名视图
-
-一个页面需要多个区域独立渲染时，可以使用命名视图拆分布局。
-`,
-      },
-      {
-        id: 'form',
-        title: '表单与校验',
-        content: `
-表单的核心是数据模型、校验规则与错误提示的配合。
-
-## 数据模型
-
-- 用响应式对象承载字段
-- 提交时统一做一次全量校验
-- 提交中禁用重复点击
-
-## 校验规则
-
-${code('ts', 'const rules = {\n  email: [{ required: true, message: \'请输入邮箱\' }],\n  password: [{ min: 8, message: \'至少 8 位\' }],\n};')}
-
-### 异步校验
-
-需要请求接口的校验（例如用户名是否重复）要防抖，并且只取最后一次结果。
-
-| 场景 | 触发时机 |
+| 方案 | 适合场景 |
 | --- | --- |
-| 输入校验 | 失焦时 |
-| 提交校验 | 点击提交时 |
-| 实时校验 | 输入防抖后 |
+| FAISS | 本地实验、单机小规模 |
+| Chroma | 快速原型、开发体验好 |
+| pgvector | 已有 PostgreSQL，想统一运维 |
+| Milvus | 大规模、生产级向量检索 |
+| Qdrant | 过滤条件复杂、需要高性能 |
 
-## 错误提示
+## 检索参数
 
-错误信息要定位到具体字段，滚动到第一个出错的位置，降低用户找错成本。
+- \`top_k\`：先召回 10～30 条，再重排到 3～5 条
+- \`score_threshold\`：过滤明显不相关的结果
+- 元数据过滤：按部门、文档类型、时间范围缩小范围
+`,
+      },
+      {
+        id: 'retrieval',
+        title: '检索、重排与引用',
+        content: `
+## 混合检索
+
+只靠向量检索可能漏掉专有名词和编号，建议结合关键词检索：
+
+- 向量检索：语义相似
+- BM25 / 全文检索：精确词命中
+- 混合排序：按权重融合两路结果
+
+## 重排
+
+召回阶段追求「不漏」，重排阶段追求「排序准」。常见做法是用 Cross-Encoder 或专用重排模型对候选段落重新打分。
+
+${code('python', 'def build_context(hits, max_chars=4000):\n    parts, total = [], 0\n    for hit in hits:\n        source = hit["source"]\n        page = hit["page"]\n        text = hit["text"]\n        block = f"[{source}#p{page}]\\n{text}"\n        if total + len(block) > max_chars:\n            break\n        parts.append(block)\n        total += len(block)\n    return "\\n\\n".join(parts)')}
+
+## 让模型必须引用
+
+在提示词里明确要求：
+
+${code('text', '只根据提供的资料回答。\n每个结论后面用 [来源#页码] 标注依据。\n如果资料中没有答案，直接回答「资料中未找到」，不要编造。')}
+
+## 评测 RAG
+
+- **召回率**：正确段落是否被召回
+- **命中率**：Top-K 中是否包含答案
+- **忠实度**：回答是否完全基于资料
+- **引用准确率**：引用是否指向真正支持结论的段落
+
+建议先修召回，再调生成。召回不对，提示词再漂亮也没用。
+`,
+      },
+    ],
+  },
+  {
+    id: 'agent',
+    title: 'Agent 与工具调用',
+    children: [
+      {
+        id: 'function-calling',
+        title: 'Function Calling',
+        content: `
+## 让模型调用你的代码
+
+Function Calling 让模型输出结构化的工具调用请求，由你的后端真正执行，再把结果返回给模型。
+
+${code('json', '{\n  "name": "query_orders",\n  "description": "按用户 ID 查询最近订单",\n  "parameters": {\n    "type": "object",\n    "properties": {\n      "user_id": { "type": "string" },\n      "limit": { "type": "integer", "default": 5 }\n    },\n    "required": ["user_id"]\n  }\n}')}
+
+## 处理流程
+
+1. 把工具定义和用户问题一起发给模型
+2. 模型返回 \`tool_calls\`
+3. 后端校验参数并执行真实函数
+4. 把结果以 \`tool\` 消息写回
+5. 模型生成最终回答
+
+## 安全边界
+
+- **永远不要**让模型直接拼接 SQL 执行
+- 参数必须做类型、范围和权限校验
+- 写操作需要二次确认或人工审批
+- 工具返回值要脱敏，避免泄露隐私
+- 为每个工具设置超时和重试上限
+
+## 工具设计原则
+
+- 一个工具只做一件事
+- 名称和描述要让模型能判断何时使用
+- 返回结构稳定，错误信息可读
+- 对高风险操作提供 dry-run 模式
+`,
+      },
+      {
+        id: 'agent-loop',
+        title: 'Agent 循环与多智能体',
+        content: `
+## Agent 的基本循环
+
+Agent 不是一次模型调用，而是「观察 → 规划 → 行动 → 再观察」的循环：
+
+${code('python', 'for step in range(max_steps):\n    plan = llm.plan(task, history, tools)\n    if plan.type == "final":\n        return plan.answer\n    result = run_tool(plan.tool, plan.args)\n    history.append({"tool": plan.tool, "result": result})')}
+
+## 必须有的停止条件
+
+- 最大步数，例如 8～12 步
+- 最大耗时，例如 60 秒
+- 最大工具调用次数
+- 连续重复调用同一工具时强制退出
+- 预算上限，超过则降级
+
+## 多智能体适合什么
+
+当任务可以明确拆成不同角色时，多智能体才有价值：
+
+- 研究员：收集资料
+- 分析师：整理数据和结论
+- 审核员：检查事实与合规
+- 写作者：生成最终内容
+
+如果只是把一个简单任务拆成多个 Agent，通常只会增加延迟和成本。
+
+## 状态管理
+
+把任务状态显式保存下来，而不是全部塞进对话历史：
+
+${code('json', '{\n  "goal": "生成竞品分析报告",\n  "completed": ["收集资料", "整理功能对比"],\n  "pending": ["补充价格信息", "生成结论"],\n  "artifacts": {"report": "draft.md"}\n}')}
+`,
+      },
+      {
+        id: 'mcp',
+        title: 'MCP 与工作流编排',
+        content: `
+## MCP 是什么
+
+MCP（Model Context Protocol）为模型和外部工具、数据源之间提供统一协议。你可以把它理解成「AI 应用的 USB-C 接口」：工具按协议暴露能力，客户端按统一方式发现和调用。
+
+## 一个 MCP Server 通常提供
+
+- Tools：可执行的动作
+- Resources：可读取的数据
+- Prompts：可复用的提示词模板
+
+## 工作流编排 vs 自由 Agent
+
+| 方式 | 优点 | 缺点 |
+| --- | --- | --- |
+| 固定工作流 | 稳定、可测试、成本可控 | 灵活性有限 |
+| 自由 Agent | 能处理开放任务 | 延迟高、难评测 |
+| 混合模式 | 关键步骤固定，局部自主 | 设计复杂度较高 |
+
+生产环境推荐「混合模式」：把确定性强的步骤写成工作流，只在需要判断和探索的节点交给 Agent。
+
+## 编排建议
+
+1. 每个节点输入输出结构化
+2. 节点失败可重试，幂等操作优先
+3. 全链路记录 trace_id
+4. 对外部副作用操作保留人工确认
+5. 把提示词、模型和工具版本一起记录
+`,
+      },
+    ],
+  },
+  {
+    id: 'multimodal',
+    title: '多模态与 AIGC',
+    children: [
+      {
+        id: 'image',
+        title: '图像生成',
+        content: `
+## 提示词的基本结构
+
+图像提示词建议按「主体 + 环境 + 光线 + 镜头 + 风格 + 质量」组织：
+
+${code('text', '主体：一台半透明的 AI 芯片悬浮在实验台上\n环境：深色未来实验室，蓝色氛围光\n光线：侧逆光，轮廓清晰\n镜头：85mm 微距，浅景深\n风格：科技感、干净、电影级质感\n质量：高细节、真实材质、8K')}
+
+## 常用控制手段
+
+- **参考图**：锁定构图、角色或风格
+- **负向提示词**：排除不需要的元素
+- **局部重绘**：只修改画面中的某个区域
+- **扩图**：扩展画布，补齐场景
+- **种子**：复现同一组结果
+
+## 商用注意
+
+- 确认模型和素材的商用许可
+- 不要生成与真实品牌高度相似的标识
+- 人物肖像需要明确授权
+- 保留生成记录，便于版权追溯
+
+## 批量生产工作流
+
+1. 先做 5～10 张风格测试
+2. 固定提示词模板和参数
+3. 批量生成并人工筛选
+4. 统一尺寸、色彩和文件命名
+5. 进入设计或剪辑流程
+`,
+      },
+      {
+        id: 'video',
+        title: 'AI 视频',
+        content: `
+## 当前视频生成的能力边界
+
+AI 视频擅长短镜头、氛围镜头和风格化画面，但在长时间一致性、复杂动作和精确口型上仍有明显限制。
+
+## 提示词要素
+
+${code('text', '主体：一台白色服务机器人在雨夜街道上缓缓前行\n动作：机器人的头部轻微转动，扫描周围环境\n镜头：低角度跟拍，缓慢向前推进\n光线：霓虹灯反射在湿润地面上\n风格：赛博朋克、电影感、真实材质\n时长：5 秒')}
+
+## 提高成功率
+
+- 一个镜头只描述一个主要动作
+- 复杂动作拆成多个短镜头
+- 用首尾帧控制过渡
+- 用参考图固定角色和场景
+- 先用低分辨率测试运动和构图
+
+## 工作流示例
+
+1. 用图像模型生成关键帧
+2. 用图生视频生成 5 秒镜头
+3. 挑出可用片段，统一调色
+4. 在剪辑软件中拼接和配乐
+5. 人工检查闪烁、变形和逻辑错误
+`,
+      },
+      {
+        id: 'audio',
+        title: '语音与数字人',
+        content: `
+## 语音合成
+
+TTS 已能生成非常自然的中文配音。生产环境重点关注：
+
+- 多音字和专有名词发音
+- 长文本的段落停顿
+- 情绪和语速控制
+- 多语言一致性
+- 生成时长与成本
+
+## 声音克隆的边界
+
+声音克隆必须取得本人明确授权。不要克隆公众人物、客户或同事的声音用于未授权内容。
+
+## 数字人视频
+
+典型流程：
+
+1. 准备正脸、光线均匀的素材
+2. 生成或录制配音
+3. 驱动口型和表情
+4. 合成背景与字幕
+5. 人工检查口型、手部和边缘瑕疵
+
+## 质量检查清单
+
+- 口型是否与音频同步
+- 眨眼和头部运动是否自然
+- 牙齿、耳朵、手指是否变形
+- 字幕是否遮挡人脸
+- 背景是否出现闪烁或漂移
 `,
       },
     ],
   },
   {
     id: 'engineering',
-    title: '工程化',
+    title: '工程化落地',
     children: [
       {
-        id: 'deploy',
-        title: '构建与部署',
+        id: 'streaming',
+        title: '流式输出与前端交互',
         content: `
-打包产物为纯静态文件，可部署到任意静态服务器。
+## 为什么需要流式
 
-## 生产构建
+大模型生成完整回答可能需要数秒到数十秒。流式输出能显著降低首字等待时间，让用户更早看到反馈。
 
-${code('bash', 'pnpm build')}
+## 后端转发 SSE
 
-## 预览产物
+${code('python', 'from fastapi import FastAPI\nfrom fastapi.responses import StreamingResponse\n\napp = FastAPI()\n\n@app.post("/chat")\nasync def chat(payload: dict):\n    async def event_stream():\n        stream = await client.chat.completions.create(\n            model=model,\n            messages=payload["messages"],\n            stream=True,\n        )\n        async for chunk in stream:\n            delta = chunk.choices[0].delta.content or ""\n            if delta:\n                yield f"data: {delta}\\n\\n"\n        yield "data: [DONE]\\n\\n"\n    return StreamingResponse(event_stream(), media_type="text/event-stream")')}
 
-${code('bash', 'pnpm preview')}
+## 前端处理
 
-### 常见问题
-
-构建内存不足时，可调大 Node 的内存上限：
-
-${code('bash', 'NODE_OPTIONS=--max_old_space_size=4096 pnpm build')}
-
-## 部署方式
-
-- 静态托管：直接上传 dist 目录
-- 容器部署：使用 nginx 托管静态文件
-- 对象存储：配合 CDN 加速
-
-## 缓存策略
-
-| 资源 | 缓存时间 |
-| --- | --- |
-| index.html | 不缓存 |
-| 带哈希的静态资源 | 一年 |
-| 图片与字体 | 三十天 |
-
-## 回滚方案
-
-每次发布保留上一版本产物，出现问题时直接切回，避免长时间不可用。
-`,
-      },
-      {
-        id: 'env',
-        title: '环境变量',
-        content: `
-不同环境的接口地址与开关通过环境变量注入。
-
-## 声明方式
-
-项目根目录下的 .env 文件会被自动读取，只有特定前缀的变量会注入到前端代码：
-
-${code('bash', 'VITE_API_BASE=/api\nVITE_ENABLE_MOCK=false')}
-
-## 多环境
-
-- .env.development 开发环境
-- .env.staging 预发环境
-- .env.production 生产环境
-
-### 安全提示
-
-前端环境变量会被打包进产物，不要写入任何密钥。
-
-## 类型声明
-
-为了获得提示，需要在类型声明文件中补充变量定义。
-
-## 使用方式
-
-${code('ts', 'const base = import.meta.env.VITE_API_BASE;')}
-
-取值缺失时要有兜底，避免线上出现空地址请求。
-`,
-      },
-      {
-        id: 'lint',
-        title: '代码规范',
-        content: `
-规范由工具强制保证，不依赖人工评审的记忆。
-
-## 检查内容
-
-- 未使用的变量与导入
-- 命名与格式
-- 潜在的空值访问
-
-## 提交前校验
-
-${code('bash', 'pnpm lint\nnpx vue-tsc --noEmit')}
-
-### 类型检查
-
-类型检查与打包分离，可以在不构建的情况下快速发现类型问题。
-
-## 忽略规则
-
-确实需要忽略时使用行内注释，并写明原因，避免大范围关闭规则：
-
-${code('ts', '// eslint-disable-next-line no-console')}
-
-## 代码风格
-
-| 项目 | 约定 |
-| --- | --- |
-| 缩进 | 2 空格 |
-| 引号 | 单引号 |
-| 分号 | 保留 |
-`,
-      },
-      {
-        id: 'test',
-        title: '单元测试',
-        content: `
-优先覆盖纯逻辑与工具函数，再逐步补齐组件测试。
-
-## 测试范围
-
-- 工具函数与格式化
-- 组合式函数的边界情况
-- 关键交互的组件行为
-
-## 编写用例
-
-${code('ts', 'it(\'formats price\', () => {\n  expect(formatPrice(1234)).toBe(\'¥1,234\');\n});')}
-
-## 断言原则
-
-### 好的断言
-
-- 断言行为与输出，而不是内部实现
-- 一个用例只验证一件事
-- 用例名称描述业务结果
-
-## 覆盖率
-
-覆盖率是参考值而不是目标，核心链路的完整覆盖比数字更重要。
-`,
-      },
-    ],
-  },
-  {
-    id: 'perf',
-    title: '性能与调优',
-    children: [
-      {
-        id: 'first-screen',
-        title: '首屏优化',
-        content: `
-首屏时间由资源体积、请求数量与渲染时机共同决定。
-
-## 关键指标
-
-- 首次内容绘制时间
-- 最大内容绘制时间
-- 交互延迟
-
-## 常用手段
-
-- 路由级懒加载，按页面拆分产物
-- 首屏关键资源预加载
-- 图片懒加载并指定尺寸
-
-${code('ts', 'const Detail = defineAsyncComponent(() => import(\'./detail.vue\'));')}
-
-### 骨架屏
-
-数据返回前先渲染占位结构，减少布局跳动。
-
-## 接口优化
-
-| 手段 | 效果 |
-| --- | --- |
-| 接口合并 | 减少请求数 |
-| 服务端渲染 | 更快的内容呈现 |
-| 数据预取 | 提前开始请求 |
-`,
-      },
-      {
-        id: 'bundle',
-        title: '打包体积',
-        content: `
-体积直接决定下载与解析时间，需要持续监控。
-
-## 体积分析
-
-${code('bash', 'pnpm build --report')}
-
-## 拆分策略
-
-- 第三方依赖单独分包
-- 按路由拆分业务代码
-- 体积较大的库按需引入
-
-### 按需引入
-
-组件库默认全量引入会把整个包打进产物，必须配置按需加载。
-
-## 依赖取舍
-
-引入一个库之前先看体积与维护状态，能用少量原生代码实现就不要引入。
+- 使用 \`fetch\` + \`ReadableStream\` 或 EventSource
+- 逐段追加到消息内容
+- 处理中断、重试和错误提示
+- 滚动到底部时尊重用户手动上滑
+- 渲染 Markdown 时注意 XSS
 
 ## 常见问题
 
-- 重复打包同一依赖的不同版本
-- 图片未压缩就直接放进产物
+1. 代理服务器缓冲导致「假流式」
+2. 没有发送 \`X-Accel-Buffering: no\`
+3. 前端一次性 \`await response.text()\`
+4. 错误发生在流开始后，无法再改 HTTP 状态码
 `,
       },
       {
-        id: 'render',
-        title: '渲染性能',
+        id: 'cost',
+        title: '缓存、限流与成本',
         content: `
-渲染卡顿通常来自超出必要的重渲染与长任务。
+## 成本从哪里来
 
-## 减少重渲染
+成本主要由输入 token、输出 token 和调用次数决定。长上下文和 Agent 多轮循环会快速放大成本。
 
-- 稳定列表的 key
-- 拆分粒度合理的组件
-- 避免在模板中执行复杂计算
+## 降低成本的手段
 
-## 长列表
+- **提示词缓存**：复用稳定的 system prompt 和知识前缀
+- **结果缓存**：相同问题在短时间内直接命中缓存
+- **模型分级**：简单任务用小模型，复杂任务再升级
+- **上下文裁剪**：只保留相关历史和检索片段
+- **批量处理**：离线任务使用批处理接口
+- **输出限制**：设置合理的 max_tokens
 
-${code('ts', 'const visible = computed(() => list.value.slice(start, start + 30));')}
+## 限流策略
 
-### 虚拟滚动
+${code('text', '用户级：每分钟 20 次\n租户级：每分钟 300 次\n全局：根据供应商配额设置并发上限\n超限处理：排队 + 退避 + 友好提示')}
 
-数据量超过千条时使用虚拟滚动，只渲染可视区。
+## 成本监控指标
 
-## 事件与监听
-
-| 场景 | 建议 |
+| 指标 | 用途 |
 | --- | --- |
-| 滚动监听 | 节流并加 passive |
-| 尺寸变化 | 使用观察器 |
-| 高频输入 | 防抖处理 |
+| 每请求 token | 发现异常长上下文 |
+| 每用户日成本 | 识别高消耗用户 |
+| 缓存命中率 | 评估缓存收益 |
+| 模型分布 | 检查是否过度使用高价模型 |
+| P95 延迟 | 平衡体验与成本 |
 
-## 定位方法
+## 降级方案
 
-先用性能面板录一段交互，确认瓶颈在脚本、样式还是布局，再针对性优化。
+当预算或配额接近上限时，可以：
+
+1. 切换到更小的模型
+2. 关闭非必要工具调用
+3. 缩短检索上下文
+4. 返回缓存答案
+5. 提示用户稍后重试
+`,
+      },
+      {
+        id: 'eval',
+        title: '评测、监控与安全',
+        content: `
+## 上线前必须回答的问题
+
+- 回答准确率是否达到业务要求？
+- 哪些问题最容易出错？
+- 最坏情况下会发生什么？
+- 出问题时能否快速定位？
+- 是否存在提示词注入和数据泄露风险？
+
+## 评测分层
+
+1. **单元评测**：固定输入输出，检查格式和关键字段
+2. **场景评测**：覆盖真实业务流程
+3. **对抗评测**：提示词注入、越权、诱导泄露
+4. **线上评测**：用户反馈、采纳率、投诉率
+
+## 监控指标
+
+- 请求量、成功率、错误码
+- 首 token 延迟、总延迟
+- 输入输出 token 与成本
+- 检索命中率、引用覆盖率
+- 工具调用成功率
+- 用户点赞、点踩和转人工率
+
+## 安全清单
+
+- 系统提示词与用户输入隔离
+- 检索内容视为不可信数据
+- 工具参数白名单校验
+- 敏感信息脱敏后再发给模型
+- 输出经过内容安全审核
+- 保留审计日志，但遵守最小必要原则
+
+## 事故处理
+
+出现严重错误时，优先降级而不是继续重试：关闭工具调用、切换保守提示词、返回兜底话术，并保留现场日志。
 `,
       },
     ],
   },
   {
-    id: 'faq',
-    title: '常见问题',
+    id: 'project',
+    title: '项目实战',
     children: [
       {
-        id: 'faq-build',
-        title: '构建报错',
+        id: 'knowledge-bot',
+        title: '企业知识库助手',
         content: `
-构建阶段的报错大多与依赖版本和类型不匹配有关。
+## 需求拆解
 
-## 依赖安装失败
+目标：让员工用自然语言查询内部制度、产品文档和历史项目资料，并给出可追溯的引用。
 
-先删除锁文件与依赖目录，再重新安装：
+## 功能清单
 
-${code('bash', 'rm -rf node_modules pnpm-lock.yaml\npnpm install')}
+- 文档上传与解析
+- 自动切分和向量化
+- 权限过滤：只能检索有权限的文档
+- 多轮对话与追问
+- 流式回答与来源引用
+- 反馈收集与低分样本回流
 
-## 类型报错
+## 数据模型
 
-- 检查导入路径是否正确
-- 检查依赖是否提供了类型声明
-- 第三方库缺失类型时补充声明文件
+${code('sql', 'create table documents (\n  id uuid primary key,\n  title text not null,\n  department text not null,\n  owner_id uuid not null,\n  created_at timestamptz default now()\n);\n\ncreate table chunks (\n  id uuid primary key,\n  document_id uuid references documents(id),\n  content text not null,\n  page int,\n  embedding vector(1536)\n);')}
 
-### 内存溢出
+## 关键设计
 
-表现为 JavaScript heap out of memory，需要调大内存上限或拆分构建。
+1. 检索前先做权限过滤，不能先检索再隐藏
+2. 引用必须精确到文档和页码
+3. 没有命中时明确说「未找到」，不要自由发挥
+4. 对高频问题做缓存，但权限变化时立即失效
+5. 低分回答进入人工复核队列
 
-## 样式编译错误
+## 验收标准
 
-| 现象 | 原因 |
-| --- | --- |
-| 整页白屏 | scss 编译失败 |
-| 样式丢失 | scoped 选择器不匹配 |
-| 变量未定义 | 未引入变量文件 |
+- 典型问题命中率 ≥ 85%
+- 引用准确率 ≥ 90%
+- 首 token 延迟 < 2 秒
+- 越权检索为 0
 `,
       },
       {
-        id: 'faq-style',
-        title: '样式不生效',
+        id: 'video-workflow',
+        title: 'AI 视频工作流',
         content: `
-排查样式问题要先确认层级，再确认优先级。
+## 目标
 
-## 排查顺序
+用 AI 完成一支 30 秒产品概念短片，包含脚本、分镜、画面、配音和字幕。
 
-1. 元素是否命中了目标类名
-2. 样式是否被打包进产物
-3. 是否被更高优先级的规则覆盖
+## 流程
 
-## 常见原因
+1. **脚本**：用大模型生成 6～8 个镜头的工作人员脚本
+2. **分镜图**：用图像模型生成统一风格的关键帧
+3. **视频片段**：用图生视频生成每个 5 秒镜头
+4. **配音**：用 TTS 生成旁白
+5. **音乐**：用音乐生成工具制作背景音乐
+6. **剪辑**：统一调色、节奏和字幕
+7. **检查**：人工复核品牌、版权和画面瑕疵
 
-- 使用了 scoped 却想影响子组件内部结构
-- 变量未在作用域内声明
-- 权重不足，被全局重置样式覆盖
+## 分镜表模板
 
-${code('scss', ':deep(.child) {\n  color: var(--ao-color-primary);\n}')}
+| 镜头 | 画面 | 动作 | 时长 | 旁白 |
+| --- | --- | --- | --- | --- |
+| 1 | 实验室全景 | 镜头缓慢推进 | 5s | 每一次突破，都始于好奇 |
+| 2 | AI 芯片特写 | 光线扫过芯片 | 4s | 我们把算力装进更小的空间 |
+| 3 | 机器人协作 | 机械臂精准操作 | 5s | 让智能真正走进生产 |
 
-### 深度选择器
+## 一致性技巧
 
-需要穿透组件边界时使用深度选择器，但要控制范围，避免影响其他页面。
+- 固定角色参考图和风格参考图
+- 统一色彩关键词和镜头语言
+- 每个镜头只描述一个动作
+- 失败镜头单独重生成，不要整段重做
 
-## 断言方法
+## 交付检查
 
-在开发者工具中查看计算样式，确认最终生效的规则来源。
+- 画面无闪烁、无肢体变形
+- 品牌 Logo 和产品细节正确
+- 音乐和旁白版权清晰
+- 字幕无错别字
+- 导出尺寸和码率符合平台要求
 `,
       },
       {
-        id: 'faq-compat',
-        title: '兼容性',
+        id: 'launch',
+        title: '上线与复盘',
         content: `
-兼容性问题集中在浏览器特性支持与移动端交互差异。
+## 上线前检查
 
-## 特性支持
+- 环境变量和密钥已配置到生产环境
+- 模型、提示词和工具版本已锁定
+- 有超时、重试、限流和降级
+- 日志不包含敏感信息
+- 监控和告警已接入
+- 回滚方案经过演练
 
-- 观察器与容器查询在老版本浏览器上不可用
-- 需要降级时提供兜底逻辑
+## 灰度发布
 
-## 移动端
+1. 内部用户试用一周
+2. 5% 真实流量灰度
+3. 观察错误率、延迟、成本和反馈
+4. 逐步扩大到 25%、50%、100%
+5. 每个阶段设置明确的放量门槛
 
-### 视口与安全区
+## 复盘模板
 
-${code('css', 'padding-bottom: env(safe-area-inset-bottom);')}
+${code('text', '目标：知识库助手首月上线\n结果：周活 320，回答采纳率 68%\n问题：长文档检索命中率偏低\n原因：PDF 表格解析丢失结构\n改进：接入表格识别，按行切分并保留表头\n下一步：补充 100 条表格问答评测集')}
 
-## 交互差异
+## 持续迭代
 
-| 场景 | 桌面 | 移动端 |
-| --- | --- | --- |
-| 悬浮提示 | hover 触发 | 点击触发 |
-| 滚动惯性 | 系统滚动 | 需要平滑处理 |
+- 每周查看低分样本
+- 每月更新评测集
+- 跟踪模型版本和价格变化
+- 定期审查权限与安全策略
+- 把稳定下来的流程固化为工作流
 
-## 验证方式
-
-真机验证优先于模拟器，重点回归首屏与主要操作路径。
+> 上线不是终点，而是评测和迭代的开始。
 `,
       },
     ],

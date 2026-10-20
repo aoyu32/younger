@@ -1,3 +1,5 @@
+import { aiImagePool } from './aiImages';
+
 export const mockComments = [
   {
     id: 1,
@@ -9,8 +11,8 @@ export const mockComments = [
       avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=xiaoming',
     },
     images: [
-      { url: 'https://picsum.photos/id/101/200/150', id: 'img1' },
-      { url: 'https://picsum.photos/id/104/200/150', id: 'img2' },
+      { url: aiImagePool[0], id: 'img1' },
+      { url: aiImagePool[1], id: 'img2' },
     ],
     createdAt: '2026-04-20T10:30:00Z',
     likes: 24,
@@ -150,7 +152,7 @@ export const mockComments = [
       name: '北冥有鱼',
       avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=zhaosi',
     },
-    images: [{ url: 'https://picsum.photos/id/20/200/150', id: 'img3' }],
+    images: [{ url: aiImagePool[2], id: 'img3' }],
     createdAt: '2026-04-15T09:45:00Z',
     likes: 42,
     dislikes: 1,
@@ -182,7 +184,7 @@ export const mockComments = [
               avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=moxiang',
             },
             images: [
-              { url: 'https://picsum.photos/id/106/200/150', id: 'img_reply' },
+              { url: aiImagePool[3], id: 'img_reply' },
             ],
             createdAt: '2026-04-16T14:05:00Z',
             likes: 15,
@@ -205,8 +207,8 @@ export const mockComments = [
       avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=lightshadow',
     },
     images: [
-      { url: 'https://picsum.photos/id/43/200/150', id: 'img4_1' },
-      { url: 'https://picsum.photos/id/77/200/150', id: 'img4_2' },
+      { url: aiImagePool[4], id: 'img4_1' },
+      { url: aiImagePool[5], id: 'img4_2' },
     ],
     createdAt: '2026-04-21T16:20:00Z',
     likes: 31,

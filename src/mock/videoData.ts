@@ -1,6 +1,8 @@
 const minioVideoUrl = (filename: string) =>
   `${import.meta.env.VITE_MINIO_ADDRESS}/younger/video/${filename}`;
 
+import { aiImagePool } from './aiImages';
+
 /** 示例作者（全部 mock 视频共用同一个作者） */
 const mockAuthor = {
   id: 1,
@@ -77,8 +79,7 @@ export const videoData = [
       shareCount: 210,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[0],
       url: minioVideoUrl('37721999918-1-192.mp4'),
       duration: 300,
     },
@@ -127,8 +128,7 @@ export const videoData = [
       shareCount: 245,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[1],
       url: minioVideoUrl('38130749343-1-192.mp4'),
       duration: 420,
     },
@@ -153,8 +153,7 @@ export const videoData = [
       shareCount: 98,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[2],
       url: minioVideoUrl('37768793798-1-192.mp4'),
       duration: 510,
     },
@@ -179,8 +178,7 @@ export const videoData = [
       shareCount: 302,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[3],
       url: minioVideoUrl('38215090891-1-192.mp4'),
       duration: 480,
     },
@@ -205,8 +203,7 @@ export const videoData = [
       shareCount: 154,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[4],
       url: minioVideoUrl('37768793798-1-192.mp4'),
       duration: 540,
     },
@@ -231,8 +228,7 @@ export const videoData = [
       shareCount: 119,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1554475901-4538ddfbccc2?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[5],
       url: minioVideoUrl('37478075686-1-192.mp4'),
       duration: 600,
     },
@@ -257,8 +253,7 @@ export const videoData = [
       shareCount: 271,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[6],
       url: minioVideoUrl('37815258037-1-192.mp4'),
       duration: 560,
     },
@@ -283,8 +278,7 @@ export const videoData = [
       shareCount: 89,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[7],
       url: minioVideoUrl('37721999918-1-192.mp4'),
       duration: 380,
     },
@@ -309,8 +303,7 @@ export const videoData = [
       shareCount: 129,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[8],
       url: minioVideoUrl('38130749343-1-192.mp4'),
       duration: 470,
     },
@@ -335,8 +328,7 @@ export const videoData = [
       shareCount: 223,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[9],
       url: minioVideoUrl('172156-846731269.mp4'),
       duration: 360,
     },
@@ -361,8 +353,7 @@ export const videoData = [
       shareCount: 80,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[10],
       url: minioVideoUrl('38215090891-1-192.mp4'),
       duration: 340,
     },
@@ -387,8 +378,7 @@ export const videoData = [
       shareCount: 176,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[11],
       url: minioVideoUrl('37768793798-1-192.mp4'),
       duration: 520,
     },
@@ -413,8 +403,7 @@ export const videoData = [
       shareCount: 96,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[12],
       url: minioVideoUrl('37478075686-1-192.mp4'),
       duration: 450,
     },
@@ -439,8 +428,7 @@ export const videoData = [
       shareCount: 315,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[13],
       url: minioVideoUrl('37815258037-1-192.mp4'),
       duration: 490,
     },
@@ -465,8 +453,7 @@ export const videoData = [
       shareCount: 71,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[14],
       url: minioVideoUrl('37721999918-1-192.mp4'),
       duration: 400,
     },
@@ -491,8 +478,7 @@ export const videoData = [
       shareCount: 188,
     },
     video: {
-      cover:
-        'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=60',
+      cover: aiImagePool[15],
       url: minioVideoUrl('38130749343-1-192.mp4'),
       duration: 530,
     },

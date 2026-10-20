@@ -1,10 +1,12 @@
 import type { TopicItem, TopicUser } from '@/view/topic/types';
+import userAvatar from '@/assets/avatar.png';
+import { aiImagePool } from './aiImages';
 
 /** 当前登录用户：发送消息时使用 */
 export const currentTopicUser: TopicUser = {
   id: 0,
   name: '我',
-  avatar: '@/assets/avatar.png',
+  avatar: userAvatar,
 };
 
 /** 话题列表：按日期倒序，第一条为当前话题 */
@@ -26,7 +28,7 @@ export const topicList: TopicItem[] = [
         },
         content:
           '月底最后一问：如果一份方案主要是 AI 帮你写出来的，汇报的时候你会主动说明吗？',
-        images: ['https://picsum.photos/id/180/1200/900'],
+        images: [aiImagePool[0]],
         createdAt: '2026-09-30T09:30:00',
         likes: 33,
       },
@@ -223,7 +225,7 @@ export const topicList: TopicItem[] = [
         },
         content:
           '今天的讨论开始啦～聊聊 AIGC 对内容创作的影响：你是用它提效了，还是担心创意工作被它替代？欢迎把作品和观点都发出来。',
-        images: ['https://picsum.photos/id/15/1200/900'],
+        images: [aiImagePool[1]],
         createdAt: '2026-09-09T09:30:00',
         likes: 36,
       },
@@ -238,8 +240,8 @@ export const topicList: TopicItem[] = [
         content:
           '我们团队的短视频文案现在是 AI 起草 + 人工改写，一天能出 30 条，效率提升非常明显。附两张最近用 AI 生成的封面图，大家看看效果。',
         images: [
-          'https://picsum.photos/id/101/1200/900',
-          'https://picsum.photos/id/104/1200/900',
+          aiImagePool[2],
+          aiImagePool[3],
         ],
         createdAt: '2026-09-09T09:41:00',
         likes: 24,
@@ -264,7 +266,7 @@ export const topicList: TopicItem[] = [
           avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=lilei',
           member: 'svip',
         },
-        images: ['https://picsum.photos/id/20/1200/900'],
+        images: [aiImagePool[4]],
         createdAt: '2026-09-09T09:56:00',
         likes: 9,
       },
@@ -278,7 +280,7 @@ export const topicList: TopicItem[] = [
         },
         content:
           '补一张工作流截图：先用大模型出脚本和分镜，再进图像模型出图，最后剪辑。整套流程一个人就能跑，成本大概只有外包的十分之一。',
-        images: ['https://picsum.photos/id/43/1200/900'],
+        images: [aiImagePool[5]],
         createdAt: '2026-09-09T10:12:00',
         likes: 15,
       },
@@ -305,9 +307,9 @@ export const topicList: TopicItem[] = [
         content:
           '分享一组今天生成的场景概念图，提示词里加了「cinematic lighting」和「35mm film」之后质感提升特别明显，参数也贴在评论区了。',
         images: [
-          'https://picsum.photos/id/77/1200/900',
-          'https://picsum.photos/id/106/1200/900',
-          'https://picsum.photos/id/120/1200/900',
+          aiImagePool[6],
+          aiImagePool[7],
+          aiImagePool[8],
         ],
         createdAt: '2026-09-09T11:05:00',
         likes: 41,

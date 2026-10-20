@@ -1,3 +1,5 @@
+import { aiIconByDomain } from './aiCatalog';
+
 export interface WebsiteSite {
   name: string;
   url: string;
@@ -14,313 +16,305 @@ export interface WebsiteCategoryGroup {
   children: WebsiteCategoryChild[];
 }
 
-// 快捷构造：icon 取 favicon 服务，与 webTools 保持一致
-const site = (name: string, domain: string): WebsiteSite => ({
+// 常用 AI 站点优先复用本地图标，其余走 favicon 服务
+const site = (
+  name: string,
+  domain: string,
+  path = '',
+): WebsiteSite => ({
   name,
-  url: `https://${domain}`,
-  icon: `https://toolb.cn/favicon/${domain}`,
+  url: `https://${domain}${path}`,
+  icon:
+    aiIconByDomain[domain] ??
+    `https://favicon.im/${domain}?size=128`,
 });
 
 export const websiteCategories: WebsiteCategoryGroup[] = [
   {
-    name: '门户资讯',
+    name: 'AI 对话与搜索',
     children: [
       {
-        name: '综合门户',
+        name: 'AI 对话',
         sites: [
-          site('新浪', 'sina.com.cn'),
-          site('搜狐', 'sohu.com'),
-          site('网易', '163.com'),
-          site('腾讯网', 'qq.com'),
-          site('凤凰网', 'ifeng.com'),
-          site('环球网', 'huanqiu.com'),
-          site('中华网', 'china.com'),
-          site('今日头条', 'toutiao.com'),
+          site('ChatGPT', 'chatgpt.com'),
+          site('Claude', 'claude.ai'),
+          site('Gemini', 'gemini.google.com'),
+          site('DeepSeek', 'deepseek.com'),
+          site('豆包', 'doubao.com'),
+          site('Kimi', 'kimi.moonshot.cn'),
+          site('文心一言', 'yiyan.baidu.com'),
+          site('通义千问', 'tongyi.aliyun.com'),
         ],
       },
       {
-        name: '新闻媒体',
+        name: 'AI 搜索',
         sites: [
-          site('人民网', 'people.com.cn'),
-          site('新华网', 'xinhuanet.com'),
-          site('央视网', 'cctv.com'),
-          site('澎湃新闻', 'thepaper.cn'),
-          site('界面新闻', 'jiemian.com'),
-          site('光明网', 'gmw.cn'),
-          site('中国新闻网', 'chinanews.com.cn'),
+          site('Perplexity', 'perplexity.ai'),
+          site('秘塔 AI 搜索', 'metaso.cn'),
+          site('天工 AI', 'tiangong.cn'),
+          site('You.com', 'you.com'),
+          site('Phind', 'phind.com'),
+          site('夸克 AI 搜索', 'quark.cn'),
         ],
       },
       {
-        name: '科技资讯',
+        name: 'AI 资讯',
         sites: [
-          site('36氪', '36kr.com'),
-          site('虎嗅', 'huxiu.com'),
-          site('爱范儿', 'ifanr.com'),
-          site('少数派', 'sspai.com'),
-          site('钛媒体', 'tmtpost.com'),
-          site('TechCrunch', 'techcrunch.com'),
-        ],
-      },
-      {
-        name: '行业垂直',
-        sites: [
-          site('亿邦动力', 'ebrun.com'),
-          site('雷锋网', 'leiphone.com'),
           site('机器之心', 'jiqizhixin.com'),
-          site('游戏葡萄', 'youxiputao.com'),
-          site('动点科技', 'technode.com'),
+          site('量子位', 'qbitai.com'),
+          site('AIBase', 'aibase.com'),
+          site('36氪', '36kr.com'),
+          site('TechCrunch', 'techcrunch.com'),
+          site('The Verge', 'theverge.com'),
         ],
       },
     ],
   },
   {
-    name: '影音娱乐',
+    name: 'AIGC 创作',
     children: [
       {
-        name: '视频网站',
+        name: 'AI 绘画',
         sites: [
-          site('哔哩哔哩', 'bilibili.com'),
-          site('爱奇艺', 'iqiyi.com'),
-          site('腾讯视频', 'v.qq.com'),
-          site('优酷', 'youku.com'),
-          site('芒果TV', 'mgtv.com'),
-          site('西瓜视频', 'ixigua.com'),
-          site('YouTube', 'youtube.com'),
+          site('Midjourney', 'midjourney.com'),
+          site('即梦 AI', 'jimeng.jianying.com'),
+          site('通义万相', 'tongyi.aliyun.com', '/wanxiang'),
+          site('Stable Diffusion', 'stability.ai'),
+          site('Leonardo.Ai', 'leonardo.ai'),
+          site('Civitai', 'civitai.com'),
         ],
       },
       {
-        name: '音乐电台',
+        name: 'AI 视频',
         sites: [
-          site('网易云音乐', 'music.163.com'),
-          site('QQ音乐', 'y.qq.com'),
-          site('酷狗音乐', 'kugou.com'),
-          site('汽水音乐', 'qishui.douyin.com'),
-          site('喜马拉雅', 'ximalaya.com'),
-          site('Spotify', 'spotify.com'),
+          site('可灵 AI', 'klingai.com'),
+          site('Runway', 'runwayml.com'),
+          site('Pika', 'pika.art'),
+          site('Luma AI', 'lumalabs.ai'),
+          site('海螺 AI', 'hailuoai.com'),
+          site('Sora', 'openai.com', '/sora'),
         ],
       },
       {
-        name: '直播平台',
+        name: 'AI 音乐',
         sites: [
-          site('斗鱼', 'douyu.com'),
-          site('虎牙', 'huya.com'),
-          site('抖音', 'douyin.com'),
-          site('快手', 'kuaishou.com'),
-          site('CC直播', 'cc.163.com'),
+          site('Suno', 'suno.com'),
+          site('Udio', 'udio.com'),
+          site('ElevenLabs', 'elevenlabs.io'),
+          site('网易天音', 'tianyin.163.com'),
+          site('魔音工坊', 'moyin.com'),
+          site('Soundraw', 'soundraw.io'),
         ],
       },
       {
-        name: '动漫游戏',
+        name: 'AI 数字人',
         sites: [
-          site('腾讯动漫', 'ac.qq.com'),
-          site('哔哩哔哩漫画', 'manga.bilibili.com'),
-          site('有妖气', 'u17.com'),
-          site('Steam', 'store.steampowered.com'),
-          site('Epic', 'epicgames.com'),
-          site('TapTap', 'taptap.cn'),
-          site('米哈游', 'mihoyo.com'),
-        ],
-      },
-      {
-        name: '影视资源',
-        sites: [
-          site('豆瓣电影', 'movie.douban.com'),
-          site('IMDb', 'imdb.com'),
-          site('片库', 'pianku.li'),
-          site('烂番茄', 'rottentomatoes.com'),
+          site('HeyGen', 'heygen.com'),
+          site('D-ID', 'd-id.com'),
+          site('Synthesia', 'synthesia.io'),
+          site('腾讯智影', 'zhiying.tencent.com'),
+          site('硅基智能', 'guiji.ai'),
         ],
       },
     ],
   },
   {
-    name: '开发工具',
+    name: 'AI 开发',
     children: [
       {
-        name: '代码托管',
+        name: 'AI 编程',
+        sites: [
+          site('GitHub Copilot', 'github.com', '/features/copilot'),
+          site('Cursor', 'cursor.com'),
+          site('Windsurf', 'windsurf.com'),
+          site('通义灵码', 'tongyi.aliyun.com', '/lingma'),
+          site('Trae', 'trae.ai'),
+          site('文心快码', 'comate.baidu.com'),
+        ],
+      },
+      {
+        name: '模型平台',
+        sites: [
+          site('Hugging Face', 'huggingface.co'),
+          site('ModelScope 魔搭', 'modelscope.cn'),
+          site('OpenAI Platform', 'platform.openai.com'),
+          site('Anthropic Console', 'console.anthropic.com'),
+          site('Google AI Studio', 'aistudio.google.com'),
+          site('Ollama', 'ollama.com'),
+        ],
+      },
+      {
+        name: '开发社区',
+        sites: [
+          site('GitHub', 'github.com'),
+          site('Stack Overflow', 'stackoverflow.com'),
+          site('稀土掘金', 'juejin.cn'),
+          site('arXiv', 'arxiv.org'),
+          site('Papers with Code', 'paperswithcode.com'),
+          site('Towards Data Science', 'towardsdatascience.com'),
+        ],
+      },
+      {
+        name: 'AI 工具',
+        sites: [
+          site("There's An AI For That", 'theresanaiforthat.com'),
+          site('Futurepedia', 'futurepedia.io'),
+          site('AI 工具集', 'ai-bot.cn'),
+          site('Toolify', 'toolify.ai'),
+          site('TopAI', 'topai.tools'),
+          site('AI Tool Hunt', 'aitoolhunt.com'),
+        ],
+      },
+    ],
+  },
+  {
+    name: 'AI 学习',
+    children: [
+      {
+        name: 'AI 课程',
+        sites: [
+          site('DeepLearning.AI', 'deeplearning.ai'),
+          site('Coursera', 'coursera.org'),
+          site('Fast.ai', 'fast.ai'),
+          site('Hugging Face Learn', 'huggingface.co', '/learn'),
+          site('Udacity', 'udacity.com'),
+          site('OpenAI Academy', 'academy.openai.com'),
+        ],
+      },
+      {
+        name: '提示词文档',
+        sites: [
+          site('OpenAI Docs', 'platform.openai.com', '/docs'),
+          site('Anthropic Docs', 'docs.anthropic.com'),
+          site('Prompting Guide', 'promptingguide.ai'),
+          site('LangChain', 'langchain.com'),
+          site('LlamaIndex', 'llamaindex.ai'),
+          site('Learn Prompting', 'learnprompting.org'),
+        ],
+      },
+      {
+        name: 'AI 论文',
+        sites: [
+          site('arXiv', 'arxiv.org'),
+          site('Papers with Code', 'paperswithcode.com'),
+          site('Semantic Scholar', 'semanticscholar.org'),
+          site('Google Scholar', 'scholar.google.com'),
+          site('Connected Papers', 'connectedpapers.com'),
+        ],
+      },
+    ],
+  },
+  {
+    name: 'AI 产品',
+    children: [
+      {
+        name: 'AI 产品库',
+        sites: [
+          site('Product Hunt', 'producthunt.com'),
+          site("There's An AI For That", 'theresanaiforthat.com'),
+          site('Futurepedia', 'futurepedia.io'),
+          site('AI Tool Hunt', 'aitoolhunt.com'),
+          site('TopAI', 'topai.tools'),
+        ],
+      },
+      {
+        name: 'AI 应用市场',
+        sites: [
+          site('GPT Store', 'chatgpt.com', '/gpts'),
+          site('Poe', 'poe.com'),
+          site('扣子 Coze', 'coze.cn'),
+          site('Dify', 'dify.ai'),
+          site('FastGPT', 'fastgpt.in'),
+          site('OpenRouter', 'openrouter.ai'),
+        ],
+      },
+      {
+        name: 'AI 设计',
+        sites: [
+          site('Figma', 'figma.com'),
+          site('Canva', 'canva.com'),
+          site('Krea', 'krea.ai'),
+          site('Clipdrop', 'clipdrop.co'),
+          site('Magnific', 'magnific.ai'),
+          site('Adobe Firefly', 'firefly.adobe.com'),
+        ],
+      },
+    ],
+  },
+  {
+    name: 'AI 社区',
+    children: [
+      {
+        name: 'AI 社区',
+        sites: [
+          site('Reddit r/artificial', 'reddit.com', '/r/artificial'),
+          site('知乎', 'zhihu.com'),
+          site('V2EX', 'v2ex.com'),
+          site('Hugging Face Discuss', 'discuss.huggingface.co'),
+          site('Discord', 'discord.com'),
+          site('Linux.do', 'linux.do'),
+        ],
+      },
+      {
+        name: 'AI 博客',
+        sites: [
+          site('机器之心', 'jiqizhixin.com'),
+          site('量子位', 'qbitai.com'),
+          site('Simon Willison', 'simonwillison.net'),
+          site("Lil'Log", 'lilianweng.github.io'),
+          site('Import AI', 'importai.substack.com'),
+          site('The Gradient', 'thegradient.pub'),
+        ],
+      },
+      {
+        name: 'AI 开源',
         sites: [
           site('GitHub', 'github.com'),
           site('Gitee', 'gitee.com'),
-          site('GitLab', 'gitlab.com'),
-          site('Bitbucket', 'bitbucket.org'),
-          site('Codeberg', 'codeberg.org'),
-        ],
-      },
-      {
-        name: '在线工具',
-        sites: [
-          site('Can I Use', 'caniuse.com'),
-          site('TinyPNG', 'tinypng.com'),
-          site('Convertio', 'convertio.co'),
-          site('Photopea', 'photopea.com'),
-          site('Regex101', 'regex101.com'),
-        ],
-      },
-      {
-        name: '接口调试',
-        sites: [
-          site('Apifox', 'apifox.com'),
-          site('Postman', 'postman.com'),
-          site('Hoppscotch', 'hoppscotch.io'),
-          site('Insomnia', 'insomnia.rest'),
-          site('ShowDoc', 'showdoc.com.cn'),
-        ],
-      },
-      {
-        name: '设计素材',
-        sites: [
-          site('Figma', 'figma.com'),
-          site('即时设计', 'js.design'),
-          site('MasterGo', 'mastergo.com'),
-          site('蓝湖', 'lanhuapp.com'),
-          site('iconfont', 'iconfont.cn'),
-          site('Unsplash', 'unsplash.com'),
-          site('Dribbble', 'dribbble.com'),
+          site('Hugging Face', 'huggingface.co'),
+          site('ModelScope 魔搭', 'modelscope.cn'),
+          site('OpenRouter', 'openrouter.ai'),
+          site('Replicate', 'replicate.com'),
         ],
       },
     ],
   },
   {
-    name: '学习教育',
+    name: 'AI 基础设施',
     children: [
       {
-        name: '在线课程',
+        name: '算力平台',
         sites: [
-          site('中国大学MOOC', 'icourse163.org'),
-          site('网易云课堂', 'study.163.com'),
-          site('慕课网', 'imooc.com'),
-          site('Coursera', 'coursera.org'),
-          site('edX', 'edx.org'),
+          site('阿里云 PAI', 'aliyun.com', '/product/pai'),
+          site('腾讯云 TI', 'cloud.tencent.com', '/product/ti'),
+          site('AWS SageMaker', 'aws.amazon.com', '/sagemaker'),
+          site('百度飞桨', 'paddlepaddle.org.cn'),
+          site('火山引擎', 'volcanoengine.com'),
+          site('华为昇腾', 'ascend.huawei.com'),
         ],
       },
       {
-        name: '文档教程',
+        name: '数据标注',
         sites: [
-          site('MDN', 'developer.mozilla.org'),
-          site('菜鸟教程', 'runoob.com'),
-          site('W3school', 'w3school.com.cn'),
-          site('廖雪峰', 'liaoxuefeng.com'),
-          site('Vue3', 'cn.vuejs.org'),
-          site('React中文', 'react.docschina.org'),
+          site('Label Studio', 'labelstud.io'),
+          site('Scale AI', 'scale.com'),
+          site('Appen', 'appen.com'),
+          site('DataRobot', 'datarobot.com'),
+          site('百度众测', 'test.baidu.com'),
         ],
       },
       {
-        name: '语言学习',
+        name: '模型评测',
         sites: [
-          site('多邻国', 'duolingo.com'),
-          site('扇贝单词', 'shanbay.com'),
-          site('百词斩', 'baicizhan.com'),
-          site('有道词典', 'dict.youdao.com'),
-        ],
-      },
-    ],
-  },
-  {
-    name: '电商购物',
-    children: [
-      {
-        name: '综合商城',
-        sites: [
-          site('淘宝', 'taobao.com'),
-          site('京东', 'jd.com'),
-          site('天猫', 'tmall.com'),
-          site('拼多多', 'pinduoduo.com'),
-          site('苏宁易购', 'suning.com'),
-          site('唯品会', 'vip.com'),
-        ],
-      },
-      {
-        name: '优惠比价',
-        sites: [
-          site('什么值得买', 'smzdm.com'),
-          site('慢慢买', 'manmanbuy.com'),
-          site('一淘', 'etao.com'),
-          site('返利网', 'fanli.com'),
-        ],
-      },
-      {
-        name: '海淘转运',
-        sites: [
-          site('亚马逊', 'amazon.com'),
-          site('考拉海购', 'kaola.com'),
-          site('转运四方', '4px.com'),
-        ],
-      },
-    ],
-  },
-  {
-    name: '社交沟通',
-    children: [
-      {
-        name: '即时通讯',
-        sites: [
-          site('微信', 'weixin.qq.com'),
-          site('QQ', 'imqq.com'),
-          site('Telegram', 'telegram.org'),
-          site('WhatsApp', 'whatsapp.com'),
-          site('钉钉', 'dingtalk.com'),
-          site('飞书', 'feishu.cn'),
-        ],
-      },
-      {
-        name: '社区论坛',
-        sites: [
-          site('知乎', 'zhihu.com'),
-          site('豆瓣', 'douban.com'),
-          site('百度贴吧', 'tieba.baidu.com'),
-          site('V2EX', 'v2ex.com'),
-          site('Reddit', 'reddit.com'),
-        ],
-      },
-      {
-        name: '博客建站',
-        sites: [
-          site('掘金', 'juejin.cn'),
-          site('CSDN', 'csdn.net'),
-          site('博客园', 'cnblogs.com'),
-          site('SegmentFault', 'segmentfault.com'),
-          site('WordPress', 'wordpress.org'),
-          site('Hexo', 'hexo.io'),
-        ],
-      },
-    ],
-  },
-  {
-    name: '实用查询',
-    children: [
-      {
-        name: '搜索引擎',
-        sites: [
-          site('百度', 'baidu.com'),
-          site('必应', 'bing.com'),
-          site('Google', 'google.com'),
-          site('DuckDuckGo', 'duckduckgo.com'),
-        ],
-      },
-      {
-        name: '地图出行',
-        sites: [
-          site('高德地图', 'amap.com'),
-          site('百度地图', 'map.baidu.com'),
-          site('腾讯地图', 'map.qq.com'),
-          site('12306', '12306.cn'),
-          site('携程', 'ctrip.com'),
-        ],
-      },
-      {
-        name: '天气日历',
-        sites: [
-          site('中国天气网', 'weather.com.cn'),
-          site('墨迹天气', 'moji.com'),
-          site('天气网', 'tianqi.com'),
-        ],
-      },
-      {
-        name: '快递物流',
-        sites: [
-          site('快递100', 'kuaidi100.com'),
-          site('菜鸟裹裹', 'cainiao.com'),
-          site('快递鸟', 'kdniao.com'),
-          site('顺丰速运', 'sf-express.com'),
+          site('LMSYS Arena', 'lmarena.ai'),
+          site('OpenCompass', 'opencompass.org.cn'),
+          site('Artificial Analysis', 'artificialanalysis.ai'),
+          site('EvalPlus', 'evalplus.github.io'),
+          site(
+            'Open LLM Leaderboard',
+            'huggingface.co',
+            '/spaces/open-llm-leaderboard/open_llm_leaderboard',
+          ),
         ],
       },
     ],
