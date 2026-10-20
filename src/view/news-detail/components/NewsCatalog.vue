@@ -1,5 +1,5 @@
 <template>
-  <nav class="news-catalog">
+  <nav ref="catalogRef" class="news-catalog">
     <div
       v-for="item in catalog"
       :key="item.index"
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   data: {
@@ -35,6 +35,53 @@ const props = defineProps<{
 const catalog = computed(() => props.data?.catalogs ?? []);
 const offsetTop = computed(() => props.data?.offsetTop ?? 0);
 const activeText = ref<string>('');
+const catalogRef = ref<HTMLElement>();
+
+/* 让目录滚动容器跟随当前激活项，避免最后/第一个目录项被裁切 */
+const ensureActiveVisible = () => {
+  const nav = catalogRef.value;
+  const active = nav?.querySelector<HTMLElement>('.catalog-item.active');
+  const scrollParent = nav?.closest<HTMLElement>('.outline-content');
+  if (!active || !scrollParent) return;
+
+  const parentRect = scrollParent.getBoundingClientRect();
+  const activeRect = active.getBoundingClientRect();
+  const itemTop =
+    activeRect.top - parentRect.top + scrollParent.scrollTop;
+  const itemBottom = itemTop + activeRect.height;
+  const viewTop = scrollParent.scrollTop;
+  const viewBottom = viewTop + scrollParent.clientHeight;
+  const maxScroll = scrollParent.scrollHeight - scrollParent.clientHeight;
+  const items = Array.from(
+    nav.querySelectorAll<HTMLElement>('.catalog-item'),
+  );
+  const activeIndex = items.indexOf(active);
+
+  let target: number | null = null;
+
+  /* 首项/末项直接滚到两端，保证滚动条也到顶/到底 */
+  if (activeIndex === 0) {
+    target = 0;
+  } else if (activeIndex === items.length - 1) {
+    target = maxScroll;
+  } else if (itemTop < viewTop) {
+    target = itemTop;
+  } else if (itemBottom > viewBottom) {
+    target = itemBottom - scrollParent.clientHeight;
+  }
+
+  if (target !== null && Math.abs(target - viewTop) > 1) {
+    scrollParent.scrollTo({
+      top: Math.max(0, Math.min(target, maxScroll)),
+      behavior: 'smooth',
+    });
+  }
+};
+
+watch(activeText, async () => {
+  await nextTick();
+  ensureActiveVisible();
+});
 
 const scrollToHeading = (item: any) => {
   const el = document.getElementById(item.text);
@@ -62,6 +109,15 @@ const onScroll = () => {
     activeText.value = headings[0].text;
   }
 };
+
+watch(
+  () => catalog.value.length,
+  async () => {
+    await nextTick();
+    onScroll();
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true });
