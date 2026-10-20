@@ -26,6 +26,7 @@
           <div class="new-news">
             <NewsListCard
               label="最新资讯"
+              highlight="最新"
               sub-label="今日更新"
               :list="newNewsList"
               @click="handleNewsClick"
@@ -36,6 +37,7 @@
           <div class="hot-course">
             <HotCourseList
               label="热门课程"
+              highlight="课程"
               sub-label="推荐学习"
               :list="hotCourseList"
               @click="handleCourseClick"

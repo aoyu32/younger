@@ -1,7 +1,7 @@
 <template>
   <div class="today-news-list">
     <div class="card-header">
-      <h3>{{ label }}</h3>
+      <h3>{{ labelParts.before }}<span v-if="labelParts.highlight" class="brand">{{ labelParts.highlight }}</span>{{ labelParts.after }}</h3>
       <span class="sub-label">{{ subLabel }}</span>
     </div>
 
@@ -33,12 +33,15 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 defineOptions({
   name: 'TodayNewsList',
 });
 
 const props = defineProps<{
   label: string;
+  highlight?: string;
   subLabel: string;
   list: Array<{
     id: string | number;
@@ -49,6 +52,22 @@ const props = defineProps<{
     views: number;
   }>;
 }>();
+
+const labelParts = computed(() => {
+  const text = props.label;
+  const keyword = props.highlight;
+  const index = keyword ? text.indexOf(keyword) : -1;
+
+  if (!keyword || index === -1) {
+    return { before: text, highlight: '', after: '' };
+  }
+
+  return {
+    before: text.slice(0, index),
+    highlight: keyword,
+    after: text.slice(index + keyword.length),
+  };
+});
 
 const emit = defineEmits<{
   (event: 'click', id: string | number): void;
@@ -92,6 +111,10 @@ const handleItemClick = (id: string | number) => {
       font-weight: var(--ao-font-weight-semibold);
       color: var(--ao-color-text-base);
       position: relative;
+
+      .brand {
+        color: var(--ao-color-primary);
+      }
     }
 
     .sub-label {
