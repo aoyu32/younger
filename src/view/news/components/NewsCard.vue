@@ -50,8 +50,8 @@ defineOptions({ name: 'NewsCard' });
 
 export interface NewsCardItem {
   id: string | number;
-  title?: string;
-  content?: string;
+  title: string;
+  content: string;
   cover?: string;
   date?: string;
   viewCount?: number;

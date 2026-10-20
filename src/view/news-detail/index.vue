@@ -217,7 +217,7 @@ function findCommentById(list: any, id: any): any {
 const handleCommentSend = (payload: any) => {
   commentsList.value.push({
     id: Date.now(),
-    user: { name: '当前用户', avatar: 'https://picsum.photos/50/50?random=2' },
+    user: { name: '当前用户', avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=ai-user-2' },
     content: payload.text,
     images: payload.images,
     createdAt: new Date().toISOString(),
@@ -230,7 +230,7 @@ const handleCommentReplySend = (payload: any) => {
   if (!target.replies) target.replies = [];
   target.replies.push({
     id: Date.now(),
-    user: { name: '当前用户', avatar: 'https://picsum.photos/50/50?random=3' },
+    user: { name: '当前用户', avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=ai-user-3' },
     content: payload.text,
     images: payload.images,
     replyTo: target.user.name,
