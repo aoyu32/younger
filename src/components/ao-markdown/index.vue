@@ -98,8 +98,13 @@ const handleUpdate = (val: string) => {
   flex-direction: column;
 }
 
-:deep(.md-editor) {
+:deep(.md-editor:not(.md-editor-fullscreen)) {
   background-color: transparent;
+}
+
+/* 全屏时编辑器脱离弹窗层级，需要不透明背景，避免透出页面和弹窗 */
+:deep(.md-editor.md-editor-fullscreen) {
+  background-color: var(--md-bk-color, #fff);
 }
 
 .preview-catalog-layout,
