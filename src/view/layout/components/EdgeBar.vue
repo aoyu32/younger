@@ -8,7 +8,7 @@
         </div>
         <div class="qr-pop">
           <p class="qr-title">
-            扫码添加<span class="qr-key">{{ item.qrLabel }}</span>参与讨论吧
+            扫码加入<span class="qr-key">{{ item.qrLabel }}</span>参与讨论吧
           </p>
           <div class="qr-box">
             <ao-image
@@ -79,7 +79,7 @@ const items: EdgeItem[] = [
     label: '微信',
     icon: '@/assets/layout/icon_wechat.svg',
     qr: '@/assets/layout/qrcode_wechat.png',
-    qrLabel: '微信',
+    qrLabel: '微信群',
   },
   {
     key: 'qq',
