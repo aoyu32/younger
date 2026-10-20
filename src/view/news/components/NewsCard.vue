@@ -80,10 +80,9 @@ const formatNumber = (n: number): string => {
 <style scoped lang="scss">
 .news-card {
   display: flex;
-  gap: 12px;
-  padding:12px 10px;
+  gap: 16px;
+  padding: 16px;
   background: var(--ao-color-bg-container);
-  // border: 1px solid var(--ao-color-border);
   border-radius: var(--ao-border-radius-lg);
   cursor: pointer;
   box-sizing: border-box;
@@ -111,9 +110,9 @@ const formatNumber = (n: number): string => {
 
   .cover-img {
     flex-shrink: 0;
-    width: 140px;
+    width: 160px;
     height: 100%;
-    border-radius: var(--ao-border-radius-sm);
+    border-radius: 10px;
     overflow: hidden;
     background: var(--ao-gray-4);
 
@@ -144,7 +143,7 @@ const formatNumber = (n: number): string => {
     white-space: nowrap;
     flex-shrink: 0;
     transition: color 0.15s ease;
-    margin-bottom: 2px;
+    margin-bottom: 5px;
 
     &.is-empty {
       visibility: hidden;
@@ -167,11 +166,12 @@ const formatNumber = (n: number): string => {
   .meta {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-size: 12px;
     color: var(--ao-color-text-tertiary);
     flex-shrink: 0;
     margin-top: auto;
+    padding-top: 10px;
 
     .meta-item {
       display: inline-flex;
@@ -187,6 +187,21 @@ const formatNumber = (n: number): string => {
 
     .date {
       margin-right: auto;
+    }
+  }
+
+  @media (max-width: 560px) {
+    gap: 12px;
+    padding: 12px;
+
+    .cover-img {
+      width: 112px;
+      border-radius: 8px;
+    }
+
+    .meta {
+      gap: 8px;
+      padding-top: 8px;
     }
   }
 }

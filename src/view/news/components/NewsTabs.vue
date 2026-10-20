@@ -332,19 +332,26 @@ watch(
 
 .tab-contents {
   width: 100%;
-  padding: 16px;
+  padding: 20px;
   min-height: 50vh;
 }
 
 .card-wrapper {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  /* 行高按内容算：12px 内边距 ×2 + 标题 21px + 间距 2px + 摘要 2 行 39px + meta 24px ≈ 120px */
-  grid-auto-rows: 120px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  /* 行高按内容算：16px 内边距 ×2 + 标题 21px + 间距 2px + 摘要 2 行 39px + meta 24px ≈ 118px，额外留出呼吸空间 */
+  grid-auto-rows: 148px;
+  align-content: start;
 
-  @media (max-width: 720px) {
+  /* 中等宽度下两列会压缩正文，改为单列更易读 */
+  @media (max-width: 1120px) {
     grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 560px) {
+    gap: 14px;
+    grid-auto-rows: 132px;
   }
 }
 
