@@ -20,15 +20,21 @@
     <footer v-if="!isTopicPage">
       <LayoutFooter />
     </footer>
-    <EdgeBar />
+    <EdgeBar @click="handleEdgeBarClick" />
+    <FeedbackDialog v-if="feedbackMounted" v-model="feedbackVisible" />
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, defineAsyncComponent, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import LayoutHeader from '@/view/layout/components/Header.vue';
 import LayoutFooter from '@/view/layout/components/Footer.vue';
 import EdgeBar from '@/view/layout/components/EdgeBar.vue';
+
+// 反馈弹窗包含 Markdown 编辑器，首次点击反馈时再按需加载
+const FeedbackDialog = defineAsyncComponent(
+  () => import('@/view/layout/components/FeedbackDialog.vue'),
+);
 
 // 组件名称
 defineOptions({
@@ -36,6 +42,19 @@ defineOptions({
 });
 
 const route = useRoute();
+
+/** 反馈弹窗显隐 */
+const feedbackVisible = ref(false);
+/** 是否已加载反馈弹窗（含 Markdown 编辑器，按需加载） */
+const feedbackMounted = ref(false);
+
+/** 边缘侧边栏点击：目前仅“反馈”需要打开弹窗 */
+const handleEdgeBarClick = (key: string) => {
+  if (key === 'feedback') {
+    feedbackMounted.value = true;
+    feedbackVisible.value = true;
+  }
+};
 
 /** 宽屏页面：视频详情页、教程页、今日话题页需要更宽的头部内容与主内容区 */
 const isWidePage = computed(() =>
