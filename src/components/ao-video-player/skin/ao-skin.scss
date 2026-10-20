@@ -2,9 +2,22 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #000;
+  background: transparent;
   overflow: hidden;
   user-select: none;
+  // 跟随外层容器的圆角，避免播放器自身方角与圆角裁切不一致
+  border-radius: inherit;
+
+  // 黑色底衬内缩 1px：视频被圆角裁切时，边缘不会和黑底混出深色描边
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: 0;
+    background: #000;
+    border-radius: inherit;
+    pointer-events: none;
+  }
 
   video {
     display: block;
@@ -13,6 +26,7 @@
 
   .art-video-player {
     --art-theme: #00a3a3;
+    --art-background-color: transparent;
     --art-font-color: #ffffff;
     --art-padding: 12px;
     --art-progress-height: 6px;
@@ -25,7 +39,7 @@
     --art-bottom-gap: 2px;
     --art-bottom-height: 80px;
     --art-bottom-offset: 18px;
-    --art-control-height: 34px;
+    --art-control-height: 40px;
     --art-control-opacity: 1;
     --art-control-icon-size: 20px;
     --art-control-icon-scale: 1;
@@ -51,7 +65,7 @@
     }
 
     .art-controls {
-      padding-bottom: 6px;
+      padding-bottom: 0;
 
       .art-controls-right {
         gap: 8px;
@@ -122,15 +136,15 @@
       }
 
       .art-selector-list {
-        bottom: calc(var(--art-control-height) + 6px);
+        bottom: calc(var(--art-control-height) - 1px);
         min-width: 52px;
-        padding: 4px;
-        gap: 2px;
+        padding: 6px;
+        gap: 4px;
         border-radius: 8px;
         backdrop-filter: blur(10px);
 
         .art-selector-item {
-          padding: 6px 8px;
+          padding: 8px 10px;
           font-size: 13px;
           border-radius: 6px;
           color: rgba(255, 255, 255, 0.75);
@@ -150,7 +164,7 @@
     }
 
     .art-control-volume .art-volume-panel {
-      bottom: calc(var(--art-control-height) + 6px);
+      bottom: calc(var(--art-control-height) - 1px);
       height: calc(var(--art-volume-height) + 8px);
       padding: 0 3px;
 
