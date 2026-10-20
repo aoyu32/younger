@@ -7,7 +7,8 @@
           <ao-image :src="item.icon" width="22px" height="22px" fit="contain" />
         </div>
         <div class="qr-pop">
-          <p class="qr-title">
+          <p v-if="item.qrTitle" class="qr-title">{{ item.qrTitle }}</p>
+          <p v-else class="qr-title">
             扫码加入<span class="qr-key">{{ item.qrLabel }}</span>参与讨论吧
           </p>
           <div class="qr-box">
@@ -69,11 +70,18 @@ type EdgeItem = {
   icon: string;
   qr?: string;
   qrLabel?: string;
+  qrTitle?: string;
 };
 
 /** 图标传路径字符串，由 AoImage 内部解析 */
 const items: EdgeItem[] = [
-  { key: 'kefu', label: '客服', icon: '@/assets/layout/icon_kefu.svg' },
+  {
+    key: 'kefu',
+    label: '客服',
+    icon: '@/assets/layout/icon_kefu.svg',
+    qr: '@/assets/layout/qrcode_qq.png',
+    qrTitle: '扫码添加官方客服QQ',
+  },
   {
     key: 'wechat',
     label: '微信',
