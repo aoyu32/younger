@@ -153,12 +153,17 @@ $card_height: 145px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #fff;
     transition: 0.5s;
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
 
     img {
       width: 100%;
       height: 100%;
+      border-radius: inherit;
+      object-fit: cover;
     }
   }
 
@@ -191,9 +196,17 @@ $card_height: 145px;
     }
 
     .bottom_category {
-      font-size: var(--ao-font-size-xs);
+      width: 100%;
+      box-sizing: border-box;
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      font-size: calc(var(--ao-font-size-xs) - 1px);
+      line-height: 1.5;
+      text-overflow: ellipsis;
       transition: 0.2s;
-      padding: 0 5px;
+      padding: 0 14px;
       color: var(--ao-color-text-tertiary);
     }
   }
