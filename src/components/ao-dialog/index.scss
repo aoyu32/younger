@@ -1,7 +1,7 @@
 .ao-dialog-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: var(--ao-z-modal);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,7 +94,6 @@
     gap: var(--ao-spacing-sm);
     padding: 15px 20px;
     // background-color: var(--ao-color-bg-layout);
-    
   }
 
   &__btn {
