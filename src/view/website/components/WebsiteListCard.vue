@@ -23,7 +23,7 @@
     <AoPage
       class="list"
       v-model:current="currentPage"
-      :size="dynamicPageSize"
+      :size="pageSize"
       :total="data.length"
       controls-position="bottom"
     >
@@ -60,11 +60,7 @@
           </div>
         </div>
       </template>
-      <div
-        class="list-wrapper"
-        ref="listWrapperRef"
-        v-if="pagedData.length > 0"
-      >
+      <div class="list-wrapper" v-if="pagedData.length > 0">
         <div
           class="card-item"
           v-for="(item, index) in pagedData"
@@ -97,12 +93,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface WebsiteData {
   id?: number | string;
   icon: string;
   name: string;
+  url?: string;
 }
 
 const props = withDefaults(
@@ -135,40 +132,33 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'update:selected': [value: number[]];
+  open: [item: WebsiteData];
 }>();
-
-// 与下方 .list-wrapper 的 grid 定义保持一致
-const GRID_MIN_COL = 128;
-const GRID_ROW_HEIGHT = 100;
-const GRID_GAP = 20;
-// 容器高度存在亚像素误差时，避免刚好差 1~2px 就少算一行/一列
-const GRID_TOLERANCE = 4;
-
-const listWrapperRef = ref<HTMLElement>();
-
-// 每页数量 = 网格容量（列数 × 行数），随容器尺寸自动重算，
-// 保证满页时内容正好填满、间距固定
-const dynamicPageSize = ref(props.pageSize);
 
 const currentPage = ref(1);
 
+// 固定四行三列，条目不足时也保留卡片尺寸
 const totalPages = computed(() =>
-  Math.max(1, Math.ceil(props.data.length / dynamicPageSize.value)),
+  Math.max(1, Math.ceil(props.data.length / props.pageSize)),
 );
 
 const pagedData = computed(() => {
-  const start = (currentPage.value - 1) * dynamicPageSize.value;
-  return props.data.slice(start, start + dynamicPageSize.value);
+  const start = (currentPage.value - 1) * props.pageSize;
+  return props.data.slice(start, start + props.pageSize);
 });
 
 /** 当前页第 index 项在完整 data 中的下标 */
 const dataIndex = (index: number) =>
-  (currentPage.value - 1) * dynamicPageSize.value + index;
+  (currentPage.value - 1) * props.pageSize + index;
 
 const isSelected = (index: number) => props.selected.includes(dataIndex(index));
 
 const handleCardClick = (index: number) => {
-  if (!props.editing) return;
+  if (!props.editing) {
+    const item = pagedData.value[index];
+    if (item?.url) emit('open', item);
+    return;
+  }
   const target = dataIndex(index);
   const next = new Set(props.selected);
   if (next.has(target)) {
@@ -190,52 +180,10 @@ watch(
   },
 );
 
-// 页容量变化后全局下标会失效，清空勾选
-watch(dynamicPageSize, () => {
-  emit('update:selected', []);
-});
-
-function updatePageSize() {
-  const el = listWrapperRef.value;
-  if (!el) return;
-  const cs = getComputedStyle(el);
-  const width =
-    el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-  const height =
-    el.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-  const cols = Math.max(
-    1,
-    Math.floor((width + GRID_GAP + GRID_TOLERANCE) / (GRID_MIN_COL + GRID_GAP)),
-  );
-  const rows = Math.max(
-    1,
-    Math.floor(
-      (height + GRID_GAP + GRID_TOLERANCE) / (GRID_ROW_HEIGHT + GRID_GAP),
-    ),
-  );
-  dynamicPageSize.value = cols * rows;
-}
-
-let resizeObserver: ResizeObserver | null = null;
-
-onMounted(() => {
-  updatePageSize();
-  resizeObserver = new ResizeObserver(updatePageSize);
-  if (listWrapperRef.value) {
-    resizeObserver.observe(listWrapperRef.value);
-  }
-});
-
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect();
-  resizeObserver = null;
-});
-
 // 页容量或数据量变化时避免当前页码越界
-watch([dynamicPageSize, () => props.data.length], () => {
-  const max = totalPages.value;
-  if (currentPage.value > max) {
-    currentPage.value = max;
+watch([() => props.pageSize, () => props.data.length], () => {
+  if (currentPage.value > totalPages.value) {
+    currentPage.value = totalPages.value;
   }
 });
 </script>
@@ -306,7 +254,9 @@ watch([dynamicPageSize, () => props.data.length], () => {
   .list-wrapper {
     height: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+    // 固定三列四行：即使当前页不足 3 个，卡片也不会被拉宽
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 100px;
     gap: 20px;
     align-content: start;
     padding: var(--ao-spacing-md);

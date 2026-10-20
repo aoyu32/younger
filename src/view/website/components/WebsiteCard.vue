@@ -10,7 +10,13 @@
       <div class="hover-card-right">
         <div class="right-content">
           <!-- 收藏按钮 -->
-          <button class="collect action-btn" type="button">
+          <button
+            class="collect action-btn"
+            :class="{ 'is-active': collected }"
+            type="button"
+            :aria-pressed="collected"
+            @click.stop="emit('collect')"
+          >
             <ao-image
               src="@/assets/website/icon_collect.svg"
               class="action-icon"
@@ -18,10 +24,14 @@
               width="16px"
               height="16px"
             />
-            <span>收藏</span>
+            <span>{{ collected ? '已收藏' : '收藏' }}</span>
           </button>
           <!-- 分享按钮 -->
-          <button class="share action-btn" type="button">
+          <button
+            class="share action-btn"
+            type="button"
+            @click.stop="emit('share')"
+          >
             <ao-image
               src="@/assets/website/icon_share.svg"
               class="action-icon"
@@ -43,16 +53,16 @@
             <span class="view-text">浏览</span>
           </div>
           <!-- 点赞图标和数量 -->
-          <div class="like">
-            <ao-image
-              src="@/assets/website/icon_like.svg"
-              class="like-icon"
-              alt="点赞"
-              width="16px"
-              height="16px"
-            />
-            <span>{{ likeCount }}</span>
-          </div>
+          <button
+            class="like"
+            :class="{ 'is-active': liked }"
+            type="button"
+            :aria-pressed="liked"
+            @click.stop="emit('like')"
+          >
+            <span class="like-icon" aria-hidden="true"></span>
+            <span>{{ likeCountText }}</span>
+          </button>
         </div>
       </div>
     </div>
@@ -60,6 +70,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 interface Props {
   icon?: string;
   name?: string;
@@ -67,21 +79,37 @@ interface Props {
   desc?: string;
   viewCount?: number | string;
   likeCount?: number | string;
+  collected?: boolean;
+  liked?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   icon: '',
   name: '',
   expandLeft: false,
   desc: '',
   viewCount: 0,
   likeCount: 0,
+  collected: false,
+  liked: false,
+});
+
+const emit = defineEmits<{
+  collect: [];
+  like: [];
+  share: [];
+}>();
+
+const likeCountText = computed(() => {
+  const base = Number(props.likeCount);
+  return (Number.isFinite(base) ? base : 0) + (props.liked ? 1 : 0);
 });
 </script>
 
 <style scoped lang="scss">
 .website-card {
   --card-line-fade: 28px; // L 形边框两端渐变的长度
+  --collect-color: #f4ea2a; // 与收藏图标保持一致的黄色
   width: 100%;
   height: 100%;
   position: relative;
@@ -272,6 +300,10 @@ withDefaults(defineProps<Props>(), {
   &:hover {
     background-color: var(--ao-color-bg-hover);
   }
+
+  &.is-active {
+    border-color: var(--collect-color);
+  }
 }
 
 /* 按钮中的图标 */
@@ -318,10 +350,39 @@ withDefaults(defineProps<Props>(), {
   display: flex;
   align-items: center;
   gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    transform 0.2s;
+
+  &:hover,
+  &.is-active {
+    color: var(--ao-color-error);
+  }
+
+  &.is-active {
+    font-weight: var(--ao-font-weight-semibold);
+  }
 }
 
 .like-icon {
   width: 16px;
   height: 16px;
+  flex-shrink: 0;
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask: url('@/assets/website/icon_like.svg') center / contain
+    no-repeat;
+  mask: url('@/assets/website/icon_like.svg') center / contain no-repeat;
+  transition: transform 0.2s;
+}
+
+.like.is-active .like-icon {
+  transform: scale(1.12);
 }
 </style>

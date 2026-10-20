@@ -14,6 +14,7 @@
             v-model:selected="historySelected"
             title-pos="left"
             empty="没有浏览历史~"
+            @open="handleSiteClick"
           >
             <template #action>
               <div class="action-btn">
@@ -52,6 +53,7 @@
             v-model:selected="collectSelected"
             title-pos="right"
             empty="没有收藏内容~"
+            @open="handleSiteClick"
           >
             <template #action>
               <div class="action-btn flex-center">
@@ -115,6 +117,7 @@
             :title="section.title"
             :list="section.list"
             :active="activeSectionName === section.title"
+            @click="handleSiteClick"
           />
         </div>
       </div>
@@ -128,7 +131,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import Lenis from 'lenis';
 import PageSolgan from '@/components/page-slogan/index.vue';
 import WebsiteListCard from './components/WebsiteListCard.vue';
-import { useWebsite } from '@/store/module/website';
+import { useWebsite, type WebsiteLink } from '@/store/module/website';
 import deleteIcon from '@/assets/website/icon_delete.svg';
 import addIcon from '@/assets/website/icon_add.svg';
 import AddWebsiteDialog from './components/AddWebsiteDialog.vue';
@@ -141,7 +144,7 @@ const isEditCollect = ref(false);
 const showAddDialog = ref(false);
 const categorySectionRef = ref();
 
-const { historyList, collectList } = useWebsite();
+const { historyList, collectList, addHistory } = useWebsite();
 const historySelected = ref<number[]>([]);
 const collectSelected = ref<number[]>([]);
 
@@ -213,74 +216,21 @@ const activeCategory = ref(firstGroup?.name ?? '');
 const activeSub = ref(firstSub?.name ?? '');
 const activeSites = ref<WebsiteSite[]>(firstSub?.sites ?? []);
 
-// 综合门户数据
-const portalSites = ref<WebsiteSite[]>(
-  websiteCategories[0]?.children?.[0]?.sites ?? [],
-);
-const newsSites = ref<WebsiteSite[]>(
-  websiteCategories[0]?.children?.[1]?.sites ?? [],
-);
-const techSites = ref<WebsiteSite[]>(
-  websiteCategories[0]?.children?.[2]?.sites ?? [],
-);
-const videoSites = ref<WebsiteSite[]>(
-  websiteCategories[1]?.children?.[0]?.sites ?? [],
-);
-const musicSites = ref<WebsiteSite[]>(
-  websiteCategories[1]?.children?.[1]?.sites ?? [],
-);
-const codeSites = ref<WebsiteSite[]>(
-  websiteCategories[2]?.children?.[0]?.sites ?? [],
-);
-const toolSites = ref<WebsiteSite[]>(
-  websiteCategories[2]?.children?.[1]?.sites ?? [],
-);
-const designSites = ref<WebsiteSite[]>(
-  websiteCategories[2]?.children?.[3]?.sites ?? [],
-);
-const courseSites = ref<WebsiteSite[]>(
-  websiteCategories[3]?.children?.[0]?.sites ?? [],
-);
-const shopSites = ref<WebsiteSite[]>(
-  websiteCategories[4]?.children?.[0]?.sites ?? [],
-);
-const imSites = ref<WebsiteSite[]>(
-  websiteCategories[5]?.children?.[0]?.sites ?? [],
-);
-const forumSites = ref<WebsiteSite[]>(
-  websiteCategories[5]?.children?.[1]?.sites ?? [],
-);
-const searchSites = ref<WebsiteSite[]>(
-  websiteCategories[6]?.children?.[0]?.sites ?? [],
+// 分类内容全部由 websiteCategories 驱动，新增 AI 站点无需再改页面
+const categorySections = computed(() =>
+  websiteCategories.flatMap((group) =>
+    group.children
+      .filter((child) => child.sites.length > 0)
+      .map((child) => ({
+        title: child.name,
+        group: group.name,
+        list: child.sites,
+      })),
+  ),
 );
 
-// 右侧各分类 section，标题与侧边菜单二级分类名一一对应
-const categorySections = computed(() => [
-  { title: '综合门户', list: portalSites.value },
-  { title: '新闻媒体', list: newsSites.value },
-  { title: '科技资讯', list: techSites.value },
-  { title: '视频网站', list: videoSites.value },
-  { title: '音乐电台', list: musicSites.value },
-  { title: '代码托管', list: codeSites.value },
-  { title: '在线工具', list: toolSites.value },
-  { title: '设计素材', list: designSites.value },
-  { title: '在线课程', list: courseSites.value },
-  { title: '综合商城', list: shopSites.value },
-  { title: '即时通讯', list: imSites.value },
-  { title: '社区论坛', list: forumSites.value },
-  { title: '搜索引擎', list: searchSites.value },
-]);
-
-// 菜单只保留有对应 section 的分类项；过滤后没有子项的分组整个不显示
-const sectionTitles = new Set(categorySections.value.map((s) => s.title));
-const menuCategories = websiteCategories
-  .map((group) => ({
-    ...group,
-    children: (group.children ?? []).filter((child) =>
-      sectionTitles.has(child.name),
-    ),
-  }))
-  .filter((group) => group.children.length > 0);
+// 菜单与右侧 section 使用同一份数据，避免分类名硬编码后失配
+const menuCategories = websiteCategories;
 
 // 收集各 section 的根元素，用于锚点滚动
 const sectionRefMap = new Map<string, HTMLElement>();
@@ -397,6 +347,16 @@ onBeforeUnmount(() => {
   lenis?.destroy();
   lenis = null;
 });
+
+const handleSiteClick = (item: WebsiteLink) => {
+  if (!item.url) return;
+  addHistory({
+    name: item.name,
+    icon: item.icon,
+    url: item.url,
+  });
+  window.open(item.url, '_blank', 'noopener,noreferrer');
+};
 
 const handleAddConfirm = (data: {
   name: string;

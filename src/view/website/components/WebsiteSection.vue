@@ -16,9 +16,13 @@
             :name="item.name"
             :expand-left="index % 2 === 1"
             :url="item.url"
+            :collected="isCollected(item)"
+            :liked="isLiked(item)"
             desc="这是一个很厉害的网站，你一定要点进去看"
             :view-count="100"
             :like-count="1000"
+            @collect="handleCollect(item)"
+            @like="handleLike(item)"
           />
         </div>
       </div>
@@ -32,6 +36,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import WebsiteCard from './WebsiteCard.vue';
+import { useWebsite } from '@/store/module/website';
 
 interface WebsiteItem {
   name: string;
@@ -71,8 +76,24 @@ const emit = defineEmits<{
   click: [item: WebsiteItem];
 }>();
 
+const { isCollected, isLiked, toggleCollect, toggleLike } = useWebsite();
+
+const toWebsiteLink = (item: WebsiteItem) => ({
+  name: item.name,
+  icon: item.icon,
+  url: item.url,
+});
+
 const handleClick = (item: WebsiteItem) => {
   emit('click', item);
+};
+
+const handleCollect = (item: WebsiteItem) => {
+  toggleCollect(toWebsiteLink(item));
+};
+
+const handleLike = (item: WebsiteItem) => {
+  toggleLike(toWebsiteLink(item));
 };
 </script>
 
