@@ -52,9 +52,6 @@ const collectList = ref<VideoCollectItem[]>(
     })),
 );
 
-/* ============================================================
-   批量管理：勾选状态
-   ============================================================ */
 /** 已勾选的视频 id */
 const selectedIds = ref<number[]>([]);
 
@@ -141,8 +138,6 @@ defineExpose({
   padding-bottom: 20px;
 }
 
-/* 空状态：外层滚动容器（.ao-scrollbar）带有定位上下文，
-   绝对定位铺满内容区，图标与文案整体居中 */
 .video-course__empty {
   position: absolute;
   inset: 0;
