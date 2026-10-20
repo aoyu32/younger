@@ -74,7 +74,7 @@
           >
             <template #controls="{ isNext, isPrev, change }">
               <div class="content_label">
-                <h3 class="second_h3">网页工具</h3>
+                <h3 class="second_h3">AI 工具</h3>
                 <div class="label_text flex-x">
                   <div
                     class="pre-btn"
@@ -83,7 +83,7 @@
                   >
                     <AoImage src="@/assets/home/icon_pre.svg" />
                   </div>
-                  <span>常用在线工具与站点</span>
+                  <span>常用 AI 工具与站点</span>
                   <div
                     class="next-btn"
                     @click="change('next')"
