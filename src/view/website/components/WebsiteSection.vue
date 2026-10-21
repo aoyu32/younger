@@ -18,9 +18,9 @@
             :url="item.url"
             :collected="isCollected(item)"
             :liked="isLiked(item)"
-            desc="这是一个很厉害的网站，你一定要点进去看"
-            :view-count="100"
-            :like-count="1000"
+            :desc="item.desc"
+            :view-count="item.views"
+            :like-count="item.likes"
             @collect="handleCollect(item)"
             @like="handleLike(item)"
           />
@@ -43,6 +43,8 @@ interface WebsiteItem {
   url: string;
   icon: string;
   desc?: string;
+  views?: number;
+  likes?: number;
 }
 
 interface Props {
