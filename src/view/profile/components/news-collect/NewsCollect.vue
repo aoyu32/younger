@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import NewsCollectCard, {
   type NewsCollectItem,
 } from './NewsCollectCard.vue';
@@ -30,6 +31,8 @@ import emptyIcon from '@/assets/website/icon_empty.svg?url';
 import { newsData } from '@/mock/news';
 
 defineOptions({ name: 'NewsCollect' });
+
+const router = useRouter();
 
 const props = defineProps<{
   /** 批量管理模式：开启后卡片右侧显示复选框 */
@@ -129,9 +132,9 @@ function handleCancel(item: NewsCollectItem) {
   // TODO: 调用取消收藏接口
 }
 
-/** 点击卡片：新标签页打开资讯详情 */
+/** 点击卡片：当前窗口打开资讯详情 */
 function handleClick(id: string | number) {
-  window.open(`/news/${id}`, '_blank');
+  router.push(`/news/${id}`);
 }
 
 defineExpose({

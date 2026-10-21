@@ -128,7 +128,7 @@
       </div>
       <div class="video_list">
         <div class="video_item" v-for="item in videos" :key="item.id">
-          <router-link :to="`/video/${item.id}`" target="_blank">
+          <router-link :to="`/video/${item.id}`">
             <VideoCard :data="item" />
           </router-link>
         </div>
@@ -152,7 +152,7 @@
       </div>
       <div class="video_list">
         <div class="video_item" v-for="item in videos" :key="item.id">
-          <router-link :to="`/video/${item.id}`" target="_blank">
+          <router-link :to="`/video/${item.id}`">
             <VipVideoCard :data="item" />
           </router-link>
         </div>
@@ -252,7 +252,7 @@ const handleMouseEnterWebTool = (event: MouseEvent) => {
 };
 
 const handleNewsItemClick = (id: any) => {
-  window.open(`/news/${id}`, '_blank');
+  router.push(`/news/${id}`);
 };
 
 // 生命周期
