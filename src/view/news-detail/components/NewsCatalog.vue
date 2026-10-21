@@ -42,7 +42,7 @@ const ensureActiveVisible = () => {
   const nav = catalogRef.value;
   const active = nav?.querySelector<HTMLElement>('.catalog-item.active');
   const scrollParent = nav?.closest<HTMLElement>('.outline-content');
-  if (!active || !scrollParent) return;
+  if (!nav || !active || !scrollParent) return;
 
   const parentRect = scrollParent.getBoundingClientRect();
   const activeRect = active.getBoundingClientRect();
