@@ -4,7 +4,7 @@
       <div class="section-title">{{ title }}</div>
     </div>
     <div class="section-body">
-      <div class="card-grid" v-if="displayList.length > 0">
+      <div class="card-grid" ref="cardGridRef" v-if="displayList.length > 0">
         <div
           class="card-item"
           v-for="(item, index) in displayList"
@@ -14,7 +14,7 @@
           <WebsiteCard
             :icon="item.icon"
             :name="item.name"
-            :expand-left="index % 2 === 1"
+            :expand-left="isExpandLeft(index)"
             :url="item.url"
             :collected="isCollected(item)"
             :liked="isLiked(item)"
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import WebsiteCard from './WebsiteCard.vue';
 import { useWebsite } from '@/store/module/website';
 
@@ -89,6 +89,40 @@ const toWebsiteLink = (item: WebsiteItem) => ({
 const handleClick = (item: WebsiteItem) => {
   emit('click', item);
 };
+
+/* ---------- 悬浮面板展开方向 ----------
+   面板宽约两倍卡宽：只有最后一列向左展开才不会溢出视口，
+   其余列（含首列）向右展开都能留在视口内。
+   列数随视口变化，用 ResizeObserver 跟踪网格实际列数 */
+const cardGridRef = ref<HTMLElement | null>(null);
+const gridColumns = ref(0);
+let gridObserver: ResizeObserver | null = null;
+
+const isExpandLeft = (index: number) => {
+  // 列数未知时退回奇偶交替（保持原行为）
+  if (gridColumns.value < 2) return index % 2 === 1;
+  return index % gridColumns.value === gridColumns.value - 1;
+};
+
+const updateGridColumns = () => {
+  const el = cardGridRef.value;
+  if (!el) return;
+  gridColumns.value = getComputedStyle(el).gridTemplateColumns.split(' ')
+    .length;
+};
+
+onMounted(() => {
+  updateGridColumns();
+  if (cardGridRef.value && typeof ResizeObserver !== 'undefined') {
+    gridObserver = new ResizeObserver(updateGridColumns);
+    gridObserver.observe(cardGridRef.value);
+  }
+});
+
+onBeforeUnmount(() => {
+  gridObserver?.disconnect();
+  gridObserver = null;
+});
 
 const handleCollect = (item: WebsiteItem) => {
   toggleCollect(toWebsiteLink(item));

@@ -93,7 +93,7 @@
           </WebsiteListCard>
         </div>
       </div>
-      <div class="line">
+      <div class="line" ref="lineRef">
         <AoImage
           src="@/assets/website/icon_line.svg"
           width="100%"
@@ -122,6 +122,12 @@
         </div>
       </div>
     </div>
+    <WebsiteMobileNav
+      :visible="showMobileNav"
+      :active-name="mobileActiveName"
+      :categories="menuCategories"
+      @select="handleCategorySelect"
+    />
     <AddWebsiteDialog v-model="showAddDialog" @confirm="handleAddConfirm" />
   </div>
 </template>
@@ -137,12 +143,17 @@ import addIcon from '@/assets/website/icon_add.svg';
 import AddWebsiteDialog from './components/AddWebsiteDialog.vue';
 import CategoryMenu from './components/CategoryMenu.vue';
 import WebsiteSection from './components/WebsiteSection.vue';
+import WebsiteMobileNav from './components/WebsiteMobileNav.vue';
 import { websiteCategories, type WebsiteSite } from '@/mock/websiteCategories';
 
 const isEditHistory = ref(false);
 const isEditCollect = ref(false);
 const showAddDialog = ref(false);
 const categorySectionRef = ref();
+
+/* ---------- 移动端横向分类导航：滚过心电图分割线后出现 ---------- */
+const lineRef = ref<HTMLElement | null>(null);
+const showMobileNav = ref(false);
 
 const { historyList, collectList, addHistory } = useWebsite();
 const historySelected = ref<number[]>([]);
@@ -242,6 +253,34 @@ const setSectionRef = (title: string, el: any) => {
   }
 };
 
+/* 移动端横向导航的 scroll-spy：高亮跟随滚动经过的 section 对应的一级分类，
+   仅作用于移动端导航（桌面侧边栏保持仅点击驱动），且不会展开二级菜单 */
+const mobileActiveName = ref(categorySections.value[0]?.title ?? '');
+
+const updateMobileActive = () => {
+  const sections = categorySections.value;
+  if (!sections.length) return;
+  // 已滚到页面底部：直接激活最后一个分类
+  if (
+    window.innerHeight + window.scrollY >=
+    document.documentElement.scrollHeight - 2
+  ) {
+    mobileActiveName.value = sections[sections.length - 1].title;
+    return;
+  }
+  const threshold = getStickyTop() + 1;
+  let current = sections[0].title;
+  for (const section of sections) {
+    const el = sectionRefMap.get(section.title);
+    if (!el) continue;
+    // 取最后一个顶部越过基准线的分类
+    if (el.getBoundingClientRect().top <= threshold) {
+      current = section.title;
+    }
+  }
+  mobileActiveName.value = current;
+};
+
 const handleCategorySelect = (
   group: { name: string },
   sub: { name: string; sites?: WebsiteSite[] },
@@ -249,6 +288,8 @@ const handleCategorySelect = (
   activeCategory.value = group.name;
   activeSub.value = sub.name;
   activeSites.value = sub.sites ?? [];
+  // 移动端导航立即高亮所点分类（滚动过程中 spy 会持续跟随，最终停在该分类）
+  mobileActiveName.value = sub.name;
   scrollToSection(sub.name);
 };
 
@@ -324,7 +365,14 @@ const getStickyTop = () => {
   const sidebar = categorySectionRef.value?.querySelector(
     '.category-sidebar',
   ) as HTMLElement | null;
-  return sidebar ? parseFloat(getComputedStyle(sidebar).top) : 74;
+  const sidebarTop = sidebar
+    ? parseFloat(getComputedStyle(sidebar).top)
+    : 74;
+  // 移动端横向分类导航悬浮在头部下方，section 对齐时需要避开它
+  const mobileNav = document.querySelector(
+    '.mobile-category-nav',
+  ) as HTMLElement | null;
+  return sidebarTop + (mobileNav ? mobileNav.offsetHeight : 0);
 };
 
 onMounted(() => {
@@ -340,12 +388,29 @@ onMounted(() => {
     lenisRafId = requestAnimationFrame(raf);
   };
   lenisRafId = requestAnimationFrame(raf);
+  // 心电图分割线顶部越过固定头部下沿（64px）后，显示移动端横向分类导航
+  updateMobileNav();
+  updateMobileActive();
+  window.addEventListener('scroll', updateMobileNav, { passive: true });
+  window.addEventListener('scroll', updateMobileActive, { passive: true });
+  window.addEventListener('resize', updateMobileNav);
+  window.addEventListener('resize', updateMobileActive);
 });
+
+const updateMobileNav = () => {
+  const el = lineRef.value;
+  if (!el) return;
+  showMobileNav.value = el.getBoundingClientRect().top < 64;
+};
 
 onBeforeUnmount(() => {
   if (lenisRafId) cancelAnimationFrame(lenisRafId);
   lenis?.destroy();
   lenis = null;
+  window.removeEventListener('scroll', updateMobileNav);
+  window.removeEventListener('scroll', updateMobileActive);
+  window.removeEventListener('resize', updateMobileNav);
+  window.removeEventListener('resize', updateMobileActive);
 });
 
 const handleSiteClick = (item: WebsiteLink) => {

@@ -74,3 +74,15 @@
     gap: 16px;
   }
 }
+
+/* ≤768：最近浏览/我的收藏上下堆叠；
+   分类侧边导航隐藏，移动端直接滚动浏览各分类区块 */
+@media (max-width: 768px) {
+  .website-main .section-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .category-section .category-sidebar {
+    display: none;
+  }
+}

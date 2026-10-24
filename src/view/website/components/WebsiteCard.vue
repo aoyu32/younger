@@ -133,13 +133,16 @@ const likeCountText = computed(() => {
     transform var(--ao-duration-base) var(--ao-ease-in-out);
 }
 
-/* hover：小卡片不带阴影、不带整圈边框，只在朝向间隔的两侧画两条直线 */
-.website-card:hover .card {
-  z-index: 1001; // 盖在展开面板之上
-  transform: translateY(-4px);
-  box-shadow: none;
-  border-color: transparent;
-  background-color: var(--ao-gray-0); // 与面板同色
+/* hover：小卡片不带阴影、不带整圈边框，只在朝向间隔的两侧画两条直线
+   （触屏点开会粘住展开态，仅指针设备启用） */
+@media (hover: hover) {
+  .website-card:hover .card {
+    z-index: 1001; // 盖在展开面板之上
+    transform: translateY(-4px);
+    box-shadow: none;
+    border-color: transparent;
+    background-color: var(--ao-gray-0); // 与面板同色
+  }
 }
 
 /*
@@ -169,8 +172,10 @@ const likeCountText = computed(() => {
   mask-composite: intersect;
 }
 
-.website-card:hover .card::before {
-  opacity: 1;
+@media (hover: hover) {
+  .website-card:hover .card::before {
+    opacity: 1;
+  }
 }
 
 /* 向左展开：镜像，竖边在左，圆角在左下 */
@@ -233,12 +238,14 @@ const likeCountText = computed(() => {
     filter 0.3s ease;
 }
 
-.website-card:hover .hover-card {
-  opacity: 1;
-  pointer-events: auto;
-  transform: scale(1) translateY(-4px);
-  // 阴影只出现在整个面板的外轮廓
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+@media (hover: hover) {
+  .website-card:hover .hover-card {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1) translateY(-4px);
+    // 阴影只出现在整个面板的外轮廓
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+  }
 }
 
 /* ---------- 向左展开（偶数位） ---------- */

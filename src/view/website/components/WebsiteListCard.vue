@@ -60,7 +60,7 @@
           </div>
         </div>
       </template>
-      <div class="list-wrapper" v-if="pagedData.length > 0">
+      <div class="list-wrapper" ref="listRef" v-if="pagedData.length > 0">
         <div
           class="card-item"
           v-for="(item, index) in pagedData"
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 interface WebsiteData {
   id?: number | string;
@@ -137,19 +137,37 @@ const emit = defineEmits<{
 
 const currentPage = ref(1);
 
-// 固定四行三列，条目不足时也保留卡片尺寸
+/* ---------- 页容量：列数随视口变化（≤600 时两列），
+   容量 = 实际列数 × 固定四行，避免窄屏下按三列容量装不下被裁切 ---------- */
+const PAGE_ROWS = 4;
+const listRef = ref<HTMLElement | null>(null);
+const gridColumns = ref(0);
+let gridObserver: ResizeObserver | null = null;
+
+const updateGridColumns = () => {
+  const el = listRef.value;
+  if (!el) return;
+  gridColumns.value = getComputedStyle(el).gridTemplateColumns.split(' ')
+    .length;
+};
+
+const effectivePageSize = computed(() =>
+  gridColumns.value > 0 ? gridColumns.value * PAGE_ROWS : props.pageSize,
+);
+
+// 固定四行，条目不足时也保留卡片尺寸
 const totalPages = computed(() =>
-  Math.max(1, Math.ceil(props.data.length / props.pageSize)),
+  Math.max(1, Math.ceil(props.data.length / effectivePageSize.value)),
 );
 
 const pagedData = computed(() => {
-  const start = (currentPage.value - 1) * props.pageSize;
-  return props.data.slice(start, start + props.pageSize);
+  const start = (currentPage.value - 1) * effectivePageSize.value;
+  return props.data.slice(start, start + effectivePageSize.value);
 });
 
 /** 当前页第 index 项在完整 data 中的下标 */
 const dataIndex = (index: number) =>
-  (currentPage.value - 1) * props.pageSize + index;
+  (currentPage.value - 1) * effectivePageSize.value + index;
 
 const isSelected = (index: number) => props.selected.includes(dataIndex(index));
 
@@ -181,10 +199,23 @@ watch(
 );
 
 // 页容量或数据量变化时避免当前页码越界
-watch([() => props.pageSize, () => props.data.length], () => {
+watch([effectivePageSize, () => props.data.length], () => {
   if (currentPage.value > totalPages.value) {
     currentPage.value = totalPages.value;
   }
+});
+
+onMounted(() => {
+  updateGridColumns();
+  if (listRef.value && typeof ResizeObserver !== 'undefined') {
+    gridObserver = new ResizeObserver(updateGridColumns);
+    gridObserver.observe(listRef.value);
+  }
+});
+
+onBeforeUnmount(() => {
+  gridObserver?.disconnect();
+  gridObserver = null;
 });
 </script>
 
@@ -410,6 +441,15 @@ watch([() => props.pageSize, () => props.data.length], () => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+/* ≤600：列表卡在移动端上下堆叠后宽度有限，固定三列改两列 */
+@media (max-width: 600px) {
+  .website-list-card {
+    .list .list-wrapper {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 }
 </style>
