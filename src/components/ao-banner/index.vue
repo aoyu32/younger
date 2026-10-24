@@ -308,6 +308,14 @@ watch(carouselList, (newList) => {
         display: block;
       }
 
+      /* 响应式堆叠布局下轮播盒高度为 16:7，取消桌面固定最小高，
+         让图片随盒子尺寸缩放，避免溢出被裁切 */
+      @media (max-width: 1024px) {
+        img {
+          min-height: 0;
+        }
+      }
+
       &.clone {
         pointer-events: none;
       }
