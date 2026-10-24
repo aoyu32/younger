@@ -40,18 +40,32 @@ const imageModules = import.meta.glob(
 );
 
 const realSrc = computed(() => {
-  if (!props.src) return '';
+  const source = props.src?.trim();
+  if (!source) return '';
 
-  if (props.src.startsWith('http') || props.src.startsWith('data:')) {
-    return props.src;
+  // 外链、内联图片、blob 以及 Vite 构建后的 /assets/... 地址直接使用
+  if (
+    source.startsWith('http://') ||
+    source.startsWith('https://') ||
+    source.startsWith('//') ||
+    source.startsWith('data:') ||
+    source.startsWith('blob:')
+  ) {
+    return source;
   }
 
-  let relativePath = props.src;
-  if (relativePath.startsWith('@/')) {
-    relativePath = relativePath.replace('@/', '/src/');
+  // 模板里的 @/assets/... 需要转成 glob 的 /src/assets/... 键
+  if (source.startsWith('@/')) {
+    const modulePath = source.replace('@/', '/src/');
+    return imageModules[modulePath] || '';
   }
 
-  return imageModules[relativePath] || '';
+  // 开发环境是 /src/assets/...，生产构建后是 /assets/...（带 hash）
+  if (source.startsWith('/src/assets/')) {
+    return imageModules[source] || source;
+  }
+
+  return imageModules[source] || source;
 });
 
 const containerStyle = computed(() => ({
