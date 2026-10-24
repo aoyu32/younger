@@ -1,7 +1,7 @@
 <template>
   <div class="news-tabs">
     <div class="tab-header" ref="headerRef">
-      <div class="tab-list">
+      <div class="tab-list" :class="{ filled }">
         <div
           v-for="tab in visibleTabs"
           :key="tab.id"
@@ -9,7 +9,7 @@
           :class="{ active: activeTab === tab.id }"
           @click="handleTabClick(tab.id)"
         >
-          {{ tab.label }}
+          <span class="tab-label">{{ tab.label }}</span>
         </div>
 
         <div
@@ -22,8 +22,12 @@
         </div>
       </div>
 
-      <div v-if="hiddenTabs.length > 0" class="tab-more">
-        <div class="tab-more-trigger">
+      <div
+        v-if="hiddenTabs.length > 0"
+        class="tab-more"
+        :class="{ open: moreOpen }"
+      >
+        <div class="tab-more-trigger" @click="toggleMore">
           <span>更多分类</span>
         </div>
         <div class="tab-more-dropdown">
@@ -32,7 +36,7 @@
             :key="tab.id"
             class="dropdown-item"
             :class="{ active: activeTab === tab.id }"
-            @click="handleTabClick(tab.id)"
+            @click="handleDropdownClick(tab.id)"
           >
             {{ tab.label }}
           </div>
@@ -92,6 +96,27 @@ const handleTabClick = (id: string | number) => {
   activeTab.value = id;
 };
 
+/* 更多分类下拉：桌面端悬浮展开（CSS），触屏端点击切换 */
+const hoverCapable = matchMedia('(hover: hover)').matches;
+const moreOpen = ref(false);
+
+const toggleMore = () => {
+  if (hoverCapable) return;
+  moreOpen.value = !moreOpen.value;
+};
+
+const handleDropdownClick = (id: string | number) => {
+  handleTabClick(id);
+  moreOpen.value = false;
+};
+
+// 点击组件外部时收起下拉（触屏场景）
+const handleDocClick = (event: Event) => {
+  if (headerRef.value && !headerRef.value.contains(event.target as Node)) {
+    moreOpen.value = false;
+  }
+};
+
 const handleCardClick = (id: string | number) => {
   emit('card-click', id);
 };
@@ -101,6 +126,8 @@ const currentList = computed(() => props.list || []);
 const headerRef = ref<HTMLElement>();
 const tabWidths = ref<number[]>([]);
 const visibleCount = ref<number>(Number.MAX_SAFE_INTEGER);
+/* 窄屏：收纳数量确定后，可见标签等分填满整行（消除尾部留白） */
+const filled = ref(false);
 
 const visibleTabs = computed(() => props.tabs.slice(0, visibleCount.value));
 const hiddenTabs = computed(() => props.tabs.slice(visibleCount.value));
@@ -111,6 +138,8 @@ const activeHiddenTab = computed<TabItem | null>(() => {
 });
 
 function measureTabs() {
+  // 先按自然宽度测量，再让可见标签等分填满
+  filled.value = false;
   if (!headerRef.value) return;
   const tabList = headerRef.value.querySelector(
     '.tab-list',
@@ -124,6 +153,9 @@ function measureTabs() {
   }
   tabWidths.value = widths;
   computeVisible();
+  nextTick(() => {
+    filled.value = true;
+  });
 }
 
 function computeVisible() {
@@ -158,17 +190,20 @@ function computeVisible() {
     used = next;
     count++;
   }
-  visibleCount.value = Math.max(1, count - 1);
+  // 剩余空间会由等分拉伸吸收，无需额外少显示一个
+  visibleCount.value = Math.max(1, count);
 }
 
 onMounted(() => {
   visibleCount.value = props.tabs.length;
   nextTick(() => measureTabs());
   window.addEventListener('resize', computeVisible);
+  document.addEventListener('click', handleDocClick);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', computeVisible);
+  document.removeEventListener('click', handleDocClick);
 });
 
 watch(
@@ -207,6 +242,22 @@ watch(
   flex: 1;
   min-width: 0;
   border-top-left-radius: inherit;
+
+  /* 窄屏：收纳数量确定后，可见标签等分填满整行（含 ··· 占位），
+     消除尾部留白；标签文字超长时省略 */
+  @media (max-width: 768px) {
+    .tab-list.filled .tab-item,
+    .tab-list.filled .tab-item--placeholder {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .tab-label {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .tab-item {
@@ -301,7 +352,14 @@ watch(
   z-index: 50;
 }
 
-.tab-more:hover .tab-more-dropdown {
+/* 桌面端悬浮展开；触屏无 hover，由点击切换的 open 类控制 */
+@media (hover: hover) {
+  .tab-more:hover .tab-more-dropdown {
+    display: block;
+  }
+}
+
+.tab-more.open .tab-more-dropdown {
   display: block;
 }
 
@@ -334,6 +392,11 @@ watch(
   width: 100%;
   padding: 20px;
   min-height: 50vh;
+
+  /* 窄屏：收紧内边距 */
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 }
 
 .card-wrapper {

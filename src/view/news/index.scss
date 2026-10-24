@@ -4,7 +4,9 @@
 
 .section-wrapper {
   display: grid;
-  grid-template-columns: 7fr 3fr;
+  /* minmax(0, …)：最新资讯卡内标题为 nowrap 省略文本，min-content 较大，
+     默认的 auto 下限会把轨道撑到超出视口，必须强制以容器宽度为准 */
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
   gap: 20px;
   align-items: stretch;
 
@@ -30,4 +32,34 @@
 
 .tabs-wrapper {
   margin-top: 20px;
+}
+
+/* ≤1024：今日话题/最新资讯 与 热门课程 上下堆叠。
+   右栏原来是绝对定位撑满等高布局，堆叠后改普通流 + 定高内部滚动 */
+@media (max-width: 1024px) {
+  .section-wrapper {
+    grid-template-columns: minmax(0, 1fr);
+
+    .wrapper-right .hot-course {
+      position: static;
+      inset: auto;
+      height: 520px;
+      max-height: 70vh;
+    }
+  }
+}
+
+/* ≤480：间距收紧 */
+@media (max-width: 480px) {
+  .section-wrapper {
+    gap: 12px;
+
+    .wrapper-left {
+      gap: 12px;
+    }
+  }
+
+  .tabs-wrapper {
+    margin-top: 12px;
+  }
 }
