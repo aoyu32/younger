@@ -217,9 +217,20 @@ const props = withDefaults(
 }
 
 /* 窄屏：标签禁止折行并收紧尺寸，价格行保持单行；
-   极窄屏（≤360）放不下时标签与价格分两行展示 */
+   极窄屏（≤360）放不下时标签与价格分两行展示。
+   封面取消固定高，改 16:9 随卡片宽度缩放（卡片过窄时垫 90px 下限） */
 @media (max-width: 768px) {
   .vip-video-card {
+    .card-top {
+      /* 仅命中封面图（card-top 的直接子级），
+         避免误伤 info-meta 里 14px 的播放小图标 */
+      > :deep(.ao-image) {
+        height: auto !important;
+        aspect-ratio: 16 / 9;
+        min-height: 90px;
+      }
+    }
+
     .info-price {
       flex-wrap: wrap;
       row-gap: 6px;

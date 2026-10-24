@@ -82,12 +82,35 @@
   gap: 20px;
 }
 
-@media (max-width: 768px) {
+/* ≤1024：轮播与右侧「最新」视频上下堆叠，轮播用 16:7 保持横幅比例。
+   （原 ≤768 的 flex-direction 对 grid 布局无效，属于历史遗留，一并修正） */
+@media (max-width: 1024px) {
   .swipper-wrapper {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+
+    > :first-child {
+      aspect-ratio: 16 / 7;
+    }
 
     .link-video {
       width: 100%;
     }
+  }
+}
+
+/* 「全部」列表的卡片列数与 VideoSection 保持一致：≤768 三列、≤480 两列 */
+@media (max-width: 768px) {
+  .video-list {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+    .video-item {
+      min-width: 0;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .video-list {
+    grid-template-columns: 1fr 1fr;
   }
 }

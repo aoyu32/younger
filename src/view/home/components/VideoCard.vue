@@ -159,4 +159,15 @@ const handleImgError = (e: any) => {
     }
   }
 }
+
+/* 窄屏：封面取消固定高，改 16:9 随卡片宽度缩放（卡片过窄时垫 90px 下限） */
+@media (max-width: 768px) {
+  .video-card {
+    .card_cover {
+      height: auto;
+      aspect-ratio: 16 / 9;
+      min-height: 90px;
+    }
+  }
+}
 </style>
