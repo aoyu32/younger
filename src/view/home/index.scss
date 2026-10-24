@@ -270,3 +270,107 @@
     margin-top: calc(var(--ao-spacing-md) + var(--ao-spacing-xxs));
   }
 }
+
+/* ============================================================
+   响应式适配（断点：1200 / 1024 / 768 / 480）
+   桌面端（>1200px）样式零变化，以下均为窄屏追加覆盖
+   ============================================================ */
+
+/* ≤1200：banner 与工具区保持两栏，banner 左块由固定 800px 改弹性宽度 */
+@media (max-width: 1200px) {
+  .home {
+    .home_banner {
+      .banner_left {
+        width: auto;
+        flex: 2;
+        min-width: 0;
+      }
+    }
+  }
+}
+
+/* ≤1024：banner 上下堆叠（高度改 16:7 自适应），工具区上下堆叠，视频 3 列 */
+@media (max-width: 1024px) {
+  .home {
+    .home_banner {
+      flex-direction: column;
+      gap: var(--ao-spacing-md);
+
+      .banner_left {
+        width: 100%;
+        min-height: 0;
+        aspect-ratio: 16 / 7;
+      }
+
+      .banner_right {
+        height: auto;
+
+        .right_bottom {
+          flex: 1;
+        }
+      }
+    }
+
+    .home_content {
+      flex-direction: column;
+
+      .content-wrapper {
+        min-height: 0;
+      }
+
+      .content_left {
+        min-width: 0;
+      }
+
+      /* 堆叠后整行变宽，固定两列会留大片空白，改为四列铺满 */
+      .content_left .apps_grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .video_list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+/* ≤768：视频 2 列；工具区三列 */
+@media (max-width: 768px) {
+  .home {
+    .video_list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--ao-spacing-sm);
+
+      .video_item {
+        min-width: 0;
+      }
+    }
+
+    .home_content .content_left .apps_grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+/* ≤600：工具区两列（再窄放三个会过小） */
+@media (max-width: 600px) {
+  .home {
+    .home_content .content_left .apps_grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+/* ≤480：间距收紧 */
+@media (max-width: 480px) {
+  .home {
+    .home_banner,
+    .home_content {
+      gap: var(--ao-spacing-sm);
+    }
+
+    .home_content .content-wrapper {
+      padding: var(--ao-spacing-md);
+    }
+  }
+}

@@ -21,6 +21,22 @@
           </div>
         </div>
       </router-link>
+      <button
+        class="mobile-menu-trigger"
+        type="button"
+        aria-label="打开导航菜单"
+        :aria-expanded="mobileDrawerOpen"
+        @click="openMobileDrawer"
+      >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M4 6h16M4 12h16M4 18h16"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
       <div class="left_nav" ref="navRef">
         <ul class="nav-list" ref="navListRef">
           <li
@@ -120,13 +136,59 @@
         </div>
       </div>
     </div>
+    <Teleport to="body">
+      <Transition name="mobile-drawer-fade">
+        <div
+          v-if="mobileDrawerOpen"
+          class="mobile-drawer-mask"
+          @click="closeMobileDrawer"
+        >
+          <div class="mobile-drawer" @click.stop>
+            <div class="drawer_header">
+              <div class="drawer_logo flex-center">
+                <AoImage src="@/assets/logo.svg" width="28px" />
+                <span>{{ chLogoName }}</span>
+              </div>
+              <button
+                class="drawer_close"
+                type="button"
+                aria-label="关闭导航菜单"
+                @click="closeMobileDrawer"
+              >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M6 6l12 12M18 6L6 18"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <nav class="drawer_nav">
+              <router-link
+                v-for="item in navMenuRouters"
+                :key="item.path"
+                :to="item.path"
+                class="drawer-item"
+                :class="{ active: currentPath === item.path }"
+                @click="closeMobileDrawer"
+              >
+                {{ item.meta.title }}
+              </router-link>
+            </nav>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUser } from '@/store/module/user';
+import { setBodyScrollLocked } from '@/utils/overlayScrollbars';
 const router = useRouter();
 const routers = router.getRoutes();
 const currentPath = computed(() => router.currentRoute.value.path);
@@ -177,6 +239,34 @@ const handleUserClick = () => {
     router.push('/profile');
   }
 };
+
+// 移动端侧滑导航抽屉（仅 ≤768px 时汉堡按钮可见）
+const mobileDrawerOpen = ref(false);
+
+const openMobileDrawer = () => {
+  mobileDrawerOpen.value = true;
+};
+
+const closeMobileDrawer = () => {
+  mobileDrawerOpen.value = false;
+};
+
+const handleKeydown = (event) => {
+  if (event.key === 'Escape') {
+    closeMobileDrawer();
+  }
+};
+
+// 抽屉打开时锁定页面滚动，路由跳转后自动收起
+watch(mobileDrawerOpen, (open) => {
+  setBodyScrollLocked(open);
+});
+
+watch(currentPath, () => {
+  if (mobileDrawerOpen.value) {
+    closeMobileDrawer();
+  }
+});
 
 const chLogoName = computed(() => {
   const name = routers.find((item) => item.path === '/home').meta.title;
@@ -309,12 +399,15 @@ onMounted(async () => {
     navResizeObserver.observe(navRef.value);
   }
   window.addEventListener('resize', scheduleMeasure);
+  window.addEventListener('keydown', handleKeydown);
 });
 
 onBeforeUnmount(() => {
   if (measureFrame) cancelAnimationFrame(measureFrame);
   navResizeObserver?.disconnect();
   window.removeEventListener('resize', scheduleMeasure);
+  window.removeEventListener('keydown', handleKeydown);
+  setBodyScrollLocked(false);
 });
 
 const handleLogoClick = () => {
@@ -335,6 +428,26 @@ const handleLogoClick = () => {
     height: var(--ao-control-height-md);
 
     object-fit: contain;
+  }
+}
+
+/* 移动端汉堡按钮：桌面端隐藏，≤768px 显示（见文件底部媒体查询） */
+.mobile-menu-trigger {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ao-color-text-base);
+  cursor: pointer;
+
+  svg {
+    width: 22px;
+    height: 22px;
   }
 }
 
@@ -730,6 +843,151 @@ const handleLogoClick = () => {
       .user_name .name {
         max-width: 64px;
       }
+    }
+  }
+}
+
+/* ---------- 移动端侧滑导航抽屉（Teleport 到 body） ---------- */
+.mobile-drawer-mask {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ao-z-modal-backdrop);
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.mobile-drawer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(78vw, 320px);
+  background-color: var(--ao-color-bg-container);
+  box-shadow: var(--ao-shadow-lg);
+
+  .drawer_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    height: var(--ao-header-height-lg);
+    padding: 0 var(--ao-spacing-md);
+    border-bottom: var(--ao-border-width-thin) solid
+      var(--ao-color-border-secondary);
+
+    .drawer_logo {
+      gap: var(--ao-spacing-xs);
+
+      span {
+        font-family: var(--ao-font-family-ali);
+        font-size: var(--ao-font-size-base);
+        font-weight: var(--ao-font-weight-semibold);
+        color: var(--ao-color-primary);
+      }
+    }
+
+    .drawer_close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--ao-color-text-secondary);
+      cursor: pointer;
+      transition: color var(--ao-duration-fast) var(--ao-ease-in-out);
+
+      &:hover {
+        color: var(--ao-color-text-base);
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .drawer_nav {
+    flex: 1;
+    padding: var(--ao-spacing-xs) 0;
+    overflow-y: auto;
+
+    .drawer-item {
+      display: block;
+      padding: 14px var(--ao-spacing-lg);
+      font-size: var(--ao-font-size-base);
+      color: var(--ao-color-text-base);
+      opacity: 0.85;
+      transition:
+        color var(--ao-duration-fast) var(--ao-ease-in-out),
+        background-color var(--ao-duration-fast) var(--ao-ease-in-out);
+
+      &:hover,
+      &:active {
+        color: var(--ao-color-primary);
+        background-color: var(--ao-gray-1);
+        opacity: 1;
+      }
+
+      &.active {
+        color: var(--ao-color-primary);
+        opacity: 1;
+        font-weight: var(--ao-font-weight-semibold);
+      }
+    }
+  }
+}
+
+.mobile-drawer-fade-enter-active,
+.mobile-drawer-fade-leave-active {
+  transition: opacity var(--ao-duration-base) var(--ao-ease-in-out);
+
+  .mobile-drawer {
+    transition: transform var(--ao-duration-base) var(--ao-ease-in-out);
+  }
+}
+
+.mobile-drawer-fade-enter-from,
+.mobile-drawer-fade-leave-to {
+  opacity: 0;
+
+  .mobile-drawer {
+    transform: translateX(-100%);
+  }
+}
+
+/* ---------- 移动端头部布局 ---------- */
+@media (max-width: 768px) {
+  .header_left {
+    /* 收紧 logo 与汉堡按钮的间距（桌面端保持原有的 64px） */
+    --nav-logo-gap: var(--ao-spacing-lg);
+
+    .left_nav {
+      display: none;
+    }
+
+    .mobile-menu-trigger {
+      display: flex;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .header_left {
+    padding-right: 0;
+  }
+
+  .header_right {
+    .right-vip span {
+      display: none;
+    }
+
+    .auth-box .line {
+      margin: 0 2px;
     }
   }
 }

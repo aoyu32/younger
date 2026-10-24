@@ -124,25 +124,29 @@ $card_height: 145px;
     // }
   }
 
-  &:hover {
-    .card_top {
-      width: 100%;
-      height: 38px;
-      .card_image {
-        width: 24px;
-        height: 24px;
-        transform: translate(-70px, 0px);
+  // 触屏点按会粘住 :hover 状态（图标缩小移位、卡片切到标签视图），
+  // 悬停动效仅对有指针的设备启用
+  @media (hover: hover) {
+    &:hover {
+      .card_top {
+        width: 100%;
+        height: 38px;
+        .card_image {
+          width: 24px;
+          height: 24px;
+          transform: translate(-70px, 0px);
+        }
       }
-    }
 
-    .card_bottom {
-      top: 300px;
-    }
+      .card_bottom {
+        top: 300px;
+      }
 
-    .card_bottom_2 {
-      top: 38px;
-      width: $card_width;
-      height: calc($card_height - 38px);
+      .card_bottom_2 {
+        top: 38px;
+        width: $card_width;
+        height: calc($card_height - 38px);
+      }
     }
   }
 
@@ -241,6 +245,72 @@ $card_height: 145px;
     .name {
       font-size: var(--ao-font-size-sm);
       font-weight: 550;
+    }
+  }
+}
+
+/* 平板/移动端堆叠布局：卡片宽度跟随网格拉伸，
+   高度按设计比例（180:145）随宽度缩放，内部上下两半改百分比定位 */
+@media (max-width: 1024px) {
+  .app-card {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 180 / 145;
+
+    .card_top {
+      width: 100%;
+      height: 50%;
+
+      // 图标改为显式居中定位，与悬停态之间只过渡 transform / left，
+      // 避免静态定位（auto）切换到具体值时产生跳动
+      .card_image {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .card_bottom,
+    .card_bottom_2 {
+      width: 100%;
+      height: 50%;
+      top: 50%;
+    }
+
+    // 隐藏态的标签视图挂在卡片下方，用百分比定位适配流式高度
+    .card_bottom_2 {
+      top: 110%;
+      height: 50%;
+    }
+
+    // 流式尺寸下的翻转动效：条带高度、标签视图位置按比例计算；
+    // 图标沿用桌面的「滑动 + 缩放」轨迹，仅把位移目标从固定 -70px
+    // 改为 left 过渡（20px 与桌面停留位置一致），transition 平滑衔接
+    @media (hover: hover) {
+      &:hover {
+        .card_top {
+          width: 100%;
+          height: 26%;
+
+          .card_image {
+            width: 24px;
+            height: 24px;
+            left: 20px;
+            top: 50%;
+            transform: translate(-50%, -50%);
+          }
+        }
+
+        .card_bottom {
+          top: 110%;
+        }
+
+        .card_bottom_2 {
+          top: 26%;
+          width: 100%;
+          height: 74%;
+        }
+      }
     }
   }
 }

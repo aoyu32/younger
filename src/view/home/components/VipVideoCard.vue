@@ -101,9 +101,12 @@ const props = withDefaults(
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   transition: 0.18s;
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
+  // 触屏点开会粘住 hover 位移，仅指针设备启用
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
+    }
   }
 
   .card-top {
@@ -208,6 +211,36 @@ const props = withDefaults(
         color: var(--ao-gray-5);
         font-size: 13px;
         text-decoration: line-through;
+      }
+    }
+  }
+}
+
+/* 窄屏：标签禁止折行并收紧尺寸，价格行保持单行；
+   极窄屏（≤360）放不下时标签与价格分两行展示 */
+@media (max-width: 768px) {
+  .vip-video-card {
+    .info-price {
+      flex-wrap: wrap;
+      row-gap: 6px;
+
+      .tags {
+        white-space: nowrap;
+        padding: 3px 8px;
+        font-size: 11px;
+      }
+
+      .price {
+        gap: 4px;
+        margin-right: 0;
+
+        .now-price {
+          font-size: 14px;
+        }
+
+        .origin-price {
+          font-size: 11px;
+        }
       }
     }
   }

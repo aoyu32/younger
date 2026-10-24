@@ -50,4 +50,25 @@
     align-items: center;
     justify-content: center;
   }
+
+  /* 窄屏（≤1200）：非宽屏页面容器由固定 1200px 变为流式，
+     头部栏与主内容区共用该变量，一并消除横向滚动；桌面端（>1200）不受影响 */
+  @media (max-width: 1200px) {
+    &:not(.layout--wide) {
+      --ao-container-max-width: calc(100% - 32px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    &:not(.layout--wide) {
+      --ao-container-max-width: calc(100% - 24px);
+    }
+  }
+
+  /* 宽屏页面在手机上收窄原本 100px 的左右边距 */
+  @media (max-width: 768px) {
+    &.layout--wide {
+      --ao-container-max-width: calc(100% - 32px);
+    }
+  }
 }

@@ -272,9 +272,14 @@ const year = computed(() => new Date().getFullYear())
     grid-template-columns: 1fr;
   }
 
+  /* 栏允许收缩；二维码网格在极窄屏下随容器缩放，避免撑出横向滚动 */
+  .footer_col {
+    min-width: 0;
+  }
+
   .footer_qr {
     .qr_grid {
-      grid-template-columns: repeat(2, 160px);
+      grid-template-columns: repeat(2, minmax(0, 160px));
       justify-content: flex-start;
     }
   }

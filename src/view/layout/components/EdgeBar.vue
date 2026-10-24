@@ -286,4 +286,11 @@ onBeforeUnmount(() => {
   opacity: 0;
   transform: translateY(10px);
 }
+
+/* 移动端隐藏：悬浮栏依赖 hover 交互（tooltip / 二维码弹层），触屏不可用且遮挡内容 */
+@media (max-width: 768px) {
+  .edge-bar {
+    display: none;
+  }
+}
 </style>

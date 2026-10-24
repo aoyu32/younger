@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import prevIcon from '@/assets/home/icon_pre.svg';
 import nextIcon from '@/assets/home/icon_next.svg';
 
@@ -93,7 +93,8 @@ const handleItemClick = (id: any) => {
   emit('click', id);
 };
 
-onMounted(() => {
+/** 按当前列表宽度计算标题最大宽度（标题与播放量同行，需减去播放量宽度） */
+const measureTitleMaxWidth = () => {
   const newsListEl = document.querySelector('.news-list') as HTMLElement | null;
   const newsViewsEl = document.querySelectorAll('.news-views');
 
@@ -104,6 +105,24 @@ onMounted(() => {
   const listWidth = newsListEl.getBoundingClientRect().width;
   const viewsWidth = newsViewsEl[0].getBoundingClientRect().width;
   newsTitleMaxWidth.value = listWidth - viewsWidth - 20 + 'px';
+};
+
+let newsResizeObserver: ResizeObserver | null = null;
+
+onMounted(() => {
+  measureTitleMaxWidth();
+
+  // 容器为流式宽度，跨断点时列表宽度会变化，需重新测量
+  const newsListEl = document.querySelector('.news-list');
+  if (newsListEl && typeof ResizeObserver !== 'undefined') {
+    newsResizeObserver = new ResizeObserver(measureTitleMaxWidth);
+    newsResizeObserver.observe(newsListEl);
+  }
+});
+
+onBeforeUnmount(() => {
+  newsResizeObserver?.disconnect();
+  newsResizeObserver = null;
 });
 </script>
 
