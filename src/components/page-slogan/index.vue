@@ -54,4 +54,22 @@ const props = defineProps({
   border-radius: 3px;
   background-color: var(--ao-lime-7);
 }
+
+/* 窄屏：缩小标语字号，避免长标语与右侧副标题挤压溢出 */
+@media (max-width: 768px) {
+  .page-slogan {
+    font-size: var(--ao-font-size-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-slogan {
+    padding: 12px 10px;
+    font-size: var(--ao-font-size-sm);
+
+    span {
+      font-size: var(--ao-font-size-xs);
+    }
+  }
+}
 </style>
