@@ -322,31 +322,34 @@ const cardTagBgColor3 = brandMix(shade3, 20);
     }
   }
 
-  &:hover {
-    .card-actions {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .card_top {
-      height: 25%;
-      .card_image {
-        width: 24px;
-        height: 24px;
-        /* 固定左边距，和圆点右边距一致，不受卡片宽度影响 */
-        left: var(--ao-spacing-sm);
-        margin-left: 0;
+  /* 触屏点按会粘住 hover 翻转态，仅指针设备启用悬停效果 */
+  @media (hover: hover) {
+    &:hover {
+      .card-actions {
+        opacity: 1;
+        visibility: visible;
       }
-    }
 
-    .card_bottom {
-      transform: translateY(100%);
-      opacity: 0;
-    }
+      .card_top {
+        height: 25%;
+        .card_image {
+          width: 24px;
+          height: 24px;
+          /* 固定左边距，和圆点右边距一致，不受卡片宽度影响 */
+          left: var(--ao-spacing-sm);
+          margin-left: 0;
+        }
+      }
 
-    .card_bottom_2 {
-      transform: translateY(-100%);
-      height: calc(100% - 25%);
+      .card_bottom {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      .card_bottom_2 {
+        transform: translateY(-100%);
+        height: calc(100% - 25%);
+      }
     }
   }
 

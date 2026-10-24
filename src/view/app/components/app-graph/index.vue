@@ -6,11 +6,12 @@
     <div class="triangle-bottom-left corner"></div>
     <canvas
       ref="canvasRef"
-      @mousedown="handleDown"
-      @mousemove="handleMove"
-      @mouseup="handleUp"
-      @mouseleave="handleLeave"
-      @mouseenter="handleEnter"
+      @pointerdown="handleDown"
+      @pointermove="handleMove"
+      @pointerup="handleUp"
+      @pointercancel="handleUp"
+      @pointerleave="handleLeave"
+      @pointerenter="handleEnter"
       @wheel="handleWheel"
     ></canvas>
   </div>
@@ -1342,9 +1343,11 @@ const bringRelatedIntoView = (anchor: any) => {
   });
 };
 
-// ---------- 鼠标交互 ----------
+// ---------- 指针交互（Pointer 事件统一鼠标与触屏） ----------
 let isDragging = false;
 let isNodeDragging = false;
+// 当前交互中的指针 id：多指触控时只跟随第一根手指，避免画布/节点跳变
+let activePointerId: number | null = null;
 let canScale = false;
 let startScreenX = 0;
 let startScreenY = 0;
@@ -1372,7 +1375,11 @@ const captureChildOffsets = () => {
   });
 };
 
-const handleDown = (e: MouseEvent) => {
+const handleDown = (e: PointerEvent) => {
+  // 已有指针在交互时忽略新按下（多指触控防跳变）
+  if (activePointerId !== null) return;
+  activePointerId = e.pointerId;
+
   const clickPosX = e.clientX;
   const clickPosY = e.clientY;
 
@@ -1439,7 +1446,9 @@ const handleEnter = () => {
   canScale = true;
 };
 
-const handleMove = (e: MouseEvent) => {
+const handleMove = (e: PointerEvent) => {
+  // 只跟随按下时的那根手指（多指触控防跳变）
+  if (activePointerId !== null && e.pointerId !== activePointerId) return;
   if (!isDragging && !isNodeDragging) return;
 
   const { x: worldX, y: worldY } = getWorldPos(e.clientX, e.clientY);
@@ -1499,7 +1508,10 @@ const handleMove = (e: MouseEvent) => {
   }
 };
 
-const handleUp = () => {
+const handleUp = (e?: PointerEvent) => {
+  // 非当前交互指针的抬起不重置状态（另一根手指仍在拖动）
+  if (activePointerId !== null && e && e.pointerId !== activePointerId) return;
+  activePointerId = null;
   const releasedNode = clickNode; // 先捕获再清除
   isDragging = false;
   isNodeDragging = false;
@@ -1525,6 +1537,7 @@ const handleUp = () => {
 const handleLeave = () => {
   isDragging = false;
   isNodeDragging = false;
+  activePointerId = null;
   clickNode = null;
   dragChildOffsets = new Map();
   canScale = false;
@@ -2137,6 +2150,12 @@ defineExpose({
   border-bottom-left-radius: var(--ao-border-radius-lg);
   border-bottom-right-radius: var(--ao-border-radius-lg);
   position: relative;
+
+  /* 触屏拖动画布 / 拖动节点时阻止浏览器接管手势（页面滚动），
+     Pointer 事件才能持续收到 move/up */
+  canvas {
+    touch-action: none;
+  }
 }
 
 .corner {
