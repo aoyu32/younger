@@ -49,6 +49,13 @@
       </AoScrollbar>
     </aside>
 
+    <!-- 移动端：一级分类条 + 二级下拉面板（样式对齐网站导航移动版） -->
+    <ProfileMobileNav
+      :active-key="activeKey"
+      :groups="menuGroups"
+      @select="handleSelect"
+    />
+
     <section class="tabs-wrapper">
       <header class="content-header">
         <div class="breadcrumb">
@@ -91,6 +98,7 @@
 import { computed, ref } from 'vue';
 import NavFlowerLine from './NavFlowerLine.vue';
 import SwayingRose from './SwayingRose.vue';
+import ProfileMobileNav from './ProfileMobileNav.vue';
 
 interface NavItem {
   key: string;
@@ -408,5 +416,19 @@ $bw: 1px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+/* ≤768：侧边导航隐藏，改用顶部分类条（ProfileMobileNav，
+   一级分类 + 按钮翻页 + 二级下拉面板）；内容面板高度自适应交给页面滚动 */
+@media (max-width: 768px) {
+  .user-center-tabs {
+    flex-direction: column;
+    height: auto;
+    gap: 12px;
+  }
+
+  .nav-wrapper {
+    display: none;
+  }
 }
 </style>

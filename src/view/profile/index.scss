@@ -15,4 +15,14 @@
   .tab-title {
     color: var(--ao-color-text-base);
   }
+
+  /* ≤768：导航已改为顶部横向分类条，面板高度自适应交给页面滚动 */
+  @media (max-width: 768px) {
+    .profile-tabs {
+      height: auto;
+      min-height: 0;
+      /* 面板与页脚之间留出间距 */
+      margin-bottom: 20px;
+    }
+  }
 }

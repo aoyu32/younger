@@ -27,6 +27,8 @@
           class="collect-group"
           :ref="(el) => setSectionRef(group.key, el)"
         >
+          <!-- 移动端分类线隐藏后，分类名展示在分组卡片上方（≤768 显示） -->
+          <div class="collect-group__title">{{ group.label }}</div>
           <div class="collect-group__grid">
             <div
               v-for="item in group.list"
@@ -423,7 +425,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-start;
   gap: 50px;
-  padding: 20px 20px 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -435,6 +437,11 @@ onBeforeUnmount(() => {
   width: 82px;
   overflow: hidden;
   box-sizing: border-box;
+
+  /* 移动端：分类线隐藏，分类名展示在分组卡片上方 */
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .timeline {
@@ -551,6 +558,24 @@ onBeforeUnmount(() => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 24px;
+
+    /* 移动端：卡片至少两列 */
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--ao-font-size-lg);
+    font-weight: var(--ao-font-weight-semibold);
+    line-height: var(--ao-line-height-tight);
+    color: var(--ao-color-text-base);
+
+    /* 桌面端由左侧分类线展示分类名，标题仅在移动端显示 */
+    @media (min-width: 769px) {
+      display: none;
+    }
   }
 }
 

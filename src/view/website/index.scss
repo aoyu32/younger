@@ -72,6 +72,15 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    /* 吸收末行卡片悬浮详情面板的下探高度，避免文档高度被撑高 */
+    padding-bottom: 150px;
+  }
+}
+
+/* ≤1024：分类侧边导航隐藏，直接滚动浏览各分类区块（标题在区块上方） */
+@media (max-width: 1024px) {
+  .category-section .category-sidebar {
+    display: none;
   }
 }
 

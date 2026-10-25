@@ -141,7 +141,7 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .modify-password {
   /* 与其它 tab 内容页保持一致 */
-  padding: 20px 20px 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 

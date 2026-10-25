@@ -262,4 +262,22 @@ const levelTag = props.order.level.toUpperCase();
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* 移动端：整卡纵向堆叠（产品行 → 详情 2×2 → 金额靠左），信息不省略 */
+@media (max-width: 768px) {
+  .vip-order-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--ao-spacing-sm);
+  }
+
+  .details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--ao-spacing-sm) var(--ao-spacing-md);
+  }
+
+  .amount {
+    text-align: left;
+  }
+}
 </style>

@@ -70,7 +70,7 @@ const pagedList = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 30px;
-  padding: 20px 20px 0;
+  padding: 20px 20px 20px;
   box-sizing: border-box;
 }
 
@@ -78,6 +78,11 @@ const pagedList = computed(() => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px 15px;
+
+  /* 移动端：卡片至少两列 */
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* 空状态：外层滚动容器（.ao-scrollbar）带有定位上下文，

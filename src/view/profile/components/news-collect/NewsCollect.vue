@@ -152,7 +152,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   /* 与历史记录页保持一致 */
-  padding: 20px 20px 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 

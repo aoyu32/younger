@@ -497,4 +497,91 @@ defineExpose({ editing, startEdit, cancelEdit, save });
 
   /* 编辑态改用 BottomLineTextarea（只有下划线），样式见该组件 */
 }
+
+/* ≤1200（平板）：页面容器转为流式后内容区放不下「头像 + 玫瑰 + 两列定宽字段」，
+   改为头像居中置顶、竖版玫瑰隐藏、字段两列等宽自适应 */
+@media (max-width: 1200px) {
+  .profile-info {
+    padding: 32px 28px;
+    gap: var(--ao-spacing-lg);
+  }
+
+  .profile-info__main {
+    flex-direction: column;
+    gap: var(--ao-spacing-lg);
+  }
+
+  .avatar {
+    width: 88px;
+    height: 88px;
+  }
+
+  .rose-divider {
+    display: none;
+  }
+
+  /* 两列等宽、可收缩；控件不再固定 240px，跟随列宽伸缩 */
+  .fields {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--ao-spacing-md) var(--ao-spacing-lg);
+  }
+
+  .field__control {
+    flex: 1;
+    width: auto;
+  }
+}
+
+/* ≤768（移动端）：侧边导航收起为顶部条；四角装饰挂在内容区上，
+   而面板卡片顶部还有面包屑头部，四角无法与卡片对齐，直接隐藏 */
+@media (max-width: 768px) {
+  .profile-info {
+    padding: 24px 20px;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  :deep(.corner-frame) {
+    display: none;
+  }
+}
+
+/* ≤600（小屏手机）：两列已放不下省市级联下拉，字段改单列 */
+@media (max-width: 600px) {
+  .profile-info {
+    padding: 20px 16px;
+    gap: var(--ao-spacing-md);
+  }
+
+  .profile-info__main {
+    gap: var(--ao-spacing-md);
+  }
+
+  .avatar {
+    width: 72px;
+    height: 72px;
+  }
+
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ao-spacing-md);
+  }
+
+  /* 单列混排两字/三字标签，右对齐会左缘参差；
+     改为两端对齐并撑满 3em，所有标签左右字缘都与「用户名」对齐 */
+  .field__label {
+    width: 3em;
+    text-align: justify;
+    text-align-last: justify;
+  }
+
+  /* 查看态介绍块收紧高度；编辑态输入框仍用组件默认高度，保证输入空间 */
+  .intro__text {
+    min-height: 120px;
+  }
+}
 </style>

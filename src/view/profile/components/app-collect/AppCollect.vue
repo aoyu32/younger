@@ -153,7 +153,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   /* 与历史记录页保持一致 */
-  padding: 20px 20px 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -162,6 +162,11 @@ defineExpose({
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px 15px;
   padding-bottom: 20px;
+
+  /* 移动端：卡片至少两列 */
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* 批量管理复选框：替换默认操作区后的选中控件 */

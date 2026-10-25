@@ -228,7 +228,7 @@ onUnmounted(stopCountdown);
   display: flex;
   flex-direction: column;
   /* 与其它 tab 内容页保持一致 */
-  padding: 20px 20px 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -299,9 +299,12 @@ onUnmounted(stopCountdown);
 
 .account-info__value {
   margin: 0;
+  flex: 1;
   min-width: 0;
-  /* 邮箱等长文本允许折行，不撑破卡片 */
-  word-break: break-all;
+  /* 值不换行：窄卡下超出显示省略号 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--ao-color-text-base);
 }
 
@@ -311,6 +314,16 @@ onUnmounted(stopCountdown);
   flex: 1;
   align-items: center;
   gap: var(--ao-spacing-sm);
+  min-width: 0;
+
+  /* 邮箱长文本：收缩并省略 */
+  > span {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 /* 文本按钮：换绑 */

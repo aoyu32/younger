@@ -27,6 +27,8 @@
           class="history-group"
           :ref="(el) => setSectionRef(group.key, el)"
         >
+          <!-- 移动端时间线隐藏后，日期标签展示在分组卡片上方（≤768 显示） -->
+          <div class="history-group__title">{{ group.title }}</div>
           <div class="history-group__grid">
             <UserVideoCard
               v-for="item in group.list"
@@ -441,7 +443,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-start;
   gap: 15px;
-  padding: 20px 20px 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -453,6 +455,11 @@ onBeforeUnmount(() => {
   width: 82px;
   overflow: hidden;
   box-sizing: border-box;
+
+  /* 移动端：时间线隐藏，为两列卡片腾出空间 */
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .timeline {
@@ -570,12 +577,22 @@ onBeforeUnmount(() => {
     font-weight: var(--ao-font-weight-semibold);
     line-height: var(--ao-line-height-tight);
     color: var(--ao-color-text-base);
+
+    /* 桌面端由左侧时间线展示日期，标题仅在移动端（时间线隐藏时）显示 */
+    @media (min-width: 769px) {
+      display: none;
+    }
   }
 
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 12px;
+
+    /* 移动端：时间线隐藏腾出空间，卡片至少两列 */
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 }
 

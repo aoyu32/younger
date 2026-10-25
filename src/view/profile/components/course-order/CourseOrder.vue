@@ -72,7 +72,7 @@ const orderList = ref<CourseOrder[]>(
   display: flex;
   flex-direction: column;
   /* 与历史记录页保持一致 */
-  padding: 20px 20px 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -81,6 +81,17 @@ const orderList = ref<CourseOrder[]>(
   display: flex;
   flex-direction: column;
   padding-bottom: 20px;
+}
+
+/* 移动端：收窄容器内边距，给订单卡片让出内容宽度 */
+@media (max-width: 768px) {
+  .course-order {
+    padding: var(--ao-spacing-sm) var(--ao-spacing-md);
+  }
+
+  .course-order__list {
+    padding-bottom: var(--ao-spacing-xs);
+  }
 }
 
 /* 空状态：外层滚动容器（.ao-scrollbar）带有定位上下文，
