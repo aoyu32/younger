@@ -140,9 +140,27 @@ let currentTranslate = 0;
 const headerHeight = 72;
 const gap = 15;
 
+/** 移动端单栏布局：侧栏不吸附跟随（样式已改 static，这里同步清理位移） */
+const mobileMedia = window.matchMedia('(max-width: 768px)');
+
+const resetSidebarTransform = () => {
+  currentTranslate = 0;
+  if (sidebarInnerRef.value) sidebarInnerRef.value.style.transform = '';
+};
+
+const onMediaChange = () => {
+  if (mobileMedia.matches) resetSidebarTransform();
+  lastScrollY = window.scrollY;
+};
+
 const onScroll = () => {
   const inner = sidebarInnerRef.value;
   if (!inner) return;
+
+  if (mobileMedia.matches) {
+    resetSidebarTransform();
+    return;
+  }
 
   const scrollY = window.scrollY;
   const delta = scrollY - lastScrollY;
@@ -170,10 +188,12 @@ const onScroll = () => {
 onMounted(() => {
   lastScrollY = window.scrollY;
   window.addEventListener('scroll', onScroll, { passive: true });
+  mobileMedia.addEventListener('change', onMediaChange);
 });
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll);
+  mobileMedia.removeEventListener('change', onMediaChange);
 });
 
 const handleGetCatalog = (catalogs: any) => {

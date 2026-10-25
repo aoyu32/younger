@@ -41,12 +41,17 @@
   }
 }
 
-.news-content {
-  margin-top: 30px;
+  .news-content {
+    margin-top: 30px;
 
-  .md-preview-wrapper {
-    min-height: 200px;
-  }
+    /* 代码块内部横向滚动，长代码行不再把内容区撑出横向滚动 */
+    :deep(.md-editor-preview pre) {
+      overflow-x: auto;
+    }
+
+    .md-preview-wrapper {
+      min-height: 200px;
+    }
 
   /* smart-blue 主题的强调色改为品牌色：标题（含左竖条）、链接、加粗 */
   :deep(.md-editor-preview.smart-blue-theme) {
@@ -167,5 +172,92 @@
     margin-top: 20px;
     padding: 20px;
     background-color: var(--ao-color-bg-layout);
+  }
+}
+
+/* ---------- 响应式 ---------- */
+
+/* ≤1024（平板）：侧栏收窄、列间距收紧，给正文让宽 */
+@media (max-width: 1024px) {
+  .news-detail {
+    gap: 16px;
+  }
+
+  .news-sidebar {
+    width: 240px;
+  }
+}
+
+/* ≤768（移动端）：改单栏，正文与评论在前。
+   目录依赖吸附场景，移动端直接隐藏；热门推荐沉到评论区下方 */
+@media (max-width: 768px) {
+  .news-detail {
+    flex-direction: column;
+    /* 桌面的 flex-start 在单栏下会让内容区按最小内容宽收缩
+       （nowrap 标签的固有宽度会把页面撑出横向滚动），改回拉伸 */
+    align-items: stretch;
+  }
+
+  .content {
+    padding: 20px 16px;
+  }
+
+  .news-comment {
+    padding: 10px 16px;
+  }
+
+  .news-header {
+    gap: 12px;
+
+    h1 {
+      font-size: 1.35rem;
+      line-height: 1.4;
+    }
+
+    .news-meta {
+      flex-wrap: wrap;
+      gap: 8px 16px;
+    }
+  }
+
+  .news-content {
+    margin-top: 20px;
+
+    /* 窄屏防溢出：正文图片不超出内容区 */
+    :deep(.md-editor-preview) {
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+
+  /* 标签与点赞操作拆两行；标签单行展示，
+     空间不足时逐个收缩出省略号，不换行 */
+  .content-footer {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px 0 6px 0;
+
+    .labels {
+      flex-basis: 100%;
+    }
+  }
+
+  .news-sidebar {
+    width: 100%;
+  }
+
+  /* 单栏下侧栏不再吸附 */
+  .sidebar-inner {
+    position: static;
+    will-change: auto;
+  }
+
+  .news-outline {
+    display: none;
+  }
+
+  .news-other {
+    margin-top: 20px;
   }
 }
