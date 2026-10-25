@@ -8,6 +8,8 @@
           height="20px"
         ></AoImage>
       </div>
+      <!-- 移动端：右上角返回按钮隐藏后，返回首页改为左上角文本按钮 -->
+      <div class="mobile-back-home" @click="handleBackHome">返回首页</div>
       <div class="form-wrapper flex-c">
         <div class="register-title">
           <h2>YOUNGER <span>SIGN UP</span></h2>
@@ -72,6 +74,10 @@
         </div>
         <div class="register-submit">
           <ao-button @click="handleRegister">注册</ao-button>
+        </div>
+        <!-- 移动端：品牌面板隐藏后，登录入口移到表单下方 -->
+        <div class="mobile-alt-link">
+          已有账号？<span @click="$router.push('/login')">去登录</span>
         </div>
       </div>
     </div>
