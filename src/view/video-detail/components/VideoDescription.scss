@@ -42,6 +42,11 @@
     font-size: var(--ao-font-size-sm);
     color: var(--ao-color-text-secondary);
 
+    /* 窄屏防溢出：正文图片不超出内容区 */
+    img {
+      max-width: 100%;
+    }
+
     > :first-child {
       margin-top: 0;
     }

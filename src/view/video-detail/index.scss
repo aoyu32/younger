@@ -7,7 +7,6 @@
   grid-template-rows: auto auto;
   column-gap: var(--ao-spacing-xl);
   row-gap: var(--ao-spacing-md);
-  min-width: 1080px;
   padding: var(--ao-spacing-md) 0 var(--ao-spacing-xxl);
 
   &__head {
@@ -246,6 +245,159 @@
     /* 侧栏封面缩小一圈，给标题留出宽度（列表内部元素需要 :deep 才能命中） */
     :deep(.video-recommend .recommend-item .cover) {
       width: 150px;
+    }
+  }
+
+  /* ---------- 响应式 ---------- */
+
+  /* ≤1280：侧栏与列间距收紧，给播放器让宽；
+     操作条放不下时标签与按钮组换行，标签自身也允许折行 */
+  @media (max-width: 1280px) {
+    --video-side-width: 340px;
+    column-gap: var(--ao-spacing-lg);
+
+    &__actions {
+      flex-wrap: wrap;
+      row-gap: var(--ao-spacing-xs);
+    }
+
+    &__tags {
+      flex-wrap: wrap;
+    }
+  }
+
+  /* ≤1024：两栏放不下播放器，改单栏。内容区用 display: contents 拆开，
+     由网格区域重排：播放器置顶，标题 / 操作 / 作者 / 章节卡片依次向下 */
+  @media (max-width: 1024px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'player'
+      'head'
+      'actions'
+      'author'
+      'chapters'
+      'description'
+      'comments';
+    /* 相关推荐 / 相关应用 / 相关网站不再显式占位，自动排到末尾 */
+    row-gap: var(--ao-spacing-md);
+
+    &__content {
+      display: contents;
+    }
+
+    &__player {
+      grid-area: player;
+    }
+
+    &__head {
+      grid-area: head;
+    }
+
+    .author-card {
+      grid-area: author;
+    }
+
+    &__description {
+      grid-area: description;
+      /* 间距交给网格 row-gap */
+      margin-top: 0;
+    }
+
+    &__comments {
+      grid-area: comments;
+      margin-top: 0;
+    }
+
+    /* 侧栏拆开：章节卡片单独占位（紧跟作者卡片），
+       推荐等区块自动流到评论之后 */
+    &__side {
+      display: contents;
+    }
+
+    .video-chapters {
+      grid-area: chapters;
+    }
+
+    /* 操作条改上下两行：标签一行在前，按钮一行在后；
+       标签按 DOM 顺序自然在前，无需调整 order */
+    &__actions {
+      grid-area: actions;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--ao-spacing-xs);
+      margin-top: 0;
+
+      /* 按钮宽度随内容自适应、多余空间均分，禁止文字在按钮内折行 */
+      .action-item {
+        flex: 1 1 auto;
+        justify-content: center;
+        padding: 0 8px;
+        white-space: nowrap;
+      }
+
+      .action-item__icon {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  /* ≤768（移动端）：标题字号略降；章节卡片不再与播放器等高
+     （移动端播放器过矮，会压扁章节列表）；付费信息一行放不下时换行；
+     操作区改为移动 App 样式：去掉描边盒子与竖分割线，
+     三个操作等分三列、图标在上文字在下居中，标签独立成行 */
+  @media (max-width: 768px) {
+    padding: var(--ao-spacing-sm) 0 var(--ao-spacing-lg);
+
+    &__title {
+      font-size: var(--ao-font-size-lg);
+    }
+
+    &__actions {
+      gap: var(--ao-spacing-sm);
+      padding: 0;
+      border: none;
+      border-radius: 0;
+
+      .action-item {
+        /* 等分三列（覆盖 ≤1024 的按内容分配），图标上、文字下居中 */
+        flex: 1;
+        flex-direction: column;
+        gap: var(--ao-spacing-xxs);
+        height: auto;
+        padding: var(--ao-spacing-xs) 0;
+      }
+
+      /* 竖分割线是桌面元素，移动端均匀三列不需要 */
+      .action-item + .action-item::before {
+        display: none;
+      }
+
+      .action-item__text {
+        font-size: var(--ao-font-size-xs);
+      }
+
+      .action-item__icon {
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    :deep(.video-chapters) {
+      max-height: none;
+    }
+
+    :deep(.video-chapters__pay) {
+      flex-wrap: wrap;
+    }
+  }
+
+  /* ≤480：相关推荐封面再缩小，给标题留出宽度 */
+  @media (max-width: 480px) {
+    &__related {
+      :deep(.video-recommend .recommend-item .cover) {
+        width: 132px;
+      }
     }
   }
 }
