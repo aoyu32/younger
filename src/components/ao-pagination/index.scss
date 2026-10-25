@@ -49,4 +49,19 @@
     cursor: default;
     color: var(--ao-color-text-tertiary);
   }
+
+  /* 移动端：紧凑尺寸，页码过多时换行而不是溢出卡片 */
+  @media (max-width: 768px) {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .ao-pagination__btn {
+    min-width: 28px;
+    height: 28px;
+    font-size: var(--ao-font-size-xs);
+  }
 }
