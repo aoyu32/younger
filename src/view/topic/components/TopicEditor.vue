@@ -293,6 +293,13 @@ onBeforeUnmount(() => {
   padding: 12px 20px 16px;
 }
 
+/* ≤768（移动端）：输入区内边距收紧 */
+@media (max-width: 768px) {
+  .topic-editor {
+    padding: 10px 12px 12px;
+  }
+}
+
 .editor-body {
   position: relative;
   padding: 6px 12px 8px;

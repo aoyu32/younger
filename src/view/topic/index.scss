@@ -23,3 +23,29 @@
   overflow: hidden;
   background-color: var(--ao-color-bg-layout);
 }
+
+/* ---------- 响应式 ---------- */
+
+/* ≤1200：侧栏收窄，给聊天区让宽 */
+@media (max-width: 1200px) {
+  .topic-sidebar {
+    width: 280px;
+  }
+}
+
+/* ≤768（移动端）：单栏。聊天区在前占满首屏（保持内部滚动、
+   输入框沉底），历史话题移到下方随页面滚动 */
+@media (max-width: 768px) {
+  .topic {
+    flex-direction: column;
+    align-items: stretch;
+    /* 本页没有站点页脚，历史话题是页面最后一块内容，
+       留出底部间距避免贴着页面底边结束 */
+    padding-bottom: var(--ao-spacing-lg);
+  }
+
+  .topic-sidebar {
+    width: 100%;
+    height: auto;
+  }
+}

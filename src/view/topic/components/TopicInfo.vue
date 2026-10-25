@@ -95,4 +95,23 @@ withDefaults(
   color: var(--ao-color-text-tertiary);
   white-space: nowrap;
 }
+
+/* ≤768（移动端）：内边距与间距收紧 */
+@media (max-width: 768px) {
+  .topic-info {
+    gap: 12px;
+    padding: 12px 14px 14px;
+  }
+}
+
+/* ≤480（小屏）：参与人数放不下时换到标题下方 */
+@media (max-width: 480px) {
+  .topic-info {
+    flex-wrap: wrap;
+
+    .info-title {
+      max-width: 100%;
+    }
+  }
+}
 </style>

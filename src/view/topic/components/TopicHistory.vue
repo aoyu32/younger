@@ -447,4 +447,12 @@ onBeforeUnmount(() => {
   font-size: var(--ao-font-size-sm);
   color: var(--ao-color-text-tertiary);
 }
+
+/* ≤768（移动端）：历史话题移到聊天区下方随页面滚动，
+   列表限高内部滚动，避免整屏都是列表 */
+@media (max-width: 768px) {
+  .history-scroll {
+    max-height: 50vh;
+  }
+}
 </style>

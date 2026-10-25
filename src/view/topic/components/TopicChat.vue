@@ -140,4 +140,20 @@ watch(() => [props.messages, props.messages.length], scrollToBottom, {
     background-color: rgba(0, 0, 0, 0.05);
   }
 }
+
+/* ≤768（移动端）：消息区左右内边距收紧；
+   纵向布局下 .topic-main 的 flex:1 接管了高度、按内容自适应，
+   无消息时聊天区会塌缩，给一个最小高度兜底；
+   contain 会阻断滚动链——消息不满一屏时手指在聊天区
+   无法滚到下方的历史话题，改回 auto 交还页面 */
+@media (max-width: 768px) {
+  .topic-chat {
+    min-height: 55vh;
+
+    :deep(.ao-scrollbar__wrap) {
+      padding: 12px 12px;
+      overscroll-behavior: auto;
+    }
+  }
+}
 </style>
