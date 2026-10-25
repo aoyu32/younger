@@ -182,3 +182,38 @@
     }
   }
 }
+
+/* ≤768（移动端）：元信息行（日期 + 点赞/点踩/回复）一行放不下时
+   整体换行，各元素自身禁止收缩变形；评论图片放不下时折行 */
+@media (max-width: 768px) {
+  .comment-item {
+    .comment-meta {
+      flex-wrap: wrap;
+      row-gap: 8px;
+      column-gap: 12px;
+
+      .date {
+        white-space: nowrap;
+      }
+
+      .action-buttons {
+        flex-wrap: wrap;
+        gap: 4px 8px;
+
+        .action-btn {
+          padding: 4px 6px;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .comment-images {
+      flex-wrap: wrap;
+
+      .image-wrapper {
+        width: 132px;
+        height: 74px;
+      }
+    }
+  }
+}
