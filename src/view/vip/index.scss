@@ -5,6 +5,7 @@
   overflow: hidden;
 }
 
+/* 桌面端左上角 logo，响应式（≤768）下隐藏 */
 .logo {
   position: absolute;
   top: var(--ao-spacing-lg);
@@ -83,14 +84,18 @@
   justify-content: center;
 }
 
+/* 返回首页：水平居中于页面底部 */
 .back-home {
   position: absolute;
   bottom: var(--ao-spacing-xl);
-  left: var(--ao-spacing-xl);
+  left: 0;
+  right: 0;
   z-index: 1001;
   display: flex;
   align-items: center;
   gap: var(--ao-spacing-xs);
+  width: fit-content;
+  margin: 0 auto;
   font-size: var(--ao-font-size-sm);
   color: var(--ao-gray-0);
   cursor: pointer;
@@ -103,5 +108,40 @@
     :deep(img) {
       filter: brightness(1.6);
     }
+  }
+}
+
+/* ---------- 响应式 ---------- */
+
+/* ≤768（移动端）：两卡放不下并排时由 flex-wrap 自动堆叠；
+   页面改为可纵向滚动（原 overflow: hidden 会把堆叠后的
+   第二张卡裁掉），背景钉在视口避免渐变随内容拉长；
+   logo 隐藏；底部留出返回首页的位置，避免与 SVIP 卡片重叠 */
+@media (max-width: 768px) {
+  .vip {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  .logo {
+    display: none;
+  }
+
+  .vip-content {
+    padding: var(--ao-spacing-xl) var(--ao-spacing-md) 96px;
+    gap: var(--ao-spacing-lg);
+  }
+
+  .vip-title {
+    font-size: 24px;
+  }
+
+  .vip-cards {
+    gap: var(--ao-spacing-md);
+  }
+
+  .vip-background {
+    position: fixed;
   }
 }

@@ -372,6 +372,32 @@ const handleOver = (event: MouseEvent) => {
   }
 }
 
+/* ≤768（响应式）：卡片随容器等比缩放，锁定 320:460 的宽高比
+   （取消 min-height，避免其覆盖 aspect-ratio 计算出的高度） */
+@media (max-width: 768px) {
+  .card {
+    width: min(320px, 100%);
+    min-height: 0;
+    aspect-ratio: 320 / 460;
+  }
+}
+
+/* ≤480（小屏）：内边距与字号随卡片一起收缩，保证内容仍放得下 */
+@media (max-width: 480px) {
+  .card-inner {
+    padding: var(--ao-spacing-lg) var(--ao-spacing-md);
+    gap: var(--ao-spacing-sm);
+  }
+
+  .price-value {
+    font-size: 40px;
+  }
+
+  .vip-mark {
+    font-size: 88px;
+  }
+}
+
 .year-card.is-hovering {
   .card-tier {
     background-image: linear-gradient(
