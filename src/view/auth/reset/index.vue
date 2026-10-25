@@ -21,6 +21,8 @@
       </div>
     </div>
     <div class="reset-right" ref="resetRightRef">
+      <!-- 移动端：右上角返回按钮隐藏后，回到首页改为左上角文本按钮 -->
+      <div class="mobile-back-home" @click="handleBackHome">返回首页</div>
       <div class="back-home" @click="handleBackHome">
         <AoImage
           src="@/assets/auth/icon_back_home.svg"
@@ -80,6 +82,10 @@
         </div>
         <div class="reset-submit">
           <ao-button @click="handleReset">重置密码</ao-button>
+        </div>
+        <!-- 移动端：品牌面板隐藏后，登录入口移到表单下方 -->
+        <div class="mobile-alt-link">
+          想起密码？<span @click="$router.push('/login')">去登录</span>
         </div>
       </div>
     </div>

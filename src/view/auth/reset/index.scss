@@ -285,3 +285,51 @@
     }
   }
 }
+
+/* mobile: hide brand panel, keep form as-is */
+@media (max-width: 768px) {
+  .reset-left {
+    display: none;
+  }
+}
+
+/* 移动端：右上角返回按钮隐藏，改为左上角文本按钮；品牌面板隐藏后的替代链接 */
+.mobile-back-home {
+  display: none;
+}
+
+.mobile-alt-link {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .back-home {
+    display: none;
+  }
+
+  .reset-right {
+    position: relative;
+  }
+
+  .mobile-back-home {
+    display: block;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: var(--ao-font-size-sm);
+    color: var(--ao-color-primary);
+    cursor: pointer;
+  }
+
+  .mobile-alt-link {
+    display: block;
+    font-size: var(--ao-font-size-sm);
+    color: var(--ao-color-text-tertiary);
+    text-align: center;
+
+    span {
+      color: var(--ao-color-primary);
+      cursor: pointer;
+    }
+  }
+}
