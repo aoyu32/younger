@@ -106,4 +106,16 @@ const handleChange = (item?: TutorialChapter) => {
   color: var(--ao-color-text-base);
   transition: color 0.2s ease;
 }
+
+/* ≤480（小屏）：上一页/下一页上下堆叠，标题可显示更长 */
+@media (max-width: 480px) {
+  .tutorial-pager {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pager-item {
+    padding: 14px 16px;
+  }
+}
 </style>

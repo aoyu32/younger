@@ -34,6 +34,51 @@
   height: 1px;
 }
 
+/* ---------- 响应式 ---------- */
+
+/* ≤1280：右侧栏收窄，给正文让宽 */
+@media (max-width: 1280px) {
+  .totorial-sidebar {
+    width: 240px;
+  }
+}
+
+/* ≤1024（平板）：三栏放不下，右侧栏整体移到正文下方；
+   目录依赖吸附场景，平板与移动端直接隐藏（只保留其他课程） */
+@media (max-width: 1024px) {
+  .totorial {
+    flex-wrap: wrap;
+  }
+
+  .totorial-sidebar {
+    flex-basis: 100%;
+    width: auto;
+  }
+
+  .sidebar-inner {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .tutorial-toc {
+    display: none;
+  }
+}
+
+/* ≤768（移动端）：单栏。左侧 fixed 章节面板由 TutorialSideNav
+   自身改为顶部可折叠面板；子项拉伸铺满，避免按最小内容宽收缩。
+   注意必须取消 ≤1024 的 wrap：纵向 flex 下 wrap 的单行宽取内容
+   最小宽度（如长代码行），会把内容列撑破容器 */
+@media (max-width: 768px) {
+  .totorial {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 12px;
+    align-items: stretch;
+  }
+}
+
 .pager-enter-active,
 .pager-leave-active {
   transition:

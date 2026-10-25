@@ -58,6 +58,11 @@ const emit = defineEmits<{
     padding: 0;
   }
 
+  /* 代码块内部横向滚动，长代码行不再把内容区撑出横向滚动 */
+  :deep(.md-editor-preview pre) {
+    overflow-x: auto;
+  }
+
   :deep(.md-editor-preview.smart-blue-theme) {
     --md-theme-heading-color: var(--ao-color-primary);
     --md-theme-link-color: var(--ao-color-primary);
@@ -65,6 +70,26 @@ const emit = defineEmits<{
     strong,
     em strong {
       color: var(--ao-color-primary);
+    }
+  }
+}
+
+/* ≤768（移动端）：内边距与标题字号收紧；正文图片防溢出 */
+@media (max-width: 768px) {
+  .tutorial-content {
+    padding: 20px 16px;
+  }
+
+  .content-title {
+    margin-bottom: 14px;
+    font-size: 1.35rem;
+  }
+
+  .content-body {
+    :deep(.md-editor-preview) {
+      img {
+        max-width: 100%;
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <aside class="tutorial-side-nav">
-    <div ref="panelRef" class="side-panel">
-      <div class="side-title">{{ title }}</div>
+    <div ref="panelRef" class="side-panel" :class="{ 'is-collapsed': collapsed }">
+      <div class="side-title" @click="handleTitleClick">{{ title }}</div>
       <AoScrollbar class="side-scroll" always>
         <div ref="listRef" class="side-list">
           <div v-for="group in groups" :key="group.id" class="group">
@@ -56,11 +56,30 @@ let wrapObserver: ResizeObserver | null = null;
 let settleTimer: ReturnType<typeof setTimeout> | undefined;
 let panelHeight = 0;
 
+/** 移动端（≤768）：面板改为顶部折叠面板，默认收起 */
+const mobileMedia = window.matchMedia('(max-width: 768px)');
+const collapsed = ref(false);
+
+const syncCollapsed = () => {
+  collapsed.value = mobileMedia.matches;
+};
+
+/** 移动端点标题行切换展开/收起；桌面无折叠概念，点击不生效 */
+const handleTitleClick = () => {
+  if (mobileMedia.matches) collapsed.value = !collapsed.value;
+};
+
+const onMediaChange = () => {
+  syncCollapsed();
+  syncPanelHeight();
+};
+
 const scrollActiveIntoView = () => {
   const list = listRef.value;
   const scroller = list?.closest('.ao-scrollbar__wrap') as HTMLElement | null;
   const item = list?.querySelector<HTMLElement>('.chapter-item.active');
   if (!list || !scroller || !item) return;
+  if (collapsed.value) return;
   const scrollerRect = scroller.getBoundingClientRect();
   const itemRect = item.getBoundingClientRect();
   if (itemRect.top < scrollerRect.top)
@@ -79,8 +98,17 @@ watch(
 
 const syncPanelHeight = () => {
   const panel = panelRef.value;
-  const wrap = panel?.closest('.totorial') as HTMLElement | null;
-  if (!panel || !wrap) return;
+  if (!panel) return;
+  /* 移动端：面板回到文档流自然撑高，清除行内高度并停用同步 */
+  if (mobileMedia.matches) {
+    if (panelHeight !== 0) {
+      panelHeight = 0;
+      panel.style.height = '';
+    }
+    return;
+  }
+  const wrap = panel.closest('.totorial') as HTMLElement | null;
+  if (!wrap) return;
   const top = parseFloat(getComputedStyle(panel).top) || 0;
   const full = window.innerHeight - top - 24;
   const limit = wrap.getBoundingClientRect().bottom - top;
@@ -92,14 +120,17 @@ const syncPanelHeight = () => {
 };
 
 const onScroll = () => {
+  if (mobileMedia.matches) return;
   syncPanelHeight();
   clearTimeout(settleTimer);
   settleTimer = setTimeout(syncPanelHeight, 140);
 };
 
 onMounted(() => {
+  syncCollapsed();
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', syncPanelHeight);
+  mobileMedia.addEventListener('change', onMediaChange);
   const wrap = panelRef.value?.closest('.totorial');
   if (wrap) {
     wrapObserver = new ResizeObserver(syncPanelHeight);
@@ -112,6 +143,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll);
   window.removeEventListener('resize', syncPanelHeight);
+  mobileMedia.removeEventListener('change', onMediaChange);
   wrapObserver?.disconnect();
   wrapObserver = null;
   clearTimeout(settleTimer);
@@ -241,5 +273,62 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 24px;
   background-color: var(--ao-gray-3);
+}
+
+/* ≤768（移动端）：面板脱离 fixed 定位回到文档流、宽度铺满；
+   标题行变为折叠开关（带指示箭头），收起时隐藏列表 */
+@media (max-width: 768px) {
+  .tutorial-side-nav {
+    width: 100%;
+  }
+
+  .side-panel {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+
+  .side-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+
+    &::after {
+      content: '';
+      flex: none;
+      width: 7px;
+      height: 7px;
+      margin-left: 8px;
+      border-right: 1.5px solid var(--ao-color-text-secondary);
+      border-bottom: 1.5px solid var(--ao-color-text-secondary);
+      transform: rotate(45deg);
+      transition: transform 0.2s ease;
+    }
+  }
+
+  /* 展开态箭头朝上 */
+  .side-panel:not(.is-collapsed) .side-title::after {
+    transform: rotate(225deg);
+  }
+
+  .side-panel.is-collapsed {
+    .side-scroll,
+    .footer {
+      display: none;
+    }
+  }
+
+  .side-scroll {
+    /* 展开后列表过深时限高内部滚动，避免整屏都是章节 */
+    max-height: 60vh;
+
+    /* 桌面的 contain 会阻断滚动链：列表不溢出时鼠标/手指
+       放在上面页面就无法滚动，移动端改回 auto 交还页面 */
+    :deep(.ao-scrollbar__wrap) {
+      overscroll-behavior: auto;
+    }
+  }
 }
 </style>
