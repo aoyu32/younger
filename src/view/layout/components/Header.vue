@@ -28,14 +28,7 @@
         :aria-expanded="mobileDrawerOpen"
         @click="openMobileDrawer"
       >
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M4 6h16M4 12h16M4 18h16"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-        </svg>
+      <AoImage src="@/assets/layout/icon_arrow_right.svg" width="20px" height="20px"></AoImage>
       </button>
       <div class="left_nav" ref="navRef">
         <ul class="nav-list" ref="navListRef">
@@ -185,7 +178,14 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue';
 import { useRouter } from 'vue-router';
 import { useUser } from '@/store/module/user';
 import { setBodyScrollLocked } from '@/utils/overlayScrollbars';
@@ -343,8 +343,7 @@ const calculateVisibleMenus = async () => {
   const listStyle = window.getComputedStyle(listEl);
   const navStyle = window.getComputedStyle(navEl);
   const gap = parseFloat(listStyle.columnGap || listStyle.gap || '0') || 0;
-  const triggerGap =
-    parseFloat(navStyle.columnGap || navStyle.gap || '0') || 0;
+  const triggerGap = parseFloat(navStyle.columnGap || navStyle.gap || '0') || 0;
   const availableWidth = navEl.getBoundingClientRect().width - 1;
   const allItemsWidth =
     itemWidths.reduce((total, width) => total + width, 0) +
@@ -361,8 +360,7 @@ const calculateVisibleMenus = async () => {
   let usedWidth = 0;
   let count = 0;
   for (let index = 0; index < itemWidths.length; index += 1) {
-    const nextWidth =
-      usedWidth + (index > 0 ? gap : 0) + itemWidths[index];
+    const nextWidth = usedWidth + (index > 0 ? gap : 0) + itemWidths[index];
     if (nextWidth + triggerGap + NAV_MORE_WIDTH > availableWidth) {
       break;
     }
@@ -812,8 +810,7 @@ const handleLogoClick = () => {
       /* 修复：强制文字不换行 */
       white-space: nowrap;
       cursor: pointer;
-      transition: background-color var(--ao-duration-fast)
-        var(--ao-ease-in-out);
+      transition: background-color var(--ao-duration-fast) var(--ao-ease-in-out);
 
       &:hover {
         background-color: var(--ao-gray-1);
@@ -828,7 +825,7 @@ const handleLogoClick = () => {
 
 @media (max-width: 900px) {
   .header_right {
-    gap: 8px;
+    gap: 14px;
 
     .right-vip {
       margin: 0 4px 0 15px;
@@ -964,7 +961,7 @@ const handleLogoClick = () => {
 @media (max-width: 768px) {
   .header_left {
     /* 收紧 logo 与汉堡按钮的间距（桌面端保持原有的 64px） */
-    --nav-logo-gap: var(--ao-spacing-lg);
+    --nav-logo-gap: 14px;
 
     .left_nav {
       display: none;
