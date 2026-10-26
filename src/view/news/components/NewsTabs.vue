@@ -155,7 +155,30 @@ function measureTabs() {
   computeVisible();
   nextTick(() => {
     filled.value = true;
+    // 收纳后“更多分类”按钮和占位槽才真正渲染出来，
+    // 用它们的实际宽度再算一次，避免预留不足导致溢出
+    nextTick(() => computeVisible());
   });
+}
+
+/* “更多”按钮 + 占位槽实际占用的宽度；没渲染时用与 CSS 一致的兜底值 */
+function reservedWidth() {
+  const MORE_GAP = 4;
+  const MORE_FALLBACK = 96;
+  /* 占位槽 CSS：min-width 64px + padding 0 20px = 104px */
+  const PLACEHOLDER_FALLBACK = 104;
+  if (!headerRef.value) {
+    return MORE_FALLBACK + PLACEHOLDER_FALLBACK + MORE_GAP;
+  }
+  const moreEl = headerRef.value.querySelector('.tab-more') as HTMLElement | null;
+  const placeholderEl = headerRef.value.querySelector(
+    '.tab-item--placeholder',
+  ) as HTMLElement | null;
+  const moreWidth = moreEl ? moreEl.offsetWidth : MORE_FALLBACK;
+  const placeholderWidth = placeholderEl
+    ? placeholderEl.offsetWidth
+    : PLACEHOLDER_FALLBACK;
+  return moreWidth + placeholderWidth + MORE_GAP;
 }
 
 function computeVisible() {
@@ -167,10 +190,7 @@ function computeVisible() {
 
   const containerWidth = headerRef.value.clientWidth;
   const GAP = 0;
-  const MORE_WIDTH = 90;
-  const MORE_GAP = 4;
-  /* 占位 tab 需要占的空间（"···" 或激活项文字） */
-  const PLACEHOLDER_WIDTH = 64;
+  const reserved = reservedWidth();
 
   let totalWidth = 0;
   for (let i = 0; i < widths.length; i++) {
@@ -185,8 +205,7 @@ function computeVisible() {
   let count = 0;
   for (let i = 0; i < widths.length; i++) {
     const next = used + (i > 0 ? GAP : 0) + widths[i];
-    if (next + MORE_GAP + MORE_WIDTH + PLACEHOLDER_WIDTH > containerWidth)
-      break;
+    if (next + reserved > containerWidth) break;
     used = next;
     count++;
   }
@@ -214,6 +233,11 @@ watch(
   },
   { deep: true },
 );
+
+/* 从“更多分类”里选中某一项后，占位槽文字（··· → 分类名）宽度会变化，需重算 */
+watch(activeTab, () => {
+  nextTick(() => computeVisible());
+});
 </script>
 
 <style scoped lang="scss">
@@ -246,8 +270,8 @@ watch(
   /* 窄屏：收纳数量确定后，可见标签等分填满整行（含 ··· 占位），
      消除尾部留白；标签文字超长时省略 */
   @media (max-width: 768px) {
-    .tab-list.filled .tab-item,
-    .tab-list.filled .tab-item--placeholder {
+    &.filled .tab-item,
+    &.filled .tab-item--placeholder {
       flex: 1 1 0;
       min-width: 0;
     }
