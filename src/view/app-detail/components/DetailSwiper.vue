@@ -1,10 +1,11 @@
 <template>
-  <div class="swiper-container">
+  <div class="swiper-container" :class="{ 'is-compact': responsive }">
     <swiper
-      :effect="'coverflow'"
+      :effect="responsive ? 'slide' : 'coverflow'"
       :grabCursor="true"
       :centeredSlides="true"
       :slidesPerView="'auto'"
+      :spaceBetween="responsive ? 12 : 0"
       :loop="true"
       :coverflowEffect="{
         rotate: 0,
@@ -39,11 +40,19 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import { EffectCoverflow, Pagination } from 'swiper/modules';
+
+defineProps<{
+  /** 响应式形态：使用普通滑动、流式尺寸，可拖拽/触摸滚动 */
+  responsive?: boolean;
+}>();
+
 const modules = [EffectCoverflow, Pagination];
 </script>
 <style lang="scss" scoped>
 .swiper-container {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   filter: drop-shadow(0px 0px 5px rgba(48, 44, 44, 0.275));
 }
 .swiper-slide {
@@ -71,5 +80,37 @@ const modules = [EffectCoverflow, Pagination];
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* 响应式：普通滑动 + 流式尺寸，保留 Swiper 的鼠标拖拽和触屏滑动 */
+.swiper-container.is-compact {
+  overflow: hidden;
+  padding: 0 16px;
+
+  .swiper-slide {
+    width: min(86vw, 800px);
+    height: auto;
+    aspect-ratio: 16 / 10;
+    box-sizing: border-box;
+  }
+
+  .custom-pagination {
+    padding: 16px 0 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .swiper-container.is-compact {
+    padding: 0 12px;
+
+    .swiper-slide {
+      width: 88vw;
+      border-radius: 12px;
+    }
+
+    .swiper-slide img {
+      border-radius: 12px;
+    }
+  }
 }
 </style>
