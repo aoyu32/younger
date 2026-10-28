@@ -48,12 +48,14 @@ const props = withDefaults(defineProps<AoLoadingProps>(), {
 });
 
 /** 全屏时才挂到 body，避免大盒子内的遮罩脱离父级定位 */
-const isFullscreen = computed(() => props.type === 'global' && props.fullscreen);
+const isFullscreen = computed(
+  () => props.type === 'global' && props.fullscreen,
+);
 
 const isMask = computed(() => props.type === 'global' && props.mask);
 
-const iconSize = computed(() =>
-  props.size ?? (props.type === 'base' ? '1em' : 100),
+const iconSize = computed(
+  () => props.size ?? (props.type === 'base' ? '1em' : 100),
 );
 
 /** 数字按 px，字符串原样使用（支持 1em、0.9rem 这类相对单位） */
