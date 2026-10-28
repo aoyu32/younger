@@ -1,0 +1,78 @@
+.ao-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ao-loading-color, #00b5b5);
+  line-height: 1;
+}
+
+.ao-loading__icon {
+  display: block;
+  flex: none;
+  width: var(--ao-loading-size, 1em);
+  height: var(--ao-loading-size, 1em);
+}
+
+/* v-html 插入的 svg 不带 scoped 标记，必须用 :deep 命中 */
+.ao-loading__icon :deep(svg) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- base：按钮、行内 ---------- */
+.ao-loading.is-base {
+  /* 默认跟随父级文字颜色，放进按钮里自动变成按钮的文字色 */
+  color: var(--ao-loading-color, currentColor);
+  vertical-align: middle;
+}
+
+/* ---------- global：大盒子 / 全屏 ---------- */
+.ao-loading.is-global {
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+
+.ao-loading.is-global .ao-loading__icon {
+  /* 全局图 200×160，按宽度算高度 */
+  height: calc(var(--ao-loading-size, 100px) * 0.8);
+}
+
+.ao-loading.is-global:not(.is-fullscreen) {
+  /* 覆盖大盒子：父级需要 position: relative */
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  border-radius: inherit;
+}
+
+.ao-loading.is-global.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+}
+
+.ao-loading.is-global.is-mask {
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.ao-loading__text {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--ao-loading-color, #00b5b5);
+}
+
+/* ---------- 淡入淡出 ---------- */
+.ao-loading-fade-enter-active,
+.ao-loading-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.ao-loading-fade-enter-from,
+.ao-loading-fade-leave-to {
+  opacity: 0;
+}
