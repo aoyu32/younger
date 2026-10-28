@@ -155,6 +155,20 @@ const routes = [
       menu: false,
     },
   },
+  {
+    name: 'not-found',
+    path: '/404',
+    component: () => import('@/view/404/index.vue'),
+    meta: {
+      title: '页面走丢了',
+      menu: false,
+    },
+  },
+  // 兜底：匹配不到的路由统一跳到 404
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/404',
+  },
 ];
 
 const router = createRouter({
