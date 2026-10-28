@@ -1,0 +1,249 @@
+.error-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 72px 24px;
+  overflow: hidden;
+  background: #f5fbfb;
+  font-family: var(--ao-font-family-base);
+  color: var(--ao-gray-8);
+}
+
+/* ---------- 背景点阵 ---------- */
+.error-page__grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(0, 181, 181, 0.22) 1px,
+    transparent 1px
+  );
+  background-size: 26px 26px;
+  /* 覆盖整屏，只在最外圈柔和淡出 */
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 0%,
+    #000 72%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 0%,
+    #000 72%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* ---------- 横向布局：左图标 + 右文案 ---------- */
+.error-page__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 56px;
+}
+
+.error-page__icon {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 180px;
+  height: 180px;
+  perspective: 720px;
+  animation: error-float 3.6s ease-in-out infinite;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    backface-visibility: visible;
+    /* 一个周期：顺时针翻 180° → 停一小会 → 逆时针翻回来 → 停一小会 */
+    animation: error-flip 4.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+}
+
+.error-page__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.error-page__code {
+  margin: 0;
+  font-family: var(--ao-font-family-ali);
+  font-size: clamp(72px, 8vw, 108px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 6px;
+  /* 字面左右留白，让 404 与下方文本视觉左对齐 */
+  margin-left: -0.05em;
+  background: linear-gradient(180deg, #00b5b5 0%, #7fe0e0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: error-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.error-page__quote {
+  margin: 14px 0 0;
+  font-family: var(--ao-font-family-ali);
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #073c3c;
+  animation: error-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+.error-page__desc {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ao-gray-6);
+  /* 文案不换行，一行显示完整 */
+  white-space: nowrap;
+  animation: error-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
+}
+
+/* 「点击 返回首页」作为一个整体，换行时不会把链接拆开 */
+.error-page__tail {
+  white-space: nowrap;
+}
+
+/* 小屏换行点：桌面端隐藏，保证说明文案一行 */
+.error-page__break {
+  display: none;
+}
+
+/* 返回首页：加粗 + 品牌色 + 下划线 */
+.error-page__link {
+  color: #00b5b5;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color 0.2s ease, opacity 0.2s ease;
+
+  &:hover {
+    color: #009a9a;
+    opacity: 0.86;
+  }
+}
+
+.error-page__footer {
+  position: absolute;
+  bottom: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--ao-gray-5);
+}
+
+.error-page__logo {
+  display: block;
+  width: 18px;
+  height: 18px;
+  opacity: 0.75;
+}
+
+/* ---------- 动画 ---------- */
+@keyframes error-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/*
+ * 一个周期 4.6s：
+ *   0    ~ 17%   (0 → 0.8s)   顺时针翻到 180°
+ *   17%  ~ 50%   (0.8 → 2.3s) 停 1.5s
+ *   50%  ~ 67%   (2.3 → 3.1s) 逆时针翻回 0°
+ *   67%  ~ 100%  (3.1 → 4.6s) 停 1.5s，接着下一轮
+ */
+@keyframes error-flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  17% {
+    transform: rotateY(180deg);
+  }
+
+  50% {
+    transform: rotateY(180deg);
+  }
+
+  67% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes error-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- 小屏：改成上下布局 ---------- */
+@media (max-width: 900px) {
+  .error-page {
+    padding: 64px 20px 88px;
+  }
+
+  .error-page__content {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .error-page__icon {
+    width: 120px;
+    height: 120px;
+  }
+
+  .error-page__info {
+    align-items: center;
+    text-align: center;
+  }
+
+  .error-page__code {
+    letter-spacing: 4px;
+  }
+
+  .error-page__desc {
+    max-width: 100%;
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .error-page__break {
+    display: block;
+  }
+
+  .error-page__footer {
+    bottom: 20px;
+    letter-spacing: 2px;
+  }
+}
