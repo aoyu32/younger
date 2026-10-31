@@ -28,6 +28,9 @@
           :imgSize="imgSize"
           :blockSize="blockSize"
           :barSize="barSize"
+          :generate-captcha="generateCaptcha"
+          :check-captcha="checkCaptcha"
+          :encrypt-point="encryptPoint"
           ref="instance"
           @success="$emit('success', $event)"
           @error="$emit('error', $event)"
@@ -86,6 +89,21 @@ export default {
     },
     barSize: {
       type: Object,
+    },
+    /** 生成验证码：使用方注入，透传给验证码实现组件 */
+    generateCaptcha: {
+      type: Function,
+      required: true,
+    },
+    /** 校验验证码：使用方注入，透传给验证码实现组件 */
+    checkCaptcha: {
+      type: Function,
+      required: true,
+    },
+    /** 坐标加密：使用方注入，透传给验证码实现组件 */
+    encryptPoint: {
+      type: Function,
+      required: true,
     },
   },
   setup(props) {
@@ -210,6 +228,7 @@ export default {
   position: absolute;
   left: 50%;
   bottom: 10px;
+  z-index: 6;
   transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
@@ -253,7 +272,78 @@ export default {
     opacity 0.32s ease;
 }
 
-/*滑动验证码*/
+/* 图片加载失败：空占位，不遮住右上角刷新按钮 */
+.verify-img-panel .verify-empty {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 3px;
+  background: rgba(249, 252, 252, 0.9);
+  pointer-events: none;
+}
+
+.verify-img-panel .verify-empty-icon {
+  width: 64px;
+  height: 64px;
+  opacity: 0.6;
+  pointer-events: auto;
+  animation: verify-empty-icon-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.verify-img-panel .verify-empty-text {
+  font-size: 13px;
+  color: #8a9b9b;
+  letter-spacing: 0.5px;
+  animation: verify-empty-text-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+@keyframes verify-empty-icon-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+  }
+
+  to {
+    opacity: 0.6;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes verify-empty-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 失败时滑块轨道置灰禁用（保留高度，弹窗不跳） */
+.verify-bar-area.is-failed {
+  opacity: 0.55;
+}
+
+.verify-bar-area.is-failed,
+.verify-bar-area.is-failed * {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* 失败时左侧填充块只去背景不断结构（滑块按钮包在它里面定位） */
+.verify-bar-area.is-failed .verify-left-bar {
+  width: 0 !important;
+  background: transparent;
+  border-color: transparent;
+}
+
 .verify-bar-area {
   position: relative;
   background: linear-gradient(180deg, #f9fcfc 0%, #f2f8f8 100%);
@@ -402,16 +492,16 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 2;
+  z-index: 4;
 }
 
 .verify-img-panel .icon-refresh {
   font-size: 20px;
-  color: #fff;
+  color: #00b5b5;
 }
 
-.icon-refresh:hover {
-  color: #00b5b5;
+.verify-img-panel .icon-refresh:hover {
+  color: #008f8f;
 }
 
 .verify-img-panel .verify-gap {

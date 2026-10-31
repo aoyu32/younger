@@ -10,10 +10,20 @@
         :style="{ width: setSize.imgWidth, height: setSize.imgHeight }"
       >
         <img
+          v-if="backImgBase && !loadFailed"
           :src="'data:image/png;base64,' + backImgBase"
           alt=""
           style="width: 100%; height: 100%; display: block"
         />
+        <div v-else-if="loadFailed" class="verify-empty" :key="emptyKey">
+          <img
+            class="verify-empty-icon"
+            :src="emptyIcon"
+            alt=""
+            aria-hidden="true"
+          />
+          <span class="verify-empty-text">验证码加载失败，点击右上角刷新重试</span>
+        </div>
         <transition name="verify-fade">
           <div class="verify-loading" v-if="isLoading">
             <img
@@ -35,7 +45,7 @@
         <transition name="tips">
           <span
             class="verify-tips"
-            v-if="tipWords"
+            v-if="tipWords && !loadFailed"
             :class="passFlag ? 'suc-bg' : 'err-bg'"
             >{{ tipWords }}</span
           >
@@ -45,7 +55,7 @@
     <!-- 公共部分 -->
     <div
       class="verify-bar-area"
-      :class="{ 'is-loading': isLoading }"
+      :class="{ 'is-loading': isLoading, 'is-failed': loadFailed }"
       :style="{
         width: setSize.imgWidth,
         height: barSize.height,
@@ -118,7 +128,7 @@
             </svg>
           </span>
           <div
-            v-if="type === '2'"
+            v-if="type === '2' && blockBackImgBase"
             class="verify-sub-block"
             :style="{
               width: Math.floor((parseInt(setSize.imgWidth) * 47) / 310) + 'px',
@@ -155,15 +165,15 @@ import {
   watch,
   getCurrentInstance,
 } from 'vue';
-import demoBg from '../image/demo-bg.png';
-import demoMask from '../image/demo-mask.png';
+import emptyIcon from '../image/icon_empty.svg?url';
 
-// 演示图尺寸（与 aj-captcha 服务端返回的尺寸一致）
+/**
+ * 通用滑块组件：网络与加密能力由外部通过 props 注入，
+ * 本文件仅依赖 vue 与相对路径资源，可直接跨项目复用。
+ */
+
+/** aj-captcha 原图宽度，坐标按这个宽度换算后再提交 */
 const SOURCE_WIDTH = 310;
-const SOURCE_HEIGHT = 155;
-const PIECE_WIDTH = 47;
-// 允许的误差（按原图 310px 宽度换算）
-const TOLERANCE = 8;
 
 export default {
   name: 'VerifySlide',
@@ -215,6 +225,21 @@ export default {
         };
       },
     },
+    /** 生成验证码：使用方注入，返回原图/滑块图/token/密钥 */
+    generateCaptcha: {
+      type: Function,
+      required: true,
+    },
+    /** 校验验证码：使用方注入，返回一次性 captchaVerification */
+    checkCaptcha: {
+      type: Function,
+      required: true,
+    },
+    /** 坐标加密：使用方注入，如 (plainText, secretKey) => AES 密文 */
+    encryptPoint: {
+      type: Function,
+      required: true,
+    },
   },
   setup(props, context) {
     const {
@@ -256,10 +281,13 @@ export default {
       isEnd = ref(false), //是否验证完成
       showRefresh = ref(true),
       isLoading = ref(true), //验证码图片加载中
+      loadFailed = ref(false), //验证码加载失败
+      emptyKey = ref(0), //失败占位的 key，每次失败 +1 让出场动画重播
       transitionLeft = ref(''),
       transitionWidth = ref(''),
       startLeft = ref(0),
-      targetX = ref(0);
+      /** 正在请求后端校验 */
+      checking = ref(false);
 
     const barArea = computed(() => {
       return proxy.$el.querySelector('.verify-bar-area');
@@ -296,88 +324,47 @@ export default {
 
     let loadToken = 0;
 
-    // 本地演示图是即时生成的，给一个最短展示时间，方便看到 loading 效果（接真实接口后可去掉）
-    const MIN_LOADING_MS = 1000;
-
-    // 本地演示：用 demo 图生成背景和拼图块（后续接接口时替换成 repData）
-    const getPictrue = async () => {
+    /** 拉取验证码：后端返回 Base64 原图、滑块图、token 和加密密钥 */
+    const fetchCaptcha = async () => {
       const token = ++loadToken;
-      const startedAt = Date.now();
       isLoading.value = true;
+      tipWords.value = '';
+      // 先清掉旧图；失败态保持到新图就绪，避免闪出坏图
+      backImgBase.value = '';
+      blockBackImgBase.value = '';
       try {
-        const [background, mask] = await Promise.all([
-          loadImage(demoBg),
-          loadImage(demoMask),
-        ]);
+        const data = await props.generateCaptcha({
+          captchaType: props.captchaType || 'blockPuzzle',
+        });
         if (token !== loadToken) return;
 
-        // 缺口出现的水平位置（原图坐标系）
-        const minX = 40;
-        const maxX = Math.max(minX, SOURCE_WIDTH - PIECE_WIDTH - 40);
-        targetX.value = Math.round(
-          minX + Math.random() * Math.max(1, maxX - minX),
-        );
+        secretKey.value = data.secretKey;
+        backToken.value = data.token;
+        blockBackImgBase.value = data.jigsawImageBase64 || '';
 
-        // 拼图块：从背景图裁出对应区域，再用拼图形状做透明遮罩
-        const pieceCanvas = document.createElement('canvas');
-        pieceCanvas.width = PIECE_WIDTH;
-        pieceCanvas.height = SOURCE_HEIGHT;
-        const pieceCtx = pieceCanvas.getContext('2d');
-        pieceCtx.drawImage(
-          background,
-          targetX.value,
-          0,
-          PIECE_WIDTH,
-          SOURCE_HEIGHT,
-          0,
-          0,
-          PIECE_WIDTH,
-          SOURCE_HEIGHT,
-        );
-        pieceCtx.globalCompositeOperation = 'destination-in';
-        pieceCtx.drawImage(mask, 0, 0, PIECE_WIDTH, SOURCE_HEIGHT);
-        blockBackImgBase.value = pieceCanvas
-          .toDataURL('image/png')
-          .split(',')[1];
-
-        // 背景图：在缺口位置画一块半透明白色拼图形状
-        const bgCanvas = document.createElement('canvas');
-        bgCanvas.width = SOURCE_WIDTH;
-        bgCanvas.height = SOURCE_HEIGHT;
-        const bgCtx = bgCanvas.getContext('2d');
-        bgCtx.drawImage(background, 0, 0, SOURCE_WIDTH, SOURCE_HEIGHT);
-
-        const holeCanvas = document.createElement('canvas');
-        holeCanvas.width = PIECE_WIDTH;
-        holeCanvas.height = SOURCE_HEIGHT;
-        const holeCtx = holeCanvas.getContext('2d');
-        holeCtx.drawImage(mask, 0, 0, PIECE_WIDTH, SOURCE_HEIGHT);
-        holeCtx.globalCompositeOperation = 'source-in';
-        holeCtx.fillStyle = '#ffffff';
-        holeCtx.fillRect(0, 0, PIECE_WIDTH, SOURCE_HEIGHT);
-
-        bgCtx.globalAlpha = 0.55;
-        bgCtx.drawImage(holeCanvas, targetX.value, 0);
-        bgCtx.globalAlpha = 1;
-
-        backImgBase.value = bgCanvas.toDataURL('image/png').split(',')[1];
-      } catch (error) {
-        console.error('生成滑块验证码演示图失败', error);
-      } finally {
-        // 补足最短 loading 时间；已被更新的请求取代时不再改动状态
-        if (token === loadToken) {
-          const rest = MIN_LOADING_MS - (Date.now() - startedAt);
-          if (rest > 0) {
-            await new Promise((resolve) => setTimeout(resolve, rest));
-          }
-          if (token === loadToken) isLoading.value = false;
+        // 等图片解码完成再撤掉 loading，避免闪一下白底
+        try {
+          await loadImage(`data:image/png;base64,${data.originalImageBase64}`);
+        } catch {
+          // 解码失败也照常展示，浏览器会重试渲染
         }
+        if (token !== loadToken) return;
+        backImgBase.value = data.originalImageBase64;
+        loadFailed.value = false;
+      } catch (error) {
+        if (token !== loadToken) return;
+        loadFailed.value = true;
+        emptyKey.value += 1;
+        passFlag.value = false;
+        tipWords.value = '验证码加载失败，点击右上角刷新重试';
+      } finally {
+        if (token === loadToken) isLoading.value = false;
       }
     };
 
     const init = () => {
       text.value = explain.value;
-      getPictrue();
+      fetchCaptcha();
       nextTick(() => {
         const size = resetSize(proxy);
         setSize.imgHeight = size.imgHeight;
@@ -390,7 +377,7 @@ export default {
 
     //鼠标按下
     const start = (e) => {
-      if (isLoading.value) return;
+      if (isLoading.value || loadFailed.value || checking.value) return;
       e = e || window.event;
       let x;
       if (!e.touches) {
@@ -448,50 +435,66 @@ export default {
       }
     };
 
-    //鼠标松开
-    const end = () => {
+    //鼠标松开：提交后端校验
+    const end = async () => {
       endMovetime.value = +new Date();
-      //判断是否重合（本地演示：按滑动距离与缺口位置比较）
-      if (status.value && isEnd.value == false) {
-        let moveLeftDistance = parseInt(
-          (moveBlockLeft.value || '').replace('px', ''),
-        );
-        if (Number.isNaN(moveLeftDistance)) moveLeftDistance = 0;
-        moveLeftDistance =
-          (moveLeftDistance * 310) / parseInt(setSize.imgWidth);
+      if (!status.value || isEnd.value || checking.value) return;
+      status.value = false;
 
-        if (Math.abs(moveLeftDistance - targetX.value) <= TOLERANCE) {
-          moveBlockBackgroundColor.value = '#21b866';
-          leftBarBorderColor.value = '#21b866';
-          iconColor.value = '#fff';
-          iconClass.value = 'icon-check';
-          showRefresh.value = false;
-          isEnd.value = true;
-          passFlag.value = true;
-          tipWords.value = `${(
-            (endMovetime.value - startMoveTime.value) /
-            1000
-          ).toFixed(2)}s验证成功`;
-          setTimeout(() => {
-            tipWords.value = '';
-            context.emit('success', { captchaVerification: 'demo' });
-          }, 1000);
-        } else {
-          moveBlockBackgroundColor.value = '#f05656';
-          leftBarBorderColor.value = '#f05656';
-          iconColor.value = '#fff';
-          iconClass.value = 'icon-close';
-          passFlag.value = false;
-          tipWords.value = '验证失败';
-          setTimeout(() => {
-            refresh();
-          }, 1000);
-          setTimeout(() => {
-            tipWords.value = '';
-          }, 1000);
-          context.emit('error', proxy);
-        }
-        status.value = false;
+      let moveLeftDistance = parseInt(
+        (moveBlockLeft.value || '').replace('px', ''),
+      );
+      if (Number.isNaN(moveLeftDistance)) moveLeftDistance = 0;
+      // 换算回原图坐标系（后端按 310px 宽度校验）
+      moveLeftDistance =
+        (moveLeftDistance * SOURCE_WIDTH) / parseInt(setSize.imgWidth);
+
+      // 坐标加密后提交，加密实现由使用方通过 encryptPoint 注入
+      const pointJson = props.encryptPoint(
+        JSON.stringify({ x: moveLeftDistance, y: 5 }),
+        secretKey.value,
+      );
+
+      checking.value = true;
+      try {
+        const res = await props.checkCaptcha({
+          captchaType: props.captchaType || 'blockPuzzle',
+          token: backToken.value,
+          pointJson,
+        });
+
+        moveBlockBackgroundColor.value = '#21b866';
+        leftBarBorderColor.value = '#21b866';
+        iconColor.value = '#fff';
+        iconClass.value = 'icon-check';
+        showRefresh.value = false;
+        isEnd.value = true;
+        passFlag.value = true;
+        tipWords.value = `${(
+          (endMovetime.value - startMoveTime.value) /
+          1000
+        ).toFixed(2)}s验证成功`;
+
+        setTimeout(() => {
+          tipWords.value = '';
+          context.emit('success', {
+            captchaVerification: res.captchaVerification,
+          });
+        }, 1000);
+      } catch (error) {
+        moveBlockBackgroundColor.value = '#f05656';
+        leftBarBorderColor.value = '#f05656';
+        iconColor.value = '#fff';
+        iconClass.value = 'icon-close';
+        passFlag.value = false;
+        tipWords.value = error?.message || '验证失败，请重试';
+        setTimeout(() => {
+          tipWords.value = '';
+          refresh();
+        }, 1000);
+        context.emit('error', proxy);
+      } finally {
+        checking.value = false;
       }
     };
 
@@ -511,7 +514,7 @@ export default {
       iconClass.value = 'icon-right';
       isEnd.value = false;
 
-      getPictrue();
+      fetchCaptcha();
       setTimeout(() => {
         transitionWidth.value = '';
         transitionLeft.value = '';
@@ -566,6 +569,9 @@ export default {
       isEnd,
       showRefresh,
       isLoading,
+      loadFailed,
+      emptyKey,
+      emptyIcon,
       transitionLeft,
       transitionWidth,
       barArea,
