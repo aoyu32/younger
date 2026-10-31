@@ -42,7 +42,7 @@ export default {
   },
 };
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties {
     $message: typeof message;
   }
