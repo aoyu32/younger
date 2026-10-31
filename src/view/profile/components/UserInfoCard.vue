@@ -32,14 +32,21 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUser } from '@/store/module/user';
+import { useUserStore } from '@/store/module/user';
+import { logout as logoutApi } from '@/api/auth';
 
 const router = useRouter();
-const { logout } = useUser();
+const { logout } = useUserStore();
 
-const handleLogout = () => {
-  logout();
-  router.push('/home');
+const handleLogout = async () => {
+  try {
+    await logoutApi({ silent: true, skipAuthRedirect: true });
+  } catch {
+    // 会话已失效时继续清理本地登录态
+  } finally {
+    logout();
+    router.push('/home');
+  }
 };
 
 const props = withDefaults(
