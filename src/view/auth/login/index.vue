@@ -38,6 +38,7 @@
         <div class="login-form flex-col">
           <div class="form-item">
             <ao-form-input
+              ref="usernameRef"
               type="text"
               placeholder="请输入用户名或邮箱"
               v-model="loginForm.username"
@@ -49,6 +50,7 @@
           </div>
           <div class="form-item">
             <ao-form-input
+              ref="passwordRef"
               type="password"
               placeholder="请输入密码"
               v-model="loginForm.password"
@@ -62,7 +64,12 @@
           <div @click="$router.push('/reset')">忘记密码？</div>
         </div>
         <div class="login-submit">
-          <ao-button @click="handleLogin">登录</ao-button>
+          <ao-button :disabled="submitting" @click="handleLogin">
+            <span class="submit-inner">
+              <ao-loading v-if="submitting" />
+              <span>{{ submitting ? '登录中...' : '登录' }}</span>
+            </span>
+          </ao-button>
         </div>
         <!-- 移动端：品牌面板隐藏后，注册入口移到表单下方 -->
         <div class="mobile-alt-link">
@@ -70,18 +77,31 @@
         </div>
       </div>
     </div>
+    <!-- 连续失败被限流（body code=429）时弹滑块，验证通过后携带凭证重试一次 -->
+    <AuthCaptcha
+      v-if="showCaptcha"
+      @on-success="handleCaptchaRetry"
+      @on-close="showCaptcha = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter, onBeforeRouteLeave } from 'vue-router';
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '../composables/useAuthTransition';
+import { useUserStore } from '@/store/module/user';
 import AoFormInput from '@/components/ao-form-input/index.vue';
+import AuthCaptcha from '../components/AuthCaptcha.vue';
+import { message } from '@/components/ao-message';
+import { login } from '@/api/auth';
+import { ApiError } from '@/request';
 
 const { showOverlay, hideOverlay } = useAuthTransition();
 
 const router = useRouter();
+const route = useRoute();
+const userStore = useUserStore();
 const loginBoxRef = ref<HTMLElement>();
 const loginFormRef = ref<HTMLElement>();
 const loginLeftRef = ref<HTMLElement>();
@@ -100,8 +120,81 @@ const rules = {
   password: [{ required: true, message: '密码不能为空' }],
 };
 
-const handleLogin = () => {
-  console.log(loginForm.value);
+const showCaptcha = ref(false);
+const submitting = ref(false);
+
+const usernameRef = ref<InstanceType<typeof AoFormInput>>();
+const passwordRef = ref<InstanceType<typeof AoFormInput>>();
+
+const EMAIL_RE = /^[\w.-]+@[\w.-]+\.\w+$/;
+
+const handleLogin = async () => {
+  if (submitting.value) return;
+
+  // 先校验表单
+  const valid = [usernameRef, passwordRef].every(
+    (field) => field.value?.validate() ?? false,
+  );
+  if (!valid) return;
+
+  await doLogin();
+};
+
+/**
+ * 密码登录：silent 自行处理提示，以便识别 body code=429。
+ * 被限流时弹滑块，拿到一次性凭证后重试一次。
+ */
+const doLogin = async (captchaVerification?: string, isRetry = false) => {
+  if (submitting.value) return;
+  submitting.value = true;
+  try {
+    const account = loginForm.value.username.trim();
+    const res = await login(
+      {
+        loginType: EMAIL_RE.test(account)
+          ? 'EMAIL_PASSWORD'
+          : 'USERNAME_PASSWORD',
+        account,
+        password: loginForm.value.password,
+        ...(captchaVerification ? { captchaVerification } : {}),
+      },
+      { silent: true },
+    );
+    // 保存后端返回的用户信息并自动登录（token 由 HttpOnly Cookie 维护，不存前端）
+    userStore.login({
+      userId: res.userId,
+      nickname: res.nickname,
+      avatar: res.avatar,
+      roles: res.roles,
+    });
+    message.success(`欢迎回来，${res.nickname}`);
+    // 401 拦截器带的 redirect 优先回跳，否则去首页
+    const redirect = route.query.redirect;
+    router.push(
+      typeof redirect === 'string' && redirect.startsWith('/')
+        ? redirect
+        : '/home',
+    );
+  } catch (e) {
+    // 429 且不是重试：弹滑块验证，通过后携带凭证重试一次
+    if (e instanceof ApiError && e.code === 429 && !isRetry) {
+      showCaptcha.value = true;
+      return;
+    }
+    message.error(e instanceof Error ? e.message : '登录失败，请稍后重试');
+  } finally {
+    submitting.value = false;
+  }
+};
+
+/** 滑块校验通过：拿 captchaVerification 重试一次登录（一次性消费） */
+const handleCaptchaRetry = async (payload: {
+  captchaVerification?: string;
+}) => {
+  showCaptcha.value = false;
+  if (!payload?.captchaVerification) return;
+
+  await doLogin(payload.captchaVerification, true);
 };
 
 const handleToRegister = () => {
