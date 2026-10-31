@@ -3,6 +3,21 @@
   height: 100vh;
 }
 
+/* 按钮里的 loading + 文案作为一组整体居中；不写字号/行高，跟按钮本身的行盒保持一致 */
+.submit-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 按钮内容用 flex 居中，消掉行内基线带来的 2px 偏差 */
+.register-submit :deep(.ao-button-btn) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .register.shrink-out {
   animation: shrinkOut 0.6s ease forwards;
 }
@@ -222,6 +237,72 @@
 
 :deep(.ao-form-input .input-wrapper::after) {
   box-shadow: inset 0 0 0 1px var(--ao-lime-7);
+}
+
+/* 注册按钮上方的协议勾选行：内容整体靠右，右边缘和注册按钮右边缘对齐 */
+.register-agreement {
+  width: 300px;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: flex-start;
+  margin: 0;
+  margin-right: auto;
+  gap: 8px;
+  font-size: var(--ao-font-size-xs);
+  color: var(--ao-color-text-tertiary);
+  user-select: none;
+
+  .agreement-checkbox {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ao-color-border);
+    border-radius: var(--ao-border-radius-sm);
+    background-color: var(--ao-color-bg-container);
+    color: var(--ao-gray-0);
+    cursor: pointer;
+    transition: all var(--ao-duration-fast) var(--ao-ease-in-out);
+
+    &:hover {
+      border-color: var(--ao-color-primary);
+    }
+
+    &.checked {
+      border-color: var(--ao-color-primary);
+      background-color: var(--ao-color-primary);
+    }
+
+    .check-icon {
+      width: 11px;
+      height: 11px;
+    }
+  }
+
+  .agreement-text {
+    line-height: 1.5;
+  }
+
+  .agreement-link {
+    color: var(--ao-color-primary);
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.register-submit {
+  width: 300px;
+  max-width: 100%;
+  align-self: flex-start;
+  margin: 0;
+  margin-right: auto;
 }
 
 .to-login {

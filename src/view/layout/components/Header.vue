@@ -102,14 +102,14 @@
         <div class="user-info-box flex-center" v-else>
           <div class="user_avatar">
             <AoImage
-              src="@/assets/avatar.png"
+              :src="userInfo?.avatar || '@/assets/deafult_avatar.png'"
               width="30px"
               height="30px"
               circle
             />
           </div>
           <div class="user_name">
-            <div class="name ellipsis">张dffsdfsdfdsfsfdsfsdf</div>
+            <div class="name ellipsis">{{ userInfo?.nickname }}</div>
           </div>
           <div class="header-menu">
             <div class="menu-wrapper">
@@ -187,7 +187,9 @@ import {
   watch,
 } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUser } from '@/store/module/user';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/store/module/user';
+import { logout as logoutApi } from '@/api/auth';
 import { setBodyScrollLocked } from '@/utils/overlayScrollbars';
 const router = useRouter();
 const routers = router.getRoutes();
@@ -209,7 +211,9 @@ defineOptions({
 });
 
 // 响应式数据
-const { isLogin, logout } = useUser();
+const userStore = useUserStore();
+const { isLogin, userInfo } = storeToRefs(userStore);
+const { logout } = userStore;
 
 // 用户下拉菜单：跳转到个人中心，并激活对应分组下的第一个菜单项
 // tab 传的是个人中心左侧导航的菜单 key，传分组 key（collect / security / order）时激活该分组第一项
@@ -226,10 +230,16 @@ const goProfile = (tab) => {
 };
 
 // 退出登录
-const handleLogout = () => {
-  logout();
-  if (router.currentRoute.value.path === '/profile') {
-    router.push('/home');
+const handleLogout = async () => {
+  try {
+    await logoutApi({ silent: true, skipAuthRedirect: true });
+  } catch {
+    // 会话已失效时继续清理本地登录态
+  } finally {
+    logout();
+    if (router.currentRoute.value.path === '/profile') {
+      router.push('/home');
+    }
   }
 };
 
@@ -773,10 +783,33 @@ const handleLogoClick = () => {
       height: 8px;
     }
 
+    &::before {
+      content: '';
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 50%;
+      z-index: 1;
+      width: 12px;
+      height: 12px;
+      transform: translateX(-50%) rotate(45deg);
+      background-color: var(--ao-gray-0);
+      border-top: var(--ao-border-width-thin) solid
+        var(--ao-color-border-secondary);
+      border-left: var(--ao-border-width-thin) solid
+        var(--ao-color-border-secondary);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--ao-duration-fast) var(--ao-ease-in-out);
+    }
+
     &:hover {
       .header-menu {
         max-height: 260px;
         pointer-events: auto;
+      }
+
+      &::before {
+        opacity: 1;
       }
     }
   }
@@ -784,16 +817,14 @@ const handleLogoClick = () => {
   .header-menu {
     position: absolute;
     top: 100%;
-    /* 修复：改为右对齐，防止菜单超出屏幕右侧 */
-    right: 0;
-    left: auto;
-    /* 修复：取消宽度跟随父元素 */
-    /* width: 100%; */
-    /* 修复：由内容撑开宽度，并设置最小宽度 */
+    left: 50%;
+    transform: translateX(-50%);
     width: max-content;
     min-width: 120px;
     margin-top: 8px;
     background-color: var(--ao-gray-0);
+    border: var(--ao-border-width-thin) solid
+      var(--ao-color-border-secondary);
     box-shadow: var(--ao-shadow-md);
     border-radius: var(--ao-border-radius-lg);
     max-height: 0;
