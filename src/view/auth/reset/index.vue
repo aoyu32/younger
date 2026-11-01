@@ -38,10 +38,12 @@
         <div class="reset-form flex-col">
           <div class="form-item">
             <ao-form-input
+              ref="emailRef"
               type="text"
               placeholder="请输入邮箱"
               v-model="resetForm.email"
               :rule="rules.email"
+              clearable
             >
               <template #label>邮箱：</template>
             </ao-form-input>
@@ -49,18 +51,28 @@
           <div class="form-item">
             <div class="code-row">
               <ao-form-input
+                ref="verifyCodeRef"
                 type="text"
                 placeholder="请输入验证码"
                 v-model="resetForm.verifyCode"
                 :rule="rules.verifyCode"
+                clearable
               >
                 <template #label>验证码：</template>
               </ao-form-input>
-              <ao-button class="code-btn" plain>获取验证码</ao-button>
+              <ao-button
+                class="code-btn"
+                plain
+                :disabled="cooldown > 0 || sending"
+                @click="handleGetCode"
+              >
+                {{ sending ? '发送中...' : cooldown > 0 ? `${cooldown}s后重试` : '获取验证码' }}
+              </ao-button>
             </div>
           </div>
           <div class="form-item">
             <ao-form-input
+              ref="passwordRef"
               type="password"
               placeholder="请输入新密码"
               v-model="resetForm.password"
@@ -71,6 +83,7 @@
           </div>
           <div class="form-item">
             <ao-form-input
+              ref="confirmPasswordRef"
               type="password"
               placeholder="请再次输入密码"
               v-model="resetForm.confirmPassword"
@@ -81,7 +94,12 @@
           </div>
         </div>
         <div class="reset-submit">
-          <ao-button @click="handleReset">重置密码</ao-button>
+          <ao-button :disabled="submitting" @click="handleReset">
+            <span class="submit-inner">
+              <ao-loading v-if="submitting" />
+              <span>{{ submitting ? '提交中...' : '重置密码' }}</span>
+            </span>
+          </ao-button>
         </div>
         <!-- 移动端：品牌面板隐藏后，登录入口移到表单下方 -->
         <div class="mobile-alt-link">
@@ -89,14 +107,25 @@
         </div>
       </div>
     </div>
+    <!-- 发码被限流（body code=429）时弹滑块，验证通过后携带凭证重发一次 -->
+    <AoCaptcha
+      v-if="showCaptcha"
+      @on-success="handleCaptchaRetry"
+      @on-close="showCaptcha = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '../composables/useAuthTransition';
 import AoFormInput from '@/components/ao-form-input/index.vue';
+import AoCaptcha from '../components/AuthCaptcha.vue';
+import { message } from '@/components/ao-message';
+import { sendResetPasswordCode } from '@/api/codes';
+import { forgotPassword } from '@/api/auth';
+import { ApiError } from '@/request';
 
 const { showOverlay, hideOverlay } = useAuthTransition();
 const router = useRouter();
@@ -126,7 +155,7 @@ const rules = {
   ],
   password: [
     { required: true, message: '新密码不能为空' },
-    { min: 6, max: 20, message: '密码长度须在 6~20 位之间' },
+    { min: 8, max: 64, message: '密码长度须在 8~64 位之间' },
   ],
   confirmPassword: [
     { required: true, message: '确认密码不能为空' },
@@ -137,12 +166,97 @@ const rules = {
   ],
 };
 
-const handleGetCode = () => {
-  console.log('send verify code');
+const showCaptcha = ref(false);
+const submitting = ref(false);
+
+/** 发送验证码：倒计时 + 发送中状态 */
+const sending = ref(false);
+const cooldown = ref(0);
+let cooldownTimer: ReturnType<typeof setInterval> | undefined;
+
+const emailRef = ref<InstanceType<typeof AoFormInput>>();
+const verifyCodeRef = ref<InstanceType<typeof AoFormInput>>();
+const passwordRef = ref<InstanceType<typeof AoFormInput>>();
+const confirmPasswordRef = ref<InstanceType<typeof AoFormInput>>();
+
+const handleGetCode = async () => {
+  if (sending.value || cooldown.value > 0) return;
+
+  if (!emailRef.value?.validate()) return;
+
+  await doSendCode();
 };
 
-const handleReset = () => {
-  console.log(resetForm.value);
+/** 发码冷却倒计时（仅发送成功后启动） */
+const startCooldown = () => {
+  cooldown.value = 60;
+  cooldownTimer = setInterval(() => {
+    cooldown.value -= 1;
+    if (cooldown.value <= 0 && cooldownTimer) {
+      clearInterval(cooldownTimer);
+      cooldownTimer = undefined;
+    }
+  }, 1000);
+};
+
+const doSendCode = async (captchaVerification?: string, isRetry = false) => {
+  if (sending.value) return;
+  sending.value = true;
+  try {
+    await sendResetPasswordCode(
+      {
+        channel: 'EMAIL',
+        target: resetForm.value.email,
+        ...(captchaVerification ? { captchaVerification } : {}),
+      },
+      { silent: true },
+    );
+    message.success('验证码已发送至邮箱，请注意查收');
+    startCooldown();
+  } catch (e) {
+    if (e instanceof ApiError && e.code === 429 && !isRetry) {
+      showCaptcha.value = true;
+      return;
+    }
+    message.error(e instanceof Error ? e.message : '发送失败，请稍后重试');
+  } finally {
+    sending.value = false;
+  }
+};
+
+/** 滑块校验通过：拿 captchaVerification 重发一次验证码 */
+const handleCaptchaRetry = async (payload: {
+  captchaVerification?: string;
+}) => {
+  showCaptcha.value = false;
+  if (!payload?.captchaVerification) return;
+
+  await doSendCode(payload.captchaVerification, true);
+};
+
+const handleReset = async () => {
+  if (submitting.value) return;
+
+  const valid = [emailRef, verifyCodeRef, passwordRef, confirmPasswordRef].every(
+    (field) => field.value?.validate() ?? false,
+  );
+  if (!valid) return;
+
+  submitting.value = true;
+  try {
+    await forgotPassword({
+      channel: 'EMAIL',
+      account: resetForm.value.email,
+      code: resetForm.value.verifyCode,
+      newPassword: resetForm.value.password,
+    });
+    message.success('密码重置成功，请登录');
+    router.push('/login');
+  } catch {
+    // 失败提示由响应拦截器统一处理
+  } finally {
+    submitting.value = false;
+  }
 };
 
 const handleBackHome = () => {
@@ -161,6 +275,10 @@ const handleBackHome = () => {
 
 onMounted(() => {
   hideOverlay();
+});
+
+onBeforeUnmount(() => {
+  if (cooldownTimer) clearInterval(cooldownTimer);
 });
 
 onBeforeRouteLeave((to) => {

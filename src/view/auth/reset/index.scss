@@ -262,6 +262,21 @@
   }
 }
 
+/* 按钮里的 loading + 文案作为一组整体居中；不写字号/行高，跟按钮本身的行盒保持一致 */
+.submit-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 按钮内容用 flex 居中，消掉行内基线带来的 2px 偏差 */
+.reset-submit :deep(.ao-button-btn) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .back-home {
   position: absolute;
   top: 0;

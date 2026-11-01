@@ -42,9 +42,10 @@
         <button
           type="button"
           class="modify-password__submit"
+          :disabled="submitting"
           @click="handleSubmit"
         >
-          确认修改
+          {{ submitting ? '提交中...' : '确认修改' }}
         </button>
         <span v-if="successTip" class="modify-password__tip">
           {{ successTip }}
@@ -57,18 +58,19 @@
 <script setup lang="ts">
 /**
  * 修改密码页
- * 填写原密码 / 新密码 / 确认密码，三项校验通过后提交（接口待接入）。
+ * 填写原密码 / 新密码 / 确认密码，三项校验通过后提交。
  * @author LiangQiYang
  * @date 2026-10-16
  */
 import { onUnmounted, reactive, ref } from 'vue';
 import AoFormInput from '@/components/ao-form-input/index.vue';
+import { changePassword } from '@/api/auth';
 
 defineOptions({ name: 'ModifyPassword' });
 
-/** 密码长度范围（与注册、重置密码保持一致） */
-const PASSWORD_MIN = 6;
-const PASSWORD_MAX = 20;
+/** 密码长度范围（与后端一致：注册、登录、重置统一 8~64） */
+const PASSWORD_MIN = 8;
+const PASSWORD_MAX = 64;
 
 /** 修改密码表单 */
 const form = reactive({
@@ -76,6 +78,9 @@ const form = reactive({
   newPassword: '',
   confirmPassword: '',
 });
+
+/** 提交中状态：防重复点击 */
+const submitting = ref(false);
 
 /** 提交成功提示（几秒后自动消失） */
 const successTip = ref('');
@@ -111,8 +116,9 @@ const rules = {
 /** 成功提示的定时器 */
 let tipTimer: ReturnType<typeof setTimeout> | undefined;
 
-/** 提交：三项都校验通过后调接口（TODO），成功后清空表单 */
-function handleSubmit() {
+/** 提交：三项都校验通过后调修改密码接口，成功后清空表单 */
+async function handleSubmit() {
+  if (submitting.value) return;
   const oldValid = oldPasswordRef.value?.validate() ?? false;
   const newValid = newPasswordRef.value?.validate() ?? false;
   const confirmValid = confirmPasswordRef.value?.validate() ?? false;
@@ -121,16 +127,27 @@ function handleSubmit() {
     return;
   }
 
-  // TODO 调修改密码接口，成功后再清空表单
-  successTip.value = '密码修改成功';
-  form.oldPassword = '';
-  form.newPassword = '';
-  form.confirmPassword = '';
+  submitting.value = true;
+  try {
+    await changePassword({
+      oldPassword: form.oldPassword,
+      newPassword: form.newPassword,
+    });
+    successTip.value = '密码修改成功';
+    form.oldPassword = '';
+    form.newPassword = '';
+    form.confirmPassword = '';
 
-  if (tipTimer) clearTimeout(tipTimer);
-  tipTimer = setTimeout(() => {
+    if (tipTimer) clearTimeout(tipTimer);
+    tipTimer = setTimeout(() => {
+      successTip.value = '';
+    }, 3000);
+  } catch {
+    // 原密码错误等失败由响应拦截器统一提示
     successTip.value = '';
-  }, 3000);
+  } finally {
+    submitting.value = false;
+  }
 }
 
 onUnmounted(() => {
@@ -205,6 +222,11 @@ onUnmounted(() => {
   &:hover {
     border-color: var(--ao-color-primary-hover);
     background-color: var(--ao-color-primary-hover);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 

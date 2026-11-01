@@ -3,7 +3,7 @@
  * @description 统一处理 baseURL、业务状态码校验、错误归一化与 401 登出
  *
  * 鉴权方式：Sa-Token HttpOnly cookie，浏览器自动携带。
- * 前端不存 token、不拼 Authorization 头（withCredentials: true 为唯一要求）。
+ * 前端不存 token、不拼 ys_token 头（withCredentials: true 为唯一要求）。
  *
  * 后端返回结构（com.younger.ys.result.Result）：
  * { code: 200, message: 'success', data: T }
@@ -158,7 +158,7 @@ function handleFailure(error: ApiError): void {
 
 http.interceptors.request.use(
   (config) => {
-    // cookie 模式：登录态由浏览器自动携带，不拼 Authorization 头
+    // cookie 模式：登录态由浏览器自动携带，不拼 ys_token 头
     // 可选：loading 计数、请求 ID 在这里加
     return config;
   },
