@@ -2,6 +2,7 @@
  * 用户认证接口类型定义
  * @description 对应 Apifox 文档「用户模块/用户认证」
  */
+import type { CodeChannel } from '../codes/types';
 
 /** 用户注册入参（与后端 UserRegisterRequest 对齐） */
 export interface RegisterRequest {
@@ -55,6 +56,25 @@ export interface UserLoginResponse {
   token: string;
 }
 
+/** 忘记密码重置入参（与后端 PasswordForgotRequest 对齐） */
+export interface PasswordForgotRequest {
+  /** 验证通道：EMAIL 邮箱，SMS 短信 */
+  channel: CodeChannel;
+  /** 账号：邮箱或手机号 */
+  account: string;
+  /** 验证码：发送重置密码验证码接口下发，一次性使用 */
+  code: string;
+  /** 新密码，8~64 位 */
+  newPassword: string;
+}
+
+/** 登录后修改密码入参（与后端 PasswordChangeRequest 对齐） */
+export interface PasswordChangeRequest {
+  /** 原密码 */
+  oldPassword: string;
+  /** 新密码，8~64 位 */
+  newPassword: string;
+}
 /** 用户注册出参（与后端 UserRegisterResponse 对齐） */
 export interface RegisterResponse {
   /** 新用户 ID（雪花 ID，后端序列化为字符串，前端当字符串用） */
