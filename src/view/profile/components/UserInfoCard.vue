@@ -43,6 +43,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/module/user';
 import { logout as logoutApi } from '@/api/auth';
 import AoDialog from '@/components/ao-dialog/index.vue';
+import { message } from '@/components/ao-message';
 
 const router = useRouter();
 const { logout } = useUserStore();
@@ -57,6 +58,7 @@ const handleLogoutConfirm = async () => {
   logoutConfirmVisible.value = false;
   try {
     await logoutApi({ silent: true, skipAuthRedirect: true });
+    message.success('已退出登录');
   } catch {
     // 会话已失效时继续清理本地登录态
   } finally {
