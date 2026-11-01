@@ -121,11 +121,19 @@
               >
                 {{ menu.title }}
               </div>
-              <div class="menu-item logout" @click.stop="handleLogout">
+              <div class="menu-item logout" @click.stop="openLogoutConfirm">
                 退出登录
               </div>
             </div>
           </div>
+          <AoDialog
+            v-model="logoutConfirmVisible"
+            title="退出登录"
+            confirm-text="确定退出"
+            @confirm="handleLogoutConfirm"
+          >
+            <p class="logout-confirm-text">确定要退出当前账号吗？</p>
+          </AoDialog>
         </div>
       </div>
     </div>
@@ -190,6 +198,7 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/store/module/user';
 import { logout as logoutApi } from '@/api/auth';
+import AoDialog from '@/components/ao-dialog/index.vue';
 import { setBodyScrollLocked } from '@/utils/overlayScrollbars';
 const router = useRouter();
 const routers = router.getRoutes();
@@ -230,7 +239,14 @@ const goProfile = (tab) => {
 };
 
 // 退出登录
-const handleLogout = async () => {
+const logoutConfirmVisible = ref(false);
+
+const openLogoutConfirm = () => {
+  logoutConfirmVisible.value = true;
+};
+
+const handleLogoutConfirm = async () => {
+  logoutConfirmVisible.value = false;
   try {
     await logoutApi({ silent: true, skipAuthRedirect: true });
   } catch {
@@ -852,6 +868,12 @@ const handleLogoClick = () => {
       color: var(--ao-color-error);
     }
   }
+}
+
+.logout-confirm-text {
+  margin: 0;
+  font-size: calc(var(--ao-font-size-sm) + 1px);
+  line-height: 1.8;
 }
 
 @media (max-width: 900px) {

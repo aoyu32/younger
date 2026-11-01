@@ -22,10 +22,18 @@
               </div>
             </div>
           </div>
-          <div class="logout-wrapper" @click="handleLogout">退出登录</div>
+          <div class="logout-wrapper" @click="openLogoutConfirm">退出登录</div>
         </div>
       </div>
     </div>
+    <AoDialog
+      v-model="logoutConfirmVisible"
+      title="退出登录"
+      confirm-text="确定退出"
+      @confirm="handleLogoutConfirm"
+    >
+      <p class="logout-confirm-text">确定要退出当前账号吗？</p>
+    </AoDialog>
   </div>
 </template>
 
@@ -34,11 +42,19 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/module/user';
 import { logout as logoutApi } from '@/api/auth';
+import AoDialog from '@/components/ao-dialog/index.vue';
 
 const router = useRouter();
 const { logout } = useUserStore();
 
-const handleLogout = async () => {
+const logoutConfirmVisible = ref(false);
+
+const openLogoutConfirm = () => {
+  logoutConfirmVisible.value = true;
+};
+
+const handleLogoutConfirm = async () => {
+  logoutConfirmVisible.value = false;
   try {
     await logoutApi({ silent: true, skipAuthRedirect: true });
   } catch {
@@ -438,5 +454,11 @@ defineExpose({ refresh: scheduleRender });
       color: #ff5757;
     }
   }
+}
+
+.logout-confirm-text {
+  margin: 0;
+  font-size: calc(var(--ao-font-size-sm) + 1px);
+  line-height: 1.8;
 }
 </style>
