@@ -63,17 +63,27 @@ defineProps<{
     }
     .label {
       width: 100%;
+      min-width: 0;
 
       .title {
+        flex-shrink: 0;
         font-size: var(--ao-font-size-base);
         font-weight: 700;
         color: var(--ao-gray-8);
         letter-spacing: 0.5px;
+        white-space: nowrap;
       }
       .sub-title {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin-left: 24px;
         font-size: var(--ao-font-size-xs);
         color: var(--ao-gray-6);
         font-weight: 400;
+        text-align: right;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
