@@ -12,6 +12,7 @@
     "@videojs/html": "10.0.0-beta.23",
     "artplayer": "^5.4.0",
     "axios": "^1.15.0",
+    "china-division": "^2.7.0",
     "colorthief": "^3.3.1",
     "crypto-js": "^4.2.0",
     "gsap": "^3.15.0",
