@@ -63,7 +63,7 @@
               />
             </template>
             <span v-else class="field__text">{{
-              cityText || EMPTY_TEXT
+              cityText || '未设置城市'
             }}</span>
           </div>
         </div>
@@ -93,7 +93,7 @@
               :disabled-date="isFutureDate"
             />
             <span v-else class="field__text">{{
-              birthdayText || EMPTY_TEXT
+              birthdayText || '未设置生日'
             }}</span>
           </div>
         </div>
@@ -121,7 +121,7 @@
               :maxlength="20"
             />
             <span v-else class="field__text">{{
-              profile.job || EMPTY_TEXT
+              profile.job || '未填写职业'
             }}</span>
           </div>
         </div>
@@ -135,9 +135,11 @@
         v-if="editing"
         v-model="profile.intro"
         placeholder="介绍一下自己吧"
-        :maxlength="100"
+        :maxlength="500"
       />
-      <p v-else class="intro__text">{{ profile.intro || EMPTY_TEXT }}</p>
+      <p v-else class="intro__text">
+        {{ profile.intro || '这个人很懒，还没有写简介' }}
+      </p>
     </div>
   </div>
 </template>
@@ -151,6 +153,7 @@
  * @date 2026-10-15
  */
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import BottomLineDatePicker from './BottomLineDatePicker.vue';
 import BottomLineInput from './BottomLineInput.vue';
 import BottomLineSelect, {
@@ -162,14 +165,44 @@ import BottomLineSwitch, {
 import BottomLineTextarea from './BottomLineTextarea.vue';
 import CornerFrame from './CornerFrame.vue';
 import RoseDivider from './RoseDivider.vue';
-import emptyCover from '@/assets/images/icon_empty_img.svg?url';
 import iconImg from '@/assets/profile/icon_img.svg?url';
+import defaultAvatar from '@/assets/deafult_avatar.png';
+import { resolveFileUrl } from '@/utils/file';
 import { formatDateCN } from '@/utils/format';
+import { useUserStore } from '@/store/module/user';
+import { updateAvatar, updateProfile } from '@/api/user';
+import { uploadFile } from '@/api/file';
+import { message } from '@/components/ao-message';
+/* 只引省/市两份小数据（约 20KB），不要从包主入口引入（会带上村级 82MB 数据） */
+import provincesData from 'china-division/dist/provinces.json';
+import citiesData from 'china-division/dist/cities.json';
 
 defineOptions({ name: 'ProfileInfo' });
 
 /** 性别取值 */
 type Gender = '男' | '女' | '';
+
+interface DivisionItem {
+  code: string;
+  name: string;
+  provinceCode?: string;
+}
+
+/** 直辖市在库里只有“市辖区”一条，市级直接用省名本身 */
+const MUNICIPALITY_CITY = '市辖区';
+
+const PROVINCE_LIST = provincesData as DivisionItem[];
+const CITY_LIST = citiesData as DivisionItem[];
+
+function citiesOf(province: string): string[] {
+  const code = PROVINCE_LIST.find((p) => p.name === province)?.code;
+  if (!code) return [];
+  const names = CITY_LIST.filter((c) => c.provinceCode === code).map(
+    (c) => c.name,
+  );
+  if (names.length === 1 && names[0] === MUNICIPALITY_CITY) return [province];
+  return names;
+}
 
 interface ProfileForm {
   /** 头像地址，空串表示未上传 */
@@ -180,6 +213,8 @@ interface ProfileForm {
   username: string;
   /** 性别 */
   gender: Gender;
+  /** 国家 */
+  country: string;
   /** 省份 */
   province: string;
   /** 城市（市级） */
@@ -201,71 +236,98 @@ const GENDER_OPTIONS: BottomLineSwitchOption<Gender>[] = [
   { label: '女', value: '女' },
 ];
 
-/** 省 → 市 mock 数据（后续替换为省市区接口数据） */
-const PROVINCE_CITY_MAP: Record<string, string[]> = {
-  安徽: ['合肥', '芜湖', '蚌埠', '安庆'],
-  江苏: ['南京', '苏州', '无锡', '常州'],
-  浙江: ['杭州', '宁波', '温州', '嘉兴'],
-  广东: ['广州', '深圳', '珠海', '佛山'],
-  四川: ['成都', '绵阳', '德阳'],
-  湖北: ['武汉', '宜昌'],
-  陕西: ['西安', '咸阳'],
-  福建: ['福州', '厦门', '泉州'],
-  北京: ['北京'],
-  上海: ['上海'],
-};
+/** 后端数字性别 ↔ 表单文案 */
+const GENDER_BY_CODE: Record<number, Gender> = { 1: '男', 2: '女' };
+const CODE_BY_GENDER: Record<string, number> = { 男: 1, 女: 2 };
 
 /** 省份下拉选项 */
-const PROVINCE_OPTIONS: BottomLineSelectOption<string>[] = Object.keys(
-  PROVINCE_CITY_MAP,
-).map((province) => ({ label: province, value: province }));
+const PROVINCE_OPTIONS: BottomLineSelectOption<string>[] = PROVINCE_LIST.map(
+  (province) => ({ label: province.name, value: province.name }),
+);
 
-/** 资料数据（mock） */
+const userStore = useUserStore();
+const { userInfo } = storeToRefs(userStore);
+
+/** 资料数据：由 store 中的用户信息回填 */
 const profile = reactive<ProfileForm>({
   avatar: '',
-  nickname: '夜航西飞',
-  username: 'younger_001',
-  gender: '男',
-  province: '安徽',
-  city: '合肥',
-  birthday: '1998-03-12',
-  job: '前端工程师',
-  intro: '喜欢折腾像素和字体，也喜欢在深夜写代码。',
+  nickname: '',
+  username: '',
+  gender: '',
+  country: '',
+  province: '',
+  city: '',
+  birthday: '',
+  job: '',
+  intro: '',
 });
+
+/** 用接口返回的用户资料覆盖表单 */
+function applyProfile(info: typeof userInfo.value) {
+  if (!info) return;
+  profile.avatar = info.avatar || '';
+  profile.nickname = info.nickname || '';
+  profile.username = info.username || '';
+  profile.gender = GENDER_BY_CODE[info.gender ?? 0] ?? '';
+  profile.country = info.country || '';
+  profile.province = info.province || '';
+  profile.city = info.city || '';
+  profile.birthday = info.birthday || '';
+  profile.job = info.profession || '';
+  profile.intro = info.bio || '';
+}
 
 /** 是否处于编辑态：为 true 时字段渲染为输入框 */
 const editing = ref(false);
 
+/** 保存中 / 头像上传中：防重复提交 */
+const submitting = ref(false);
+const uploading = ref(false);
+
+/** 编辑态下不覆盖用户正在修改的内容（头像单独回填） */
+watch(
+  userInfo,
+  (info) => {
+    if (!info || editing.value) return;
+    applyProfile(info);
+  },
+  { immediate: true },
+);
+
 /** 进入编辑态时的数据快照，取消编辑时用于回滚 */
 let snapshot: ProfileForm | null = null;
 
-/** 头像地址：未上传时使用占位图 */
-const avatarUrl = computed(() => profile.avatar || emptyCover);
+/** 头像地址：后端返回 objectKey，需拼 MinIO 前缀；未设置时用默认头像 */
+const avatarUrl = computed(
+  () => resolveFileUrl(profile.avatar) || defaultAvatar,
+);
 
 /** 性别展示文案 */
-const genderText = computed(() => profile.gender || EMPTY_TEXT);
+const genderText = computed(() => profile.gender || '未知性别');
 
 /** 城市下拉选项：跟随省份联动 */
 const cityOptions = computed<BottomLineSelectOption<string>[]>(() =>
-  (PROVINCE_CITY_MAP[profile.province] ?? []).map((city) => ({
+  citiesOf(profile.province).map((city) => ({
     label: city,
     value: city,
   })),
 );
 
-/** 城市展示文案：省 · 市（缺一项时只展示已有的一项） */
-const cityText = computed(() =>
-  [profile.province, profile.city].filter(Boolean).join(' · '),
-);
+/** 城市展示文案：国家非中国时统一显示境外，否则省 · 市（缺一项时只展示已有的一项） */
+const cityText = computed(() => {
+  const country = profile.country.trim();
+  if (country && country !== '中国') return '中国境外区域';
+  return [profile.province, profile.city].filter(Boolean).join(' · ');
+});
 
 /** 生日展示文案：查看态显示「xx年x月x日」，编辑态仍是 yyyy-MM-dd */
 const birthdayText = computed(() => formatDateCN(profile.birthday));
 
-/** 切换省份后，原城市不属于新省份时清空，避免出现「江苏 · 合肥」 */
+/** 切换省份后，原城市不属于新省份时清空，避免出现「江苏省 · 合肥市」 */
 watch(
   () => profile.province,
   (province) => {
-    const cities = PROVINCE_CITY_MAP[province] ?? [];
+    const cities = citiesOf(province);
     if (profile.city && !cities.includes(profile.city)) profile.city = '';
   },
 );
@@ -289,29 +351,71 @@ function cancelEdit() {
   editing.value = false;
 }
 
-/** 保存资料 */
-function save() {
-  // TODO: 调用保存资料接口，成功后再提交并退出编辑态
-  snapshot = null;
-  editing.value = false;
+/** 保存资料：只提交非空字段（后端只覆盖非 null 字段） */
+async function save() {
+  if (submitting.value || uploading.value) return;
+  submitting.value = true;
+  try {
+    const res = await updateProfile({
+      nickname: profile.nickname.trim() || undefined,
+      username: profile.username.trim() || undefined,
+      gender: (CODE_BY_GENDER[profile.gender] ?? 0) as 0 | 1 | 2,
+      birthday: profile.birthday || undefined,
+      bio: profile.intro,
+      country: profile.country || undefined,
+      province: profile.province || undefined,
+      city: profile.city || undefined,
+      profession: profile.job,
+    });
+    userStore.login(res);
+    applyProfile(res);
+    snapshot = null;
+    editing.value = false;
+    message.success('资料已保存');
+  } catch {
+    // 失败提示由响应拦截器统一处理
+  } finally {
+    submitting.value = false;
+  }
 }
 
 /** 点击头像：唤起文件选择（查看态/编辑态都可换） */
 function handleAvatarClick() {
+  if (uploading.value) return;
   fileRef.value?.click();
 }
 
-/** 选择头像文件：本地预览（后续替换为上传接口） */
-function handleFileChange(e: Event) {
+/** 选择头像：本地预览 → 上传文件 → 绑定头像 → 回填 store */
+async function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
-  if (file) {
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-    objectUrl = URL.createObjectURL(file);
-    profile.avatar = objectUrl;
-  }
-  // 清空 value，保证再次选择同一文件也能触发 change
   input.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    message.warning('请选择图片文件');
+    return;
+  }
+
+  if (objectUrl) URL.revokeObjectURL(objectUrl);
+  objectUrl = URL.createObjectURL(file);
+  const previousAvatar = profile.avatar;
+  profile.avatar = objectUrl;
+
+  uploading.value = true;
+  try {
+    const uploaded = await uploadFile(file, 'USER_AVATAR');
+    const res = await updateAvatar({
+      imageId: uploaded.fileId,
+      objectKey: uploaded.objectKey,
+    });
+    userStore.login(res);
+    profile.avatar = res.avatar || uploaded.url;
+    message.success('头像已更新');
+  } catch {
+    profile.avatar = previousAvatar;
+  } finally {
+    uploading.value = false;
+  }
 }
 
 /** 生日不能选未来日期（date 为当天 0 点，今天因此不会被禁用） */
@@ -319,18 +423,18 @@ function isFutureDate(date: Date): boolean {
   return date.getTime() > Date.now();
 }
 
-/** 头像加载失败兜底 */
+/** 头像加载失败兜底：换成默认头像 */
 function handleImgError(e: Event) {
   const img = e.target as HTMLImageElement;
-  if (!img || img.src === emptyCover) return;
-  img.src = emptyCover;
+  if (!img || img.src.endsWith('deafult_avatar.png')) return;
+  img.src = defaultAvatar;
 }
 
 onBeforeUnmount(() => {
   if (objectUrl) URL.revokeObjectURL(objectUrl);
 });
 
-defineExpose({ editing, startEdit, cancelEdit, save });
+defineExpose({ editing, submitting, uploading, startEdit, cancelEdit, save });
 </script>
 
 <style scoped lang="scss">

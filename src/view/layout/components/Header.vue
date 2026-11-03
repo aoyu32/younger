@@ -102,7 +102,7 @@
         <div class="user-info-box flex-center" v-else>
           <div class="user_avatar">
             <AoImage
-              :src="userInfo?.avatar || '@/assets/deafult_avatar.png'"
+              :src="headerAvatarUrl"
               width="30px"
               height="30px"
               circle
@@ -197,6 +197,8 @@ import {
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/store/module/user';
+import defaultAvatar from '@/assets/deafult_avatar.png';
+import { resolveFileUrl } from '@/utils/file';
 import { logout as logoutApi } from '@/api/auth';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import { message } from '@/components/ao-message';
@@ -224,6 +226,11 @@ defineOptions({
 const userStore = useUserStore();
 const { isLogin, userInfo } = storeToRefs(userStore);
 const { logout } = userStore;
+
+/** 头像地址：后端返回 objectKey，需拼 MinIO 前缀 */
+const headerAvatarUrl = computed(
+  () => resolveFileUrl(userInfo.value?.avatar) || defaultAvatar,
+);
 
 // 用户下拉菜单：跳转到个人中心，并激活对应分组下的第一个菜单项
 // tab 传的是个人中心左侧导航的菜单 key，传分组 key（collect / security / order）时激活该分组第一项

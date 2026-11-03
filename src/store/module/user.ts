@@ -5,8 +5,9 @@
  */
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import type { GenderCode } from '@/api/user/types';
 
-/** 前端保存的用户信息（取自注册/登录接口出参，剔除 token） */
+/** 前端保存的用户信息（核心字段必填，注册/登录接口出参，剔除 token） */
 export interface UserInfo {
   /** 用户 ID（雪花 ID 字符串） */
   userId: string;
@@ -16,6 +17,24 @@ export interface UserInfo {
   avatar: string | null;
   /** 角色编码列表，如 ['ROLE_USER'] */
   roles: string[];
+  /** 用户名，登录标识（仅用户资料接口返回） */
+  username?: string;
+  /** 个人简介 */
+  bio?: string;
+  /** 性别编码：0 未知，1 男，2 女（仅用户资料接口返回） */
+  gender?: GenderCode;
+  /** 出生日期 yyyy-MM-dd */
+  birthday?: string;
+  /** 国家 */
+  country?: string;
+  /** 省份 */
+  province?: string;
+  /** 城市 */
+  city?: string;
+  /** 职业 */
+  profession?: string;
+  /** 加入时间 */
+  createdTime?: string;
 }
 
 export const useUserStore = defineStore('user', () => {

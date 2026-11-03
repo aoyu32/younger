@@ -10,15 +10,19 @@
         <div class="bottom">
           <div class="user">
             <div class="user-avatar">
-              <!-- <img :src="avatarUrl" alt="" /> -->
+              <img :src="avatarUrl" alt="用户头像" @error="handleImgError" />
             </div>
             <div class="user-info">
-              <div class="user-name">夜航西飞</div>
-              <div class="user-desc">前端工程师 · 喜欢折腾像素和字体</div>
+              <div class="user-name">{{ displayName }}</div>
+              <div class="user-desc">{{ displayDesc }}</div>
               <div class="user-meta">
-                <span>杭州</span>
+                <span>{{ displayGender }}</span>
                 <span class="dot"></span>
-                <span>2023 年加入</span>
+                <span>{{ displayCity }}</span>
+                <span class="dot"></span>
+                <span>{{ joinText }}</span>
+                <span class="dot"></span>
+                <span>{{ displayProfession }}</span>
               </div>
             </div>
           </div>
@@ -40,13 +44,50 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/store/module/user';
 import { logout as logoutApi } from '@/api/auth';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import { message } from '@/components/ao-message';
+import defaultAvatar from '@/assets/deafult_avatar.png';
+import { resolveFileUrl } from '@/utils/file';
+
+/** 后端数字性别 → 展示文案 */
+const GENDER_TEXT: Record<number, string> = { 1: '男', 2: '女' };
 
 const router = useRouter();
-const { logout } = useUserStore();
+const userStore = useUserStore();
+const { userInfo } = storeToRefs(userStore);
+const { logout } = userStore;
+
+/** 头像：后端未设置或加载失败时用默认头像 */
+const avatarUrl = computed(
+  () => resolveFileUrl(userInfo.value?.avatar) || defaultAvatar,
+);
+const displayName = computed(() => userInfo.value?.nickname || '未登录');
+const displayDesc = computed(() => userInfo.value?.bio || '这个人很懒，还没有写简介');
+const displayCity = computed(
+  () =>
+    [userInfo.value?.province, userInfo.value?.city]
+      .filter(Boolean)
+      .join(' · ') || '未设置城市',
+);
+const displayGender = computed(
+  () => GENDER_TEXT[userInfo.value?.gender ?? 0] ?? '未设置性别',
+);
+const displayProfession = computed(
+  () => userInfo.value?.profession || '未填写职业',
+);
+const joinText = computed(() =>
+  userInfo.value?.createdTime
+    ? `${userInfo.value.createdTime.slice(0, 4)} 年加入`
+    : '未知加入时间',
+);
+
+function handleImgError(e: Event) {
+  const img = e.target as HTMLImageElement;
+  if (img && !img.src.endsWith('deafult_avatar.png')) img.src = defaultAvatar;
+}
 
 const logoutConfirmVisible = ref(false);
 
@@ -386,6 +427,7 @@ defineExpose({ refresh: scheduleRender });
     align-items: center;
     gap: 16px;
     min-width: 0;
+    flex: 1;
   }
 
   .user-avatar {
@@ -409,6 +451,8 @@ defineExpose({ refresh: scheduleRender });
     flex-direction: column;
     gap: 8px;
     min-width: 0;
+    flex: 1;
+    overflow: hidden;
   }
 
   .user-name {
@@ -430,15 +474,27 @@ defineExpose({ refresh: scheduleRender });
     text-overflow: ellipsis;
   }
 
+  /* 单行展示：放不下的每一块各自省略，不换行 */
   .user-meta {
     display: flex;
     align-items: center;
     gap: 6px;
+    min-width: 0;
     font-size: 12px;
     color: #9ca3af;
     line-height: 1.4;
+    white-space: nowrap;
+
+    > span:not(.dot) {
+      min-width: 0;
+      flex: 0 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     .dot {
+      flex-shrink: 0;
       width: 3px;
       height: 3px;
       border-radius: 50%;
@@ -454,6 +510,22 @@ defineExpose({ refresh: scheduleRender });
     cursor: pointer;
     &:hover {
       color: #ff5757;
+    }
+  }
+
+  /* 小屏：缩小头像与间距，给资料信息留出更多宽度 */
+  @media (max-width: 480px) {
+    .card-content {
+      padding: 30px 16px;
+    }
+
+    .user {
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
     }
   }
 }

@@ -174,9 +174,10 @@
               <button
                 type="button"
                 class="header-action-btn header-action-btn--primary"
+                :disabled="profileRef?.submitting || profileRef?.uploading"
                 @click="profileRef?.save()"
               >
-                保存
+                {{ profileRef?.submitting ? '保存中...' : '保存' }}
               </button>
             </template>
             <button
