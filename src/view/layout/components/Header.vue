@@ -831,6 +831,8 @@ const handleLogoClick = () => {
       .header-menu {
         max-height: 260px;
         pointer-events: auto;
+        border-color: var(--ao-color-border-secondary);
+        box-shadow: var(--ao-shadow-md);
       }
 
       &::before {
@@ -848,9 +850,8 @@ const handleLogoClick = () => {
     min-width: 120px;
     margin-top: 8px;
     background-color: var(--ao-gray-0);
-    border: var(--ao-border-width-thin) solid
-      var(--ao-color-border-secondary);
-    box-shadow: var(--ao-shadow-md);
+    /* 收起时边框透明，避免 max-height: 0 状态下露出两条灰线 */
+    border: var(--ao-border-width-thin) solid transparent;
     border-radius: var(--ao-border-radius-lg);
     max-height: 0;
     overflow: hidden;
@@ -868,13 +869,43 @@ const handleLogoClick = () => {
       cursor: pointer;
       transition: background-color var(--ao-duration-fast) var(--ao-ease-in-out);
 
-      &:hover {
-        background-color: var(--ao-gray-1);
+      /* 触屏设备没有真正的 hover，避免点击后底色残留 */
+      @media (hover: hover) {
+        &:hover {
+          background-color: var(--ao-gray-1);
+        }
       }
     }
 
     .logout {
       color: var(--ao-color-error);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header_right {
+    .user-info-box::before {
+      /* 右对齐后箭头跟着挪到菜单靠右的位置，同时与头像拉开一点间距 */
+      top: calc(100% + 6px);
+      left: auto;
+      right: 36px;
+      transform: rotate(45deg);
+    }
+
+    .header-menu {
+      /* 右边缘与内容区右边缘对齐 */
+      left: auto;
+      right: 0;
+      transform: none;
+      min-width: 108px;
+      margin-top: 12px;
+      max-width: calc(100vw - 24px);
+
+      .menu-item {
+        padding: 10px 14px;
+        font-size: calc(var(--ao-font-size-sm) - 1px);
+      }
     }
   }
 }
