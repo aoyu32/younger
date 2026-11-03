@@ -1,5 +1,6 @@
 // router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
+import { useUserStore } from '@/store/module/user';
 
 const routes = [
   {
@@ -97,6 +98,7 @@ const routes = [
         meta: {
           title: '个人中心',
           menu: false,
+          requiresAuth: true,
         },
       },
       {
@@ -177,6 +179,14 @@ const router = createRouter({
   scrollBehavior() {
     return { top: 0, left: 0 };
   },
+});
+
+/** 需要登录的路由：未登录跳登录页并带上回跳地址 */
+router.beforeEach((to) => {
+  if (!to.matched.some((record) => record.meta.requiresAuth)) return true;
+  const userStore = useUserStore();
+  if (userStore.isLogin) return true;
+  return { name: 'login', query: { redirect: to.fullPath } };
 });
 
 export default router;

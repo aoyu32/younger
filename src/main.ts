@@ -12,7 +12,6 @@ const app = createApp(App);
 const pinia = createPinia();
 
 app.use(pinia);
-app.use(router);
 app.use(AoComponents);
 
 async function bootstrap(): Promise<void> {
@@ -26,6 +25,7 @@ async function bootstrap(): Promise<void> {
   } catch {
     userStore.logout();
   }
+  app.use(router);
   app.mount('#app');
 }
 
