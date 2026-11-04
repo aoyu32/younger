@@ -169,7 +169,7 @@ onBeforeUnmount(() => {
   gap: 6px;
   position: fixed;
   right: 26px;
-  bottom: 300px;
+  bottom: 40px;
   z-index: 80;
   padding: 10px 5px;
   border-radius: var(--ao-border-radius-lg);
