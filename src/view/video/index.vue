@@ -22,10 +22,8 @@
           </div>
         </div>
       </div>
-      <div class="nav-wrapper">
+      <div class="nav-wrapper" ref="navAnchorRef">
         <VideoWaterfallNav v-model="activeNavItem" :menu-items="navList" />
-        <!-- 瀑布流导航滚出视口后，悬浮在右侧的同数据分类导航 -->
-        <VideoSideNav v-model="activeNavItem" :menu-items="navList" />
       </div>
       <!-- 「全部」下把所有分类视频合并成一组展示，不再重复展示分类区块 -->
       <div class="video-list" v-if="activeNavItem === 'all'">
@@ -48,6 +46,13 @@
         </template>
       </VideoSection>
     </div>
+
+    <!-- 分类导航滚出视口后，顶部吸顶分类栏 -->
+    <AoStickyTabs
+      v-model="activeNavItem"
+      :items="navList"
+      :anchor="navAnchorRef"
+    />
   </div>
 </template>
 
@@ -59,10 +64,12 @@ import { categoryData } from '@/mock/videoLIst';
 import VipVideoCard from '../home/components/VipVideoCard.vue';
 import VideoSwipper from './components/VideoSwipper.vue';
 import VideoWaterfallNav from './components/VideoWaterfallNav.vue';
-import VideoSideNav from './components/VideoSideNav.vue';
+import AoStickyTabs from '@/components/ao-sticky-tabs/index.vue';
 import type { MenuItem } from './components/VideoWaterfallNav.vue';
 import VideoPlayer from '@/components/ao-video-player/index.vue';
 const activeNavItem = ref<string | number>('all');
+/** 分类导航容器：滚出视口顶部后显示吸顶分类栏 */
+const navAnchorRef = ref<HTMLElement>();
 /** 分类导航与 mock 分组数据同源：全部 + categoryData 的真实分类，不会出现点了却没数据的分类 */
 const navList = ref<MenuItem[]>([
   { id: 'all', label: '全部', icon: '' },
