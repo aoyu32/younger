@@ -1,5 +1,5 @@
 <template>
-  <div class="website">
+  <div class="website" ref="pageRef">
     <PageSolgan
       content="常用网站一处收藏，智能时代的信息一站直达。"
       sub-content="网站导航"
@@ -93,13 +93,14 @@
           </WebsiteListCard>
         </div>
       </div>
-      <div class="line" ref="lineRef">
+      <div class="line">
         <AoImage
           src="@/assets/website/icon_line.svg"
           width="100%"
           height="64px"
         ></AoImage>
       </div>
+      <div ref="stickyAnchorRef" class="category-anchor"></div>
       <div class="category-section" ref="categorySectionRef">
         <aside class="category-sidebar">
           <CategoryMenu
@@ -122,11 +123,13 @@
         </div>
       </div>
     </div>
-    <WebsiteMobileNav
-      :visible="showMobileNav"
-      :active-name="mobileActiveName"
-      :categories="menuCategories"
-      @select="handleCategorySelect"
+    <!-- 分类导航滚出视口后，顶部吸顶分类栏（二级分类点击展开） -->
+    <AoStickyTabs
+      v-model="mobileActiveName"
+      :items="stickyItems"
+      :anchor="stickyAnchorRef"
+      mobile-only
+      @select="handleStickySelect"
     />
     <AddWebsiteDialog v-model="showAddDialog" @confirm="handleAddConfirm" />
   </div>
@@ -143,17 +146,29 @@ import addIcon from '@/assets/website/icon_add.svg';
 import AddWebsiteDialog from './components/AddWebsiteDialog.vue';
 import CategoryMenu from './components/CategoryMenu.vue';
 import WebsiteSection from './components/WebsiteSection.vue';
-import WebsiteMobileNav from './components/WebsiteMobileNav.vue';
+import AoStickyTabs from '@/components/ao-sticky-tabs/index.vue';
+import { useScrollingClass } from '@/hooks/useScrollingClass';
+import { useHoverFollow } from '@/hooks/useHoverFollow';
 import { websiteCategories, type WebsiteSite } from '@/mock/websiteCategories';
+
+/** 滚动时给 html 打标记，用于关闭卡片 hover 效果 */
+useScrollingClass();
+
+const pageRef = ref<HTMLElement>();
+
+/** 卡片高亮跟随指针：滚动时清除，停止后按当前指针位置重新判定 */
+useHoverFollow({
+  container: pageRef,
+  itemSelector: '.website-card',
+});
 
 const isEditHistory = ref(false);
 const isEditCollect = ref(false);
 const showAddDialog = ref(false);
 const categorySectionRef = ref();
 
-/* ---------- 移动端横向分类导航：滚过心电图分割线后出现 ---------- */
-const lineRef = ref<HTMLElement | null>(null);
-const showMobileNav = ref(false);
+/* ---------- 吸顶分类栏：滚到分类区顶部时出现 ---------- */
+const stickyAnchorRef = ref<HTMLElement | null>(null);
 
 const { historyList, collectList, addHistory } = useWebsite();
 const historySelected = ref<number[]>([]);
@@ -243,6 +258,16 @@ const categorySections = computed(() =>
 // 菜单与右侧 section 使用同一份数据，避免分类名硬编码后失配
 const menuCategories = websiteCategories;
 
+/** 吸顶分类栏数据：一级分类 + 二级分类，点击一级展开二级面板 */
+const stickyItems = websiteCategories.map((group) => ({
+  id: group.name,
+  label: group.name,
+  children: group.children.map((child) => ({
+    id: child.name,
+    label: child.name,
+  })),
+}));
+
 // 收集各 section 的根元素，用于锚点滚动
 const sectionRefMap = new Map<string, HTMLElement>();
 const setSectionRef = (title: string, el: any) => {
@@ -291,6 +316,20 @@ const handleCategorySelect = (
   // 移动端导航立即高亮所点分类（滚动过程中 spy 会持续跟随，最终停在该分类）
   mobileActiveName.value = sub.name;
   scrollToSection(sub.name);
+};
+
+/** 吸顶分类栏选中二级分类：复用分类跳转逻辑 */
+const handleStickySelect = (
+  group: { id: string | number; label: string },
+  child: { id: string | number; label: string },
+) => {
+  const target = websiteCategories
+    .find((item) => item.name === group.id)
+    ?.children.find((item) => item.name === child.id);
+  handleCategorySelect(
+    { name: group.label },
+    { name: child.label, sites: target?.sites },
+  );
 };
 
 // cubic-bezier(x1, y1, x2, y2) 缓动求解器，与 CSS 同名曲线行为一致
@@ -370,7 +409,7 @@ const getStickyTop = () => {
     : 74;
   // 移动端横向分类导航悬浮在头部下方，section 对齐时需要避开它
   const mobileNav = document.querySelector(
-    '.mobile-category-nav',
+    '.ao-sticky-tabs',
   ) as HTMLElement | null;
   return sidebarTop + (mobileNav ? mobileNav.offsetHeight : 0);
 };
@@ -388,28 +427,17 @@ onMounted(() => {
     lenisRafId = requestAnimationFrame(raf);
   };
   lenisRafId = requestAnimationFrame(raf);
-  // 心电图分割线顶部越过固定头部下沿（64px）后，显示移动端横向分类导航
-  updateMobileNav();
+  // 滚动时高亮跟随当前经过的 section，吸顶分类栏据此自动激活
   updateMobileActive();
-  window.addEventListener('scroll', updateMobileNav, { passive: true });
   window.addEventListener('scroll', updateMobileActive, { passive: true });
-  window.addEventListener('resize', updateMobileNav);
   window.addEventListener('resize', updateMobileActive);
 });
-
-const updateMobileNav = () => {
-  const el = lineRef.value;
-  if (!el) return;
-  showMobileNav.value = el.getBoundingClientRect().top < 64;
-};
 
 onBeforeUnmount(() => {
   if (lenisRafId) cancelAnimationFrame(lenisRafId);
   lenis?.destroy();
   lenis = null;
-  window.removeEventListener('scroll', updateMobileNav);
   window.removeEventListener('scroll', updateMobileActive);
-  window.removeEventListener('resize', updateMobileNav);
   window.removeEventListener('resize', updateMobileActive);
 });
 
