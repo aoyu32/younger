@@ -20,7 +20,7 @@
     <footer v-if="!isTopicPage">
       <LayoutFooter />
     </footer>
-    <EdgeBar @click="handleEdgeBarClick" />
+    <EdgeBarBlocks @click="handleEdgeBarClick" />
     <FeedbackDialog v-if="feedbackMounted" v-model="feedbackVisible" />
   </div>
 </template>
@@ -29,7 +29,7 @@ import { computed, defineAsyncComponent, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import LayoutHeader from '@/view/layout/components/Header.vue';
 import LayoutFooter from '@/view/layout/components/Footer.vue';
-import EdgeBar from '@/view/layout/components/EdgeBar.vue';
+import EdgeBarBlocks from '@/view/layout/components/EdgeBarBlocks.vue';
 
 // 反馈弹窗包含 Markdown 编辑器，首次点击反馈时再按需加载
 const FeedbackDialog = defineAsyncComponent(
