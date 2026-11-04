@@ -134,9 +134,14 @@ const likeCountText = computed(() => {
 }
 
 /* hover：小卡片不带阴影、不带整圈边框，只在朝向间隔的两侧画两条直线
-   （触屏点开会粘住展开态，仅指针设备启用） */
+   （触屏点开会粘住展开态，仅指针设备启用；滚动期间禁用） */
 @media (hover: hover) {
-  .website-card:hover .card {
+  /* 展开时整块卡片一起提升层级，避免相邻卡片盖住面板 */
+  .website-card.is-hovered {
+    z-index: 1002;
+  }
+
+  .website-card.is-hovered .card {
     z-index: 1001; // 盖在展开面板之上
     transform: translateY(-4px);
     box-shadow: none;
@@ -173,7 +178,7 @@ const likeCountText = computed(() => {
 }
 
 @media (hover: hover) {
-  .website-card:hover .card::before {
+  .website-card.is-hovered .card::before {
     opacity: 1;
   }
 }
@@ -239,7 +244,7 @@ const likeCountText = computed(() => {
 }
 
 @media (hover: hover) {
-  .website-card:hover .hover-card {
+  .website-card.is-hovered .hover-card {
     opacity: 1;
     pointer-events: auto;
     transform: scale(1) translateY(-4px);
