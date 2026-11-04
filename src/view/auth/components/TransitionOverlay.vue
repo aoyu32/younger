@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthTransition } from '../composables/useAuthTransition';
+import { useAuthTransition } from '@/hooks/useAuthTransition';
 
 const { overlayVisible, overlayText } = useAuthTransition();
 </script>
