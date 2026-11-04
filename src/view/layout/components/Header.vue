@@ -787,6 +787,8 @@ const handleLogoClick = () => {
   }
 
   .user-info-box {
+    /* 头像与菜单之间的间距，同时也是 hover 过桥区高度，两者必须一致才不会出现空隙 */
+    --header-menu-gap: 8px;
     gap: 6px;
     cursor: pointer;
     position: relative;
@@ -802,7 +804,7 @@ const handleLogoClick = () => {
       top: 100%;
       left: 0;
       width: 100%;
-      height: 8px;
+      height: var(--header-menu-gap, 8px);
     }
 
     &::before {
@@ -845,7 +847,7 @@ const handleLogoClick = () => {
     transform: translateX(-50%);
     width: max-content;
     min-width: 120px;
-    margin-top: 8px;
+    margin-top: var(--header-menu-gap, 8px);
     background-color: var(--ao-gray-0);
     /* 收起时边框透明，避免 max-height: 0 状态下露出两条灰线 */
     border: var(--ao-border-width-thin) solid transparent;
@@ -882,6 +884,11 @@ const handleLogoClick = () => {
 
 @media (max-width: 768px) {
   .header_right {
+    .user-info-box {
+      /* 移动端间距比桌面大，过桥区同步加高，否则鼠标穿过空隙时菜单会提前收起 */
+      --header-menu-gap: 12px;
+    }
+
     .user-info-box::before {
       /* 右对齐后箭头跟着挪到菜单靠右的位置，同时与头像拉开一点间距 */
       top: calc(100% + 6px);
@@ -896,7 +903,6 @@ const handleLogoClick = () => {
       right: 0;
       transform: none;
       min-width: 108px;
-      margin-top: 12px;
       max-width: calc(100vw - 24px);
 
       .menu-item {
