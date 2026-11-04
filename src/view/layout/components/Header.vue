@@ -721,7 +721,7 @@ const handleLogoClick = () => {
 
 .header_right {
   flex-shrink: 0;
-  gap: calc(var(--ao-spacing-sm) + 2px);
+  gap: var(--ao-spacing-md);
 
   .tool_collect {
     button {
@@ -747,15 +747,12 @@ const handleLogoClick = () => {
   }
 
   .right-vip {
-    margin: 0 15px;
+    margin: 0;
     gap: var(--ao-spacing-xxs);
     cursor: pointer;
     transition: all 0.1s ease-in-out;
     &:hover {
       color: rgb(233, 182, 75);
-    }
-    span {
-      padding-bottom: 1px;
     }
   }
 
@@ -767,7 +764,7 @@ const handleLogoClick = () => {
   }
 
   .auth-box {
-    gap: var(--ao-spacing-sm);
+    gap: var(--ao-spacing-md);
     font-size: var(--ao-font-size-sm);
     color: var(--ao-color-primary);
 
@@ -775,7 +772,7 @@ const handleLogoClick = () => {
       width: var(--ao-border-width-thin);
       height: var(--ao-spacing-md);
       background-color: var(--ao-color-border);
-      margin: 0 6px;
+      margin: 0;
     }
 
     .login,
@@ -918,12 +915,6 @@ const handleLogoClick = () => {
 
 @media (max-width: 900px) {
   .header_right {
-    gap: 14px;
-
-    .right-vip {
-      margin: 0 4px 0 15px;
-    }
-
     .user-info-box {
       .user_avatar :deep(.ao-image) {
         width: 26px !important;
@@ -1074,10 +1065,6 @@ const handleLogoClick = () => {
   .header_right {
     .right-vip span {
       display: none;
-    }
-
-    .auth-box .line {
-      margin: 0 2px;
     }
   }
 }
