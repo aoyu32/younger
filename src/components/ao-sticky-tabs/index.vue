@@ -56,18 +56,20 @@
           class="ao-sticky-tabs__panel"
           :style="panelStyle"
         >
-          <button
-            v-for="child in panelItem.children"
-            :key="child.id"
-            type="button"
-            class="ao-sticky-tabs__panel-item"
-            :class="{
-              'is-active': String(child.id) === String(modelValue),
-            }"
-            @click="handleChildSelect(panelItem, child)"
-          >
-            {{ child.label }}
-          </button>
+          <div class="ao-sticky-tabs__panel-scroll">
+            <button
+              v-for="child in panelItem.children"
+              :key="child.id"
+              type="button"
+              class="ao-sticky-tabs__panel-item"
+              :class="{
+                'is-active': String(child.id) === String(modelValue),
+              }"
+              @click="handleChildSelect(panelItem, child)"
+            >
+              {{ child.label }}
+            </button>
+          </div>
         </div>
       </div>
     </Transition>
@@ -104,10 +106,13 @@ const props = withDefaults(
     offsetTop?: number;
     /** 仅在移动端显示（桌面已有侧边导航时使用） */
     mobileOnly?: boolean;
+    /** 常驻显示：不等锚点滚出视口，直接固定在头部下方（需页面自行留出占位高度） */
+    alwaysVisible?: boolean;
   }>(),
   {
     offsetTop: 64,
     mobileOnly: false,
+    alwaysVisible: false,
   },
 );
 
@@ -120,6 +125,13 @@ const emit = defineEmits<{
 const visible = ref(false);
 const barRef = ref<HTMLElement>();
 const listRef = ref<HTMLElement>();
+
+/** 当前展开二级菜单的一级项 id（空串表示收起）；需在 updateVisible 之前初始化 */
+const openId = ref<string | number | ''>('');
+
+function closePanel() {
+  openId.value = '';
+}
 
 /** 左右是否还有可滚动内容：控制两侧渐变遮罩 */
 const canScrollLeft = ref(false);
@@ -147,8 +159,19 @@ function updateScrollState() {
 
 /** 锚点是否已经滚到吸顶线以上 */
 function updateVisible() {
+  // 桌面端不需要这个移动端吸顶栏时直接隐藏
+  if (props.mobileOnly && window.innerWidth > 768) {
+    visible.value = false;
+    closePanel();
+    return;
+  }
+  // 常驻模式：不依赖锚点位置，挂载即显示
+  if (props.alwaysVisible) {
+    visible.value = true;
+    return;
+  }
   const anchor = props.anchor;
-  if (!anchor || (props.mobileOnly && window.innerWidth > 768)) {
+  if (!anchor) {
     visible.value = false;
     closePanel();
     return;
@@ -159,7 +182,7 @@ function updateVisible() {
 
 function bindScroll() {
   unbindScroll();
-  if (!props.anchor) {
+  if (!props.anchor && !props.alwaysVisible) {
     visible.value = false;
     return;
   }
@@ -211,7 +234,6 @@ function isItemActive(item: StickyTabItem) {
 }
 
 /* ---------- 二级菜单 ---------- */
-const openId = ref<string | number | ''>('');
 const itemRefs = new Map<string, HTMLElement>();
 
 function setItemRef(id: string | number, el: unknown) {
@@ -229,81 +251,79 @@ const panelItem = computed(() =>
 
 const panelRef = ref<HTMLElement>();
 
-/** 面板相对吸顶栏的位置：底边上移一点，贴近父项 */
-const PANEL_TOP = 'calc(100% - 10px)';
+/** 面板相对吸顶栏的位置：紧贴分类栏底边，不留空隙（1px 让过栏的下边框） */
+const PANEL_TOP = 'calc(100% + 1px)';
 
-const panelStyle = ref<{ left: string; top: string; minWidth: string }>({
+/** 气泡箭头距面板左右边缘的最小留白 */
+const ARROW_GAP = 16;
+
+interface PanelStyle {
+  left: string;
+  top: string;
+  /** 面板最小宽度（跟随父项宽度，样式里再与 144px 兜底取大值） */
+  '--panel-min-width': string;
+  /** 气泡箭头的水平锚点（相对面板左边缘） */
+  '--panel-arrow-left': string;
+}
+
+const panelStyle = ref<PanelStyle>({
   left: '0px',
   top: PANEL_TOP,
-  minWidth: '0px',
+  '--panel-min-width': '0px',
+  '--panel-arrow-left': '24px',
 });
 
 /**
- * 面板锚定在对应一级项下方：
- * 默认与父项同宽（左右分割线对齐）；子项更宽时以父项中心为轴居中展开。
+ * 面板锚定在对应一级项下方：以父项中心为轴居中展开，
+ * 宽度至少与父项一致（样式里另有 150px 兜底），内容更宽时按内容撑开。
+ * @param measureContent 是否连内容实际宽度一起算（首帧还没渲染出新内容时为 false）
  */
-function updatePanelPosition() {
+function applyPanelLayout(measureContent: boolean) {
   const bar = barRef.value;
   const el = openId.value === '' ? null : itemRefs.get(String(openId.value));
   if (!bar || !el) return;
   const barRect = bar.getBoundingClientRect();
   const itemRect = el.getBoundingClientRect();
 
-  // 面板对齐基准：中间项对齐两侧分割线；首项左对齐、末项右对齐
-  const index = props.items.findIndex(
-    (item) => String(item.id) === String(openId.value),
-  );
-  const padLeft = parseFloat(getComputedStyle(el).paddingLeft) || 0;
-  const isLast = index === props.items.length - 1;
-  const spanLeft = isLast
-    ? itemRect.right - itemRect.width
-    : itemRect.left + padLeft;
-  const spanWidth = itemRect.width;
-
+  // 面板宽度由 min-width 和内容共同决定，读渲染结果即可
   const panelEl = panelRef.value;
-  const contentWidth = panelEl?.offsetWidth ?? 0;
-  const width = Math.max(spanWidth, contentWidth);
+  const width = Math.max(
+    itemRect.width,
+    measureContent && panelEl ? panelEl.offsetWidth : 0,
+  );
+  const itemCenter = itemRect.left + itemRect.width / 2;
+  // 居中展开；贴近视口两侧时收进边距内
   const left = Math.min(
-    Math.max(spanLeft + spanWidth / 2 - width / 2, barRect.left + 12),
+    Math.max(itemCenter - width / 2, barRect.left + 12),
     window.innerWidth - width - 12,
   );
+  // 箭头指向父项中心，靠近面板两端时收进留白范围内
+  const arrowLeft = Math.min(
+    Math.max(itemCenter - left, ARROW_GAP),
+    Math.max(width - ARROW_GAP, ARROW_GAP),
+  );
+
   panelStyle.value = {
     left: `${left - barRect.left}px`,
     top: PANEL_TOP,
-    minWidth: `${spanWidth}px`,
+    '--panel-min-width': `${itemRect.width}px`,
+    '--panel-arrow-left': `${arrowLeft}px`,
   };
+}
+
+function updatePanelPosition() {
+  applyPanelLayout(true);
 }
 
 /** 切换面板时先按父项占位，等新内容渲染后再测量实际宽度并居中 */
 async function placePanelForCurrentItem() {
-  const bar = barRef.value;
-  const el = openId.value === '' ? null : itemRefs.get(String(openId.value));
-  if (!bar || !el) return;
-  const barRect = bar.getBoundingClientRect();
-  const itemRect = el.getBoundingClientRect();
-  const index = props.items.findIndex(
-    (item) => String(item.id) === String(openId.value),
-  );
-  const padLeft = parseFloat(getComputedStyle(el).paddingLeft) || 0;
-  const isLast = index === props.items.length - 1;
-  const spanLeft = isLast
-    ? itemRect.right - itemRect.width
-    : itemRect.left + padLeft;
-  panelStyle.value = {
-    left: `${spanLeft - barRect.left}px`,
-    top: PANEL_TOP,
-    minWidth: `${itemRect.width}px`,
-  };
+  applyPanelLayout(false);
   await nextTick();
   updatePanelPosition();
   // 字体/内容布局完成后校正一次，避免复用旧宽度导致偏移
   requestAnimationFrame(() => {
     if (openId.value !== '') updatePanelPosition();
   });
-}
-
-function closePanel() {
-  openId.value = '';
 }
 
 function handleSelect(item: StickyTabItem) {
