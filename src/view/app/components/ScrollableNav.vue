@@ -1,29 +1,39 @@
 <template>
   <div class="app-canvas-nav">
-    <canvas id="nav" ref="navCanvasRef"></canvas>
-    <!-- 左侧进度条 -->
-    <div class="progress-bar left">
-      <div class="progress-fill" :style="{ height: leftProgress + '%' }"></div>
-    </div>
-    <!-- 右侧进度条 -->
-    <div class="progress-bar right">
-      <div class="progress-fill" :style="{ height: rightProgress + '%' }"></div>
-    </div>
-    <!-- 激活项指示小三角 -->
-    <div
-      class="triangle-indicator"
-      :class="indicatorClass"
-      :style="{ left: triangleLeft + 'px' }"
-      v-show="activeIndex !== -1"
-    ></div>
+    <template v-if="hasItems">
+      <canvas id="nav" ref="navCanvasRef"></canvas>
+      <!-- 左侧进度条 -->
+      <div class="progress-bar left">
+        <div class="progress-fill" :style="{ height: leftProgress + '%' }"></div>
+      </div>
+      <!-- 右侧进度条 -->
+      <div class="progress-bar right">
+        <div class="progress-fill" :style="{ height: rightProgress + '%' }"></div>
+      </div>
+      <!-- 激活项指示小三角：仅有导航项时显示 -->
+      <div
+        class="triangle-indicator"
+        :class="indicatorClass"
+        :style="{ left: triangleLeft + 'px' }"
+        v-show="activeIndex !== -1"
+      ></div>
+    </template>
+    <div v-else class="nav-empty">未设置分类导航项</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue';
-import { aiAppCatalog } from '@/mock/aiCatalog';
+defineOptions({ name: 'ScrollableNav' });
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue';
 
 const emit = defineEmits(['item-click']);
+
+/** 外部选中的分类名（吸顶分类栏联动） */
+const props = defineProps<{
+  modelValue?: string;
+  /** 分类名列表（接口下发） */
+  categories: string[];
+}>();
 
 const navCanvasRef = ref<HTMLCanvasElement>();
 const ctx = ref<CanvasRenderingContext2D | null>();
@@ -39,9 +49,9 @@ const indicatorClass = ref('');
 const INDICATOR_SIZE = 8; // 三角形宽度
 const EDGE_MARGIN = 6; // 靠边时与容器边缘的距离
 
-// 分类与应用目录保持同源，新增分类后导航和图谱会自动同步
-const navList = ref(
-  Array.from(new Set(aiAppCatalog.map((app) => app.category))).map((name) => ({
+/** 画布分类导航与吸顶分类栏共用同一份接口数据 */
+const navList = computed(() =>
+  props.categories.map((name) => ({
     icon: '',
     name,
     to: `/${name}`,
@@ -51,6 +61,22 @@ const navList = ref(
 
 // 默认激活第一个
 const activeIndex = ref(0);
+
+/** 是否有导航项：没有时显示占位文案并隐藏三角指示 */
+const hasItems = computed(() => navList.value.length > 0);
+
+/** 外部切换分类时同步画布内高亮与滚动位置 */
+watch(
+  () => props.modelValue,
+  (name) => {
+    if (!name) return;
+    const index = navList.value.findIndex((item) => item.name === name);
+    if (index === -1 || index === activeIndex.value) return;
+    activeIndex.value = index;
+    render();
+    scrollToActiveNode();
+  },
+);
 
 // 拖动状态
 let offsetX = 0;
@@ -588,6 +614,33 @@ const handleResize = () => {
 };
 
 onMounted(() => {
+  if (hasItems.value) initCanvas();
+  window.addEventListener('resize', handleResize);
+});
+
+const bindCanvasEvents = () => {
+  const canvas = navCanvasRef.value;
+  if (!canvas) return;
+  canvas.style.cursor = 'pointer';
+  canvas.addEventListener('pointerdown', onPointerDown);
+  canvas.addEventListener('pointermove', onPointerMove);
+  canvas.addEventListener('pointerup', onPointerUp);
+  canvas.addEventListener('pointercancel', onPointerUp);
+  canvas.addEventListener('pointerleave', onPointerLeave);
+};
+
+const unbindCanvasEvents = () => {
+  const canvas = navCanvasRef.value;
+  if (!canvas) return;
+  canvas.removeEventListener('pointerdown', onPointerDown);
+  canvas.removeEventListener('pointermove', onPointerMove);
+  canvas.removeEventListener('pointerup', onPointerUp);
+  canvas.removeEventListener('pointercancel', onPointerUp);
+  canvas.removeEventListener('pointerleave', onPointerLeave);
+};
+
+/** 画布首次出现时初始化：尺寸、居中、事件绑定 */
+const initCanvas = () => {
   setupCanvas();
   offsetX = clampOffset(0);
   render();
@@ -600,33 +653,21 @@ onMounted(() => {
       const nodeCenterInCanvas = node.rectX + node.rectW / 2;
       const targetOffset = canvas.clientWidth / 2 - nodeCenterInCanvas;
       offsetX = clampOffset(targetOffset);
-      render(); // 重新渲染，使节点居中
+      render(); // 重新渲染使节点居中
     }
   }
 
-  if (navCanvasRef.value) navCanvasRef.value.style.cursor = 'pointer';
+  bindCanvasEvents();
+};
 
-  const canvas = navCanvasRef.value;
-  if (canvas) {
-    canvas.addEventListener('pointerdown', onPointerDown);
-    canvas.addEventListener('pointermove', onPointerMove);
-    canvas.addEventListener('pointerup', onPointerUp);
-    canvas.addEventListener('pointercancel', onPointerUp);
-    canvas.addEventListener('pointerleave', onPointerLeave);
-  }
-
-  window.addEventListener('resize', handleResize);
+/** 分类数据后到：等 canvas 挂载后再初始化 */
+watch(hasItems, (visible) => {
+  if (!visible) return;
+  nextTick(initCanvas);
 });
 
 onBeforeUnmount(() => {
-  const canvas = navCanvasRef.value;
-  if (canvas) {
-    canvas.removeEventListener('pointerdown', onPointerDown);
-    canvas.removeEventListener('pointermove', onPointerMove);
-    canvas.removeEventListener('pointerup', onPointerUp);
-    canvas.removeEventListener('pointercancel', onPointerUp);
-    canvas.removeEventListener('pointerleave', onPointerLeave);
-  }
+  unbindCanvasEvents();
   window.removeEventListener('resize', handleResize);
   if (rafId) cancelAnimationFrame(rafId);
   if (inertiaAnimId) cancelAnimationFrame(inertiaAnimId);
@@ -652,6 +693,16 @@ canvas {
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* 无导航项时的居中提示 */
+.nav-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--ao-color-text-tertiary);
+  font-size: var(--ao-font-size-sm);
 }
 
 /* 进度条样式 */

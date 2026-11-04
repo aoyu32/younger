@@ -70,8 +70,12 @@
         <div class="title">分类导航</div>
         <div class="desc">点击导航项，快速分类查找你的目标APP</div>
       </div>
-      <div class="app-category">
-        <AppCanvasNav />
+      <div class="app-category" ref="categoryAnchorRef">
+        <ScrollableNav
+          v-model="activeCategory"
+          :categories="categoryNames"
+          @item-click="onCategoryClick"
+        />
       </div>
       <div class="app-category-list">
         <div class="category-label flex-between">
@@ -87,18 +91,55 @@
         </div>
       </div>
     </div>
+
+    <!-- 分类导航滚出视口后，顶部吸顶分类栏 -->
+    <AoStickyTabs
+      v-model="activeCategory"
+      :items="categoryItems"
+      :anchor="categoryAnchorRef"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import AppGraph from './components/app-graph/index.vue';
-import AppCanvasNav from './components/AppCanvasNav.vue';
+import ScrollableNav from './components/ScrollableNav.vue';
 import ApplicationCard from './components/ApplicationCard.vue';
 import PageSlogan from '@/components/page-slogan/index.vue';
+import AoStickyTabs from '@/components/ao-sticky-tabs/index.vue';
 import { appData } from '@/mock/appData';
+import { getAppCategories } from '@/api/app/category';
+
+/** 分类名列表：接口下发 */
+const categoryNames = ref<string[]>([]);
 const apps = ref(appData);
 const appMapRef = ref<InstanceType<typeof AppGraph> | null>(null);
+
+/** 分类导航容器：滚出视口顶部后显示吸顶分类栏 */
+const categoryAnchorRef = ref<HTMLElement>();
+
+/** 分类列表：画布导航与吸顶栏共用同一份数据 */
+const categoryItems = computed(() =>
+  categoryNames.value.map((name) => ({ id: name, label: name })),
+);
+
+/** 当前选中分类，画布导航与吸顶栏共用 */
+const activeCategory = ref('');
+
+function onCategoryClick(item: { name: string }) {
+  activeCategory.value = item.name;
+}
+
+onMounted(async () => {
+  const list = await getAppCategories({ status: 1 });
+  const names = list.map((item) => item.name).filter(Boolean);
+  if (!names.length) return;
+  categoryNames.value = names;
+  if (!names.includes(activeCategory.value)) {
+    activeCategory.value = names[0];
+  }
+});
 
 // 刷新：重新随机生成节点位置并重播生成动画
 const handleRefresh = () => {
