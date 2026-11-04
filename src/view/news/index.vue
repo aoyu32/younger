@@ -45,6 +45,7 @@
           </div>
         </div>
       </div>
+      <div ref="tabsAnchorRef" class="sticky-anchor"></div>
       <div class="tabs-wrapper">
         <NewsTabs
           v-model="activeTab"
@@ -54,6 +55,13 @@
         />
       </div>
     </div>
+
+    <!-- 分类 tab 滚出视口后，顶部吸顶分类栏（无二级菜单） -->
+    <AoStickyTabs
+      v-model="activeTab"
+      :items="stickyItems"
+      :anchor="tabsAnchorRef"
+    />
   </div>
 </template>
 
@@ -62,6 +70,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTopic } from '@/store/module/topic';
 import PageSlogan from '@/components/page-slogan/index.vue';
+import AoStickyTabs from '@/components/ao-sticky-tabs/index.vue';
 import TodayTopic from './components/TodayTopic.vue';
 import NewsListCard from './components/NewsListCard.vue';
 import HotCourseList from './components/HotCourseList.vue';
@@ -194,6 +203,14 @@ const handleCourseClick = (id: string | number) => {
 const newsTabs = aiNewsCategories;
 const activeTab = ref('all');
 
+/** 分类 tab 容器：滚出视口顶部后显示吸顶分类栏 */
+const tabsAnchorRef = ref<HTMLElement>();
+
+/** 吸顶分类栏数据（无二级菜单） */
+const stickyItems = computed(() =>
+  newsTabs.map((tab) => ({ id: tab.id, label: tab.label })),
+);
+
 type NewsCard = {
   id: string | number;
   title: string;
@@ -232,4 +249,9 @@ const handleCardClick = (id: string | number) => {
 
 <style scoped lang="scss">
 @use './index.scss' as *;
+
+/* 吸顶分类栏锚点：零高度哨兵不占布局 */
+.sticky-anchor {
+  height: 0;
+}
 </style>
