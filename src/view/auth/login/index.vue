@@ -28,8 +28,10 @@
           height="20px"
         ></AoImage>
       </div>
-      <!-- 移动端：右上角返回按钮隐藏后，返回首页改为左上角文本按钮 -->
-      <div class="mobile-back-home" @click="handleBackHome">返回首页</div>
+      <!-- 移动端：返回首页移到表单底部，圆形浅灰底 home 图标按钮 -->
+      <div class="mobile-back-home" @click="handleBackHome" aria-label="返回首页">
+        <AoImage src="@/assets/auth/icon_home.svg" width="20px" height="20px"></AoImage>
+      </div>
       <div class="form-wrapper flex-c">
         <div class="login-title">
           <h2>YOUNGER <span>SIGN IN</span></h2>
@@ -89,7 +91,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import { useAuthTransition } from '../composables/useAuthTransition';
+import { useAuthTransition } from '@/hooks/useAuthTransition';
 import { useUserStore } from '@/store/module/user';
 import AoFormInput from '@/components/ao-form-input/index.vue';
 import AuthCaptcha from '../components/AuthCaptcha.vue';

@@ -21,8 +21,10 @@
       </div>
     </div>
     <div class="reset-right" ref="resetRightRef">
-      <!-- 移动端：右上角返回按钮隐藏后，回到首页改为左上角文本按钮 -->
-      <div class="mobile-back-home" @click="handleBackHome">返回首页</div>
+      <!-- 移动端：返回首页移到表单底部，圆形浅灰底 home 图标按钮 -->
+      <div class="mobile-back-home" @click="handleBackHome" aria-label="返回首页">
+        <AoImage src="@/assets/auth/icon_home.svg" width="20px" height="20px"></AoImage>
+      </div>
       <div class="back-home" @click="handleBackHome">
         <AoImage
           src="@/assets/auth/icon_back_home.svg"
@@ -119,7 +121,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
-import { useAuthTransition } from '../composables/useAuthTransition';
+import { useAuthTransition } from '@/hooks/useAuthTransition';
 import AoFormInput from '@/components/ao-form-input/index.vue';
 import AoCaptcha from '../components/AuthCaptcha.vue';
 import { message } from '@/components/ao-message';

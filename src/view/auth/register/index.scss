@@ -395,7 +395,7 @@
   }
 }
 
-/* 移动端：右上角返回按钮隐藏，改为左上角文本按钮 */
+/* 移动端：右上角返回按钮隐藏，表单底部显示圆形浅灰底 home 按钮 */
 .mobile-back-home {
   display: none;
 }
@@ -410,12 +410,28 @@
   }
 
   .mobile-back-home {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: var(--ao-font-size-sm);
-    color: var(--ao-color-primary);
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--ao-gray-2);
+    color: var(--ao-color-text-secondary);
     cursor: pointer;
+
+    svg,
+    img {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:active {
+      background-color: var(--ao-gray-3);
+    }
   }
 }
