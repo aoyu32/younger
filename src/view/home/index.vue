@@ -163,7 +163,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
-import { useAuthTransition } from '@/view/auth/composables/useAuthTransition';
+import { useAuthTransition } from '@/hooks/useAuthTransition';
 import AoBanner from '@/components/ao-banner/index.vue';
 import AppCard from '@/view/home/components/AppCard.vue';
 import WebToolCard from '@/view/home/components/WebToolCard.vue';
