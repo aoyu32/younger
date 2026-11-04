@@ -18,6 +18,13 @@
 
   /* ≤768：导航已改为顶部横向分类条，面板高度自适应交给页面滚动 */
   @media (max-width: 768px) {
+    /* 移动端吸顶分类栏常驻在头部下方，卡片下移让出它的高度，避免被遮挡 */
+    .user-card-wrapper {
+      padding-top: calc(
+        var(--ao-sticky-tabs-height) + var(--ao-border-width-thin)
+      );
+    }
+
     .profile-tabs {
       height: auto;
       min-height: 0;

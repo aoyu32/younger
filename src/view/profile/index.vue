@@ -265,6 +265,15 @@
         {{ deleteConfirmText }}
       </AoDialog>
     </div>
+
+    <!-- 移动端顶部常驻的吸顶分类栏（带二级菜单），页面卡片已预留其高度 -->
+    <AoStickyTabs
+      v-model="stickyActiveKey"
+      :items="stickyItems"
+      mobile-only
+      always-visible
+      @update:model-value="handleStickySelect"
+    />
   </div>
 </template>
 
@@ -285,6 +294,8 @@ import ProfileInfo from './components/profile-info/ProfileInfo.vue';
 import AccountInfo from './components/account-info/AccountInfo.vue';
 import ModifyPassword from './components/modify-password/ModifyPassword.vue';
 import AoDialog from '@/components/ao-dialog/index.vue';
+import AoStickyTabs from '@/components/ao-sticky-tabs/index.vue';
+import { profileNavGroups } from './components/profile-nav';
 import bgUrl from '@/assets/green-rose-flower.jpg';
 
 const route = useRoute();
@@ -292,6 +303,23 @@ const router = useRouter();
 
 /** 左侧导航实例：外部跳转（如头部用户下拉的 ?tab=xxx）时需要主动激活某个菜单项 */
 const tabsRef = ref<InstanceType<typeof UserCenterTabs>>();
+
+/** 吸顶分类栏：移动端常驻在头部下方，与侧边导航共用同一份导航数据 */
+const stickyItems = profileNavGroups.map((group) => ({
+  id: group.key,
+  label: group.title,
+  children: group.children?.map((child) => ({
+    id: child.key,
+    label: child.title,
+  })),
+}));
+
+/** 吸顶栏当前选中项，与侧边栏保持同步 */
+const stickyActiveKey = ref('course-watching');
+
+const handleStickySelect = (id: string | number) => {
+  tabsRef.value?.setActive(String(id));
+};
 
 /** 历史记录菜单 key：命中后内容区渲染 HistoryRecord */
 const HISTORY_KEY = 'course-watching';
@@ -419,6 +447,8 @@ onMounted(applyTabFromQuery);
 watch(() => route.query.tab, applyTabFromQuery);
 
 const handleChange = (item: { key: string; title: string }) => {
+  // 同步吸顶分类栏的高亮
+  stickyActiveKey.value = item.key;
   // 离开对应菜单时退出批量管理
   if (item.key !== HISTORY_KEY) batchMode.value = false;
   if (item.key !== VIDEO_COLLECT_KEY) collectBatchMode.value = false;
