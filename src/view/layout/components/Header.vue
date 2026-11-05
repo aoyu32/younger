@@ -721,7 +721,7 @@ const handleLogoClick = () => {
 
 .header_right {
   flex-shrink: 0;
-  gap: var(--ao-spacing-md);
+  gap: var(--ao-spacing-lg);
 
   .tool_collect {
     button {
@@ -764,7 +764,7 @@ const handleLogoClick = () => {
   }
 
   .auth-box {
-    gap: var(--ao-spacing-md);
+    gap: 20px;
     font-size: var(--ao-font-size-sm);
     color: var(--ao-color-primary);
 
