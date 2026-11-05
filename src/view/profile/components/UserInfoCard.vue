@@ -45,7 +45,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/store/module/user';
+import useStore from '@/store';
 import { logout as logoutApi } from '@/api/auth';
 import AoDialog from '@/components/ao-dialog/index.vue';
 import { message } from '@/components/ao-message';
@@ -56,7 +56,7 @@ import { resolveFileUrl } from '@/utils/file';
 const GENDER_TEXT: Record<number, string> = { 1: '男', 2: '女' };
 
 const router = useRouter();
-const userStore = useUserStore();
+const { user: userStore } = useStore();
 const { userInfo } = storeToRefs(userStore);
 const { logout } = userStore;
 

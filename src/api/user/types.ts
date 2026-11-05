@@ -66,3 +66,12 @@ export interface UserProfile {
   /** 角色编码列表，如 ['ROLE_USER'] */
   roles: string[];
 }
+
+/**
+ * 登录/注册响应里的基础用户信息。
+ * 简介、性别、地区、加入时间等字段只有资料接口（UserProfile）才返回。
+ */
+export type UserProfileBasic = Pick<
+  UserProfile,
+  'userId' | 'nickname' | 'avatar' | 'roles'
+>;

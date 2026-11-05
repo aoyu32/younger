@@ -169,7 +169,7 @@ import iconImg from '@/assets/profile/icon_img.svg?url';
 import defaultAvatar from '@/assets/deafult_avatar.png';
 import { resolveFileUrl } from '@/utils/file';
 import { formatDateCN } from '@/utils/format';
-import { useUserStore } from '@/store/module/user';
+import useStore from '@/store';
 import { updateAvatar, updateProfile } from '@/api/user';
 import { uploadFile } from '@/api/file';
 import { message } from '@/components/ao-message';
@@ -245,7 +245,7 @@ const PROVINCE_OPTIONS: BottomLineSelectOption<string>[] = PROVINCE_LIST.map(
   (province) => ({ label: province.name, value: province.name }),
 );
 
-const userStore = useUserStore();
+const { user: userStore } = useStore();
 const { userInfo } = storeToRefs(userStore);
 
 /** 资料数据：由 store 中的用户信息回填 */
