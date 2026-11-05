@@ -32,7 +32,7 @@
           <h2>YOUNGER <span>SIGN IN</span></h2>
           <p>Welcome To 洋果教育</p>
         </div>
-        <div class="login-form flex-col">
+        <div class="login-form flex-col" @keydown.enter.prevent="handleFormEnter">
           <div class="form-item">
             <ao-form-input
               ref="usernameRef"
@@ -146,6 +146,12 @@ const handleLogin = async () => {
   if (!valid) return;
 
   await doLogin();
+};
+
+/** 表单内按 Enter 直接登录（中文输入法组词中的 Enter 不触发） */
+const handleFormEnter = (event: KeyboardEvent) => {
+  if (event.isComposing) return;
+  void handleLogin();
 };
 
 /**
