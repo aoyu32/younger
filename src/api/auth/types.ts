@@ -14,6 +14,11 @@ export interface RegisterRequest {
   emailCode: string;
   /** 明文密码，8~64 位 */
   password: string;
+  /**
+   * 保持登录：true 时后端下发 30 天持久化 Cookie（关浏览器后仍保持），
+   * false 时下发会话级 Cookie（关闭浏览器即失效）
+   */
+  rememberMe?: boolean;
 }
 
 /** 用户登录方式 */
@@ -32,6 +37,11 @@ export interface UserLoginRequest {
   account: string;
   /** 明文密码 */
   password: string;
+  /**
+   * 保持登录：true 时后端下发 30 天持久化 Cookie（关浏览器后仍保持），
+   * false 时下发会话级 Cookie（关闭浏览器即失效）
+   */
+  rememberMe?: boolean;
   /**
    * 滑块验证凭证，一次性消费，平时不传；
    * 连续登录失败达阈值 / 收到 body code=429 后完成滑块验证并重试时携带
