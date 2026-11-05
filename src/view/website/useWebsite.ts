@@ -52,3 +52,5 @@ export const useWebsite = () => ({
   isLiked,
   toggleLike,
 });
+
+export default useWebsite;

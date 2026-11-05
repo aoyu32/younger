@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useTopic } from '@/store/module/topic';
+import useTopic from '@/view/topic/useTopic';
 import TopicInfo from './components/TopicInfo.vue';
 import TopicChat from './components/TopicChat.vue';
 import TopicEditor from './components/TopicEditor.vue';

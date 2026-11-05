@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import WebsiteCard from './WebsiteCard.vue';
-import { useWebsite } from '@/store/module/website';
+import useWebsite from '@/view/website/useWebsite';
 
 interface WebsiteItem {
   name: string;

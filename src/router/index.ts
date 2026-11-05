@@ -1,6 +1,6 @@
 // router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-import { useUserStore } from '@/store/module/user';
+import useStore from '@/store';
 
 const routes = [
   {
@@ -184,7 +184,7 @@ const router = createRouter({
 /** 需要登录的路由：未登录跳登录页并带上回跳地址 */
 router.beforeEach((to) => {
   if (!to.matched.some((record) => record.meta.requiresAuth)) return true;
-  const userStore = useUserStore();
+  const { user: userStore } = useStore();
   if (userStore.isLogin) return true;
   return { name: 'login', query: { redirect: to.fullPath } };
 });

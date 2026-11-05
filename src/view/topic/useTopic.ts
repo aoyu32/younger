@@ -76,3 +76,5 @@ export const useTopic = () => ({
   likeMessage,
   sendMessage,
 });
+
+export default useTopic;

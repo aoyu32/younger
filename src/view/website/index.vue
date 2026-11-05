@@ -140,7 +140,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import Lenis from 'lenis';
 import PageSolgan from '@/components/page-slogan/index.vue';
 import WebsiteListCard from './components/WebsiteListCard.vue';
-import { useWebsite, type WebsiteLink } from '@/store/module/website';
+import useWebsite, { type WebsiteLink } from '@/view/website/useWebsite';
 import deleteIcon from '@/assets/website/icon_delete.svg';
 import addIcon from '@/assets/website/icon_add.svg';
 import AddWebsiteDialog from './components/AddWebsiteDialog.vue';

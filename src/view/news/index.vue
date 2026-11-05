@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useTopic } from '@/store/module/topic';
+import useTopic from '@/view/topic/useTopic';
 import PageSlogan from '@/components/page-slogan/index.vue';
 import AoStickyTabs from '@/components/ao-sticky-tabs/index.vue';
 import TodayTopic from './components/TodayTopic.vue';

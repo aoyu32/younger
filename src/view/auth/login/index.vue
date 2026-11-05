@@ -90,7 +90,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '@/hooks/useAuthTransition';
-import { useUserStore } from '@/store/module/user';
+import useStore from '@/store';
 import AoFormInput from '@/components/ao-form-input/index.vue';
 import AuthCaptcha from '../components/AuthCaptcha.vue';
 import RememberMeCheckbox from '../components/RememberMeCheckbox.vue';
@@ -103,7 +103,7 @@ const { showOverlay, hideOverlay } = useAuthTransition();
 
 const router = useRouter();
 const route = useRoute();
-const userStore = useUserStore();
+const { user: userStore } = useStore();
 const loginBoxRef = ref<HTMLElement>();
 const loginFormRef = ref<HTMLElement>();
 const loginLeftRef = ref<HTMLElement>();
@@ -182,6 +182,8 @@ const doLogin = async (captchaVerification?: string, isRetry = false) => {
       avatar: res.avatar,
       roles: res.roles,
     });
+    // 登录响应只有基础字段，异步补拉完整资料（个人中心等页面要用），失败不影响登录
+    void userStore.loadProfile().catch(() => {});
     message.success(`欢迎回来，${res.nickname}`);
     // 401 拦截器带的 redirect 优先回跳，否则去首页
     const redirect = route.query.redirect;

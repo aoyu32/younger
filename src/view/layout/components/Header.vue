@@ -196,7 +196,7 @@ import {
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/store/module/user';
+import useStore from '@/store';
 import defaultAvatar from '@/assets/deafult_avatar.png';
 import { resolveFileUrl } from '@/utils/file';
 import { logout as logoutApi } from '@/api/auth';
@@ -223,7 +223,7 @@ defineOptions({
 });
 
 // 响应式数据
-const userStore = useUserStore();
+const { user: userStore } = useStore();
 const { isLogin, userInfo } = storeToRefs(userStore);
 const { logout } = userStore;
 

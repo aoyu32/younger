@@ -158,7 +158,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '@/hooks/useAuthTransition';
-import { useUserStore } from '@/store/module/user';
+import useStore from '@/store';
 import AoFormInput from '@/components/ao-form-input/index.vue';
 import AuthCaptcha from '../components/AuthCaptcha.vue';
 import RopeHomeButton from '../components/RopeHomeButton.vue';
@@ -171,7 +171,7 @@ import { register } from '@/api/auth';
 import { ApiError } from '@/request';
 
 const { showOverlay, hideOverlay } = useAuthTransition();
-const userStore = useUserStore();
+const { user: userStore } = useStore();
 const router = useRouter();
 const registerBoxRef = ref<HTMLElement>();
 const registerLeftRef = ref<HTMLElement>();
@@ -350,6 +350,8 @@ const handleRegister = async () => {
       avatar: res.avatar,
       roles: res.roles,
     });
+    // 注册响应只有基础字段，异步补拉完整资料，失败不影响注册流程
+    void userStore.loadProfile().catch(() => {});
     message.success(`注册成功，${res.nickname}，欢迎加入洋果教育`);
     router.push('/home');
   } catch {
