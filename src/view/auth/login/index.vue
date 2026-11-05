@@ -21,13 +21,8 @@
       </div>
     </div>
     <div class="login-right" ref="loginFormRef">
-      <div class="back-home" @click="handleBackHome">
-        <AoImage
-          src="@/assets/auth/icon_back_home.svg"
-          width="20px"
-          height="20px"
-        ></AoImage>
-      </div>
+      <!-- 桌面端：绳子吊着的 home 圆球，可拉拽摆动，点击回首页 -->
+      <RopeHomeButton @home="handleBackHome" />
       <!-- 移动端：返回首页移到表单底部，圆形浅灰底 home 图标按钮 -->
       <div class="mobile-back-home" @click="handleBackHome" aria-label="返回首页">
         <AoImage src="@/assets/auth/icon_home.svg" width="20px" height="20px"></AoImage>
@@ -63,7 +58,10 @@
           </div>
         </div>
         <div class="form-bottom">
-          <div @click="$router.push('/reset')">忘记密码？</div>
+          <RememberMeCheckbox v-model="rememberMe" />
+          <div class="forgot-link" @click="$router.push('/reset')">
+            忘记密码？
+          </div>
         </div>
         <div class="login-submit">
           <ao-button :disabled="submitting" @click="handleLogin">
@@ -95,6 +93,8 @@ import { useAuthTransition } from '@/hooks/useAuthTransition';
 import { useUserStore } from '@/store/module/user';
 import AoFormInput from '@/components/ao-form-input/index.vue';
 import AuthCaptcha from '../components/AuthCaptcha.vue';
+import RememberMeCheckbox from '../components/RememberMeCheckbox.vue';
+import RopeHomeButton from '../components/RopeHomeButton.vue';
 import { message } from '@/components/ao-message';
 import { login } from '@/api/auth';
 import { ApiError } from '@/request';
@@ -116,6 +116,12 @@ const loginForm = ref({
   username: '',
   password: '',
 });
+
+/**
+ * 保持登录：勾选时后端下发 30 天持久 Cookie（关浏览器后仍保持登录），
+ * 不勾选则下发会话级 Cookie，关闭浏览器自动退出。默认不勾选。
+ */
+const rememberMe = ref(false);
 
 const rules = {
   username: [{ required: true, message: '账号不能为空' }],
@@ -158,6 +164,7 @@ const doLogin = async (captchaVerification?: string, isRetry = false) => {
           : 'USERNAME_PASSWORD',
         account,
         password: loginForm.value.password,
+        rememberMe: rememberMe.value,
         ...(captchaVerification ? { captchaVerification } : {}),
       },
       { silent: true },

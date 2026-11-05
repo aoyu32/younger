@@ -158,6 +158,7 @@
 }
 
 .reset-right {
+  position: relative;
   flex: 1;
   display: flex;
   justify-content: center;
@@ -279,30 +280,6 @@
   justify-content: center;
 }
 
-.back-home {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60px;
-  height: 60px;
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
-  background-color: var(--ao-color-primary);
-  z-index: 2;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  :deep(img) {
-    transition: all 0.2s ease-in-out;
-    transform: translate(12px, -12px) rotate(45deg);
-
-    &:hover {
-      transform: translate(12px, -12px) scaleX(1.1);
-    }
-  }
-}
-
 /* mobile: hide brand panel, keep form as-is */
 @media (max-width: 768px) {
   .reset-left {
@@ -320,10 +297,6 @@
 }
 
 @media (max-width: 768px) {
-  .back-home {
-    display: none;
-  }
-
   .reset-right {
     position: relative;
   }

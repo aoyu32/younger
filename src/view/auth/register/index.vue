@@ -1,13 +1,8 @@
 <template>
   <div class="register flex" ref="registerBoxRef">
     <div class="register-left" ref="registerLeftRef">
-      <div class="back-home" @click="handleBackHome">
-        <AoImage
-          src="@/assets/auth/icon_back_home.svg"
-          width="20px"
-          height="20px"
-        ></AoImage>
-      </div>
+      <!-- 桌面端：绳子吊着的 home 圆球（表单在左侧，镜像挂左边），可拉拽摆动，点击回首页 -->
+      <RopeHomeButton side="left" @home="handleBackHome" />
       <!-- 移动端：返回首页移到表单底部，圆形浅灰底 home 图标按钮 -->
       <div class="mobile-back-home" @click="handleBackHome" aria-label="返回首页">
         <AoImage src="@/assets/auth/icon_home.svg" width="20px" height="20px"></AoImage>
@@ -166,6 +161,7 @@ import { useAuthTransition } from '@/hooks/useAuthTransition';
 import { useUserStore } from '@/store/module/user';
 import AoFormInput from '@/components/ao-form-input/index.vue';
 import AuthCaptcha from '../components/AuthCaptcha.vue';
+import RopeHomeButton from '../components/RopeHomeButton.vue';
 import AgreementReader, {
   type AgreementType,
 } from './components/AgreementReader.vue';
@@ -339,6 +335,7 @@ const handleRegister = async () => {
       email: form.value.email,
       emailCode: form.value.verifyCode,
       password: form.value.password,
+      rememberMe: true,
     });
     // 保存后端返回的用户信息并自动登录（token 由 HttpOnly Cookie 维护，不存前端）
     userStore.login({

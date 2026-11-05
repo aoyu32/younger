@@ -25,13 +25,8 @@
       <div class="mobile-back-home" @click="handleBackHome" aria-label="返回首页">
         <AoImage src="@/assets/auth/icon_home.svg" width="20px" height="20px"></AoImage>
       </div>
-      <div class="back-home" @click="handleBackHome">
-        <AoImage
-          src="@/assets/auth/icon_back_home.svg"
-          width="20px"
-          height="20px"
-        ></AoImage>
-      </div>
+      <!-- 桌面端：绳子吊着的 home 圆球，可拉拽摆动，点击回首页 -->
+      <RopeHomeButton @home="handleBackHome" />
       <div class="form-wrapper flex-c">
         <div class="reset-title">
           <h2>YOUNGER <span>RE PWD</span></h2>
@@ -124,6 +119,7 @@ import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAuthTransition } from '@/hooks/useAuthTransition';
 import AoFormInput from '@/components/ao-form-input/index.vue';
 import AoCaptcha from '../components/AuthCaptcha.vue';
+import RopeHomeButton from '../components/RopeHomeButton.vue';
 import { message } from '@/components/ao-message';
 import { sendResetPasswordCode } from '@/api/codes';
 import { forgotPassword } from '@/api/auth';
