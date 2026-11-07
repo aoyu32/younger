@@ -62,6 +62,9 @@ export interface AiAppFeature {
   desc: string;
 }
 
+/** 可下载平台 */
+export type AppPlatform = 'windows' | 'macos' | 'linux';
+
 export interface AiAppCatalogItem {
   id: number;
   key: AiAppKey;
@@ -78,6 +81,8 @@ export interface AiAppCatalogItem {
   features: AiAppFeature[];
   useCases: string[];
   tips: string[];
+  /** 可下载平台，缺省视为三端齐全 */
+  platforms?: AppPlatform[];
 }
 
 export const aiAppCatalog: AiAppCatalogItem[] = [
@@ -94,9 +99,6 @@ export const aiAppCatalog: AiAppCatalogItem[] = [
     tags: ['AI 对话', 'OpenAI', '多模态'],
     features: [
       { title: '自然对话与深度推理', desc: '支持长上下文、逐步推理与追问，复杂问题可以拆开聊透。' },
-      { title: '多模态理解与生成', desc: '图片、文件、语音都能直接输入，图表和代码也能读懂。' },
-      { title: '自定义 GPT 与工作流', desc: '把常用提示词、知识库和工具封装成专属助手，随取随用。' },
-      { title: '联网与数据分析', desc: '需要时联网检索最新信息，并生成可交互的表格与图表。' },
     ],
     useCases: ['长文写作与润色', '代码生成与排错', '资料总结与数据分析'],
     tips: ['把背景、目标、约束和输出格式一次说清，效果通常更好。', '重要结论建议要求给出处，并做一次交叉验证。'],
@@ -115,11 +117,10 @@ export const aiAppCatalog: AiAppCatalogItem[] = [
     features: [
       { title: '超长上下文阅读', desc: '一次读完整份合同、论文或代码仓库，跨章节保持上下文。' },
       { title: 'Artifacts 可视化', desc: '把代码、网页、图表直接渲染成可预览的交互式产物。' },
-      { title: '严谨的结构化输出', desc: '擅长按指定格式整理要点、风险和待办事项。' },
-      { title: '代码理解与重构', desc: '能解释复杂逻辑、定位缺陷，并给出可执行的修改方案。' },
     ],
     useCases: ['合同与论文审阅', '代码库理解', '结构化报告生成'],
     tips: ['把长文档分段标注章节，引用时更准确。', '让它先列出假设和不确定点，再给出结论。'],
+    platforms: ['windows', 'macos'],
   },
   {
     id: 2,
@@ -136,7 +137,6 @@ export const aiAppCatalog: AiAppCatalogItem[] = [
       { title: '原生多模态理解', desc: '文本、图片、音频和视频统一理解，适合处理混合素材。' },
       { title: 'Google 生态联动', desc: '可结合搜索、Gmail、Docs 等工具完成信息整理与创作。' },
       { title: '长上下文与文件分析', desc: '上传长文档或代码文件，快速提取要点和行动项。' },
-      { title: '多语言创作', desc: '中英文互译、改写和本地化表达更加自然。' },
     ],
     useCases: ['跨语言资料整理', '会议纪要生成', '图文内容创作'],
     tips: ['需要最新信息时明确要求联网检索并标注来源。', '处理表格时说明列含义，减少误读。'],
@@ -157,9 +157,11 @@ export const aiAppCatalog: AiAppCatalogItem[] = [
       { title: '中文理解与写作', desc: '对中文语境、成语和行业表达把握更自然。' },
       { title: '代码生成与调试', desc: '覆盖前后端常见语言，能解释报错并给出修复补丁。' },
       { title: '高性价比 API', desc: '适合把对话、摘要和代码能力接入自己的产品。' },
+      { title: '联网搜索', desc: '需要最新信息时自动检索并汇总来源。' },
     ],
     useCases: ['数学与逻辑题', '中文内容创作', 'API 应用开发'],
     tips: ['推理题可以要求先列步骤再给答案。', '代码问题附上完整报错和版本信息。'],
+    platforms: ['windows'],
   },
   {
     id: 4,
@@ -197,6 +199,8 @@ export const aiAppCatalog: AiAppCatalogItem[] = [
       { title: '多模态创意', desc: '支持图片理解和生成，适合配图与视觉灵感。' },
       { title: '语音交互', desc: '语音输入与播报，移动场景下更方便。' },
       { title: '智能体广场', desc: '内置多种角色与工具，降低使用门槛。' },
+      { title: '文档总结', desc: '上传长文档自动提炼要点，支持多轮追问。' },
+      { title: '创意配图', desc: '按描述生成配图，快速补齐内容素材。' },
     ],
     useCases: ['社交媒体文案', '短视频脚本', '日常学习问答'],
     tips: ['明确平台调性和字数限制，文案会更贴近需求。', '创意任务可以一次要多个方向再筛选。'],
@@ -217,6 +221,11 @@ export const aiAppCatalog: AiAppCatalogItem[] = [
       { title: '中文创作', desc: '文案、公文、诗词等多种中文文体生成。' },
       { title: '多模态生成', desc: '支持图片理解与生成，满足基础视觉需求。' },
       { title: '插件与智能体', desc: '可调用搜索、文档等能力扩展任务边界。' },
+      { title: '长文档理解', desc: '上传文档快速提炼要点，支持多轮追问。' },
+      { title: '语音对话', desc: '支持语音输入与播报，移动场景更方便。' },
+      { title: '多语言翻译', desc: '中英互译与本地化表达，保留原文结构。' },
+      { title: '代码解释', desc: '粘贴代码片段即可获得逐行说明与示例。' },
+      { title: '会议纪要', desc: '把会议记录整理成结论、待办和负责人。' },
     ],
     useCases: ['中文知识问答', '公文写作', '营销文案'],
     tips: ['事实类问题要求给出参考来源。', '公文写作先给格式和语气要求。'],
