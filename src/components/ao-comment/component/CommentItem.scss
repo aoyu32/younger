@@ -36,7 +36,7 @@
           color: #9499a0;
         }
         span {
-          color: #3b82f6;
+          color: var(--ao-comment-theme, #00b5b5);
         }
       }
     }
@@ -116,14 +116,14 @@
         }
 
         &.active {
-          color: #3b82f6;
+          color: var(--ao-comment-theme, #00b5b5);
           font-weight: 500;
         }
         &.like-btn.active {
-          color: #3b82f6;
+          color: var(--ao-comment-theme, #00b5b5);
         }
         &.dislike-btn.active {
-          color: #3b82f6;
+          color: var(--ao-comment-theme, #00b5b5);
         }
       }
 
@@ -155,14 +155,18 @@
         background: none;
         border: none;
         font-size: 13px;
-        color: #3b82f6;
+        color: var(--ao-comment-theme, #00b5b5);
         cursor: pointer;
         padding: 4px 12px;
         border-radius: 16px;
         transition: background-color 0.2s;
 
         &:hover {
-          background-color: #eef2ff;
+          background-color: color-mix(
+            in srgb,
+            var(--ao-comment-theme, #00b5b5) 10%,
+            transparent
+          );
         }
       }
     }

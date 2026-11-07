@@ -1,5 +1,5 @@
 <template>
-  <div class="ao-comment">
+  <div class="ao-comment" :style="themeStyle">
     <div class="header">
       <div class="label">
         <h3>
@@ -42,7 +42,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, provide } from 'vue';
+import { ref, provide, computed } from 'vue';
 import CommentInput from './component/CommentInput.vue';
 import CommentItem from './component/CommentItem.vue';
 import type { CommentItemData, UploadFn, ImageItem } from './index.ts';
@@ -53,10 +53,22 @@ const emit = defineEmits<{
     data: { commentId: string | number; text: string; images: ImageItem[] },
   ): void;
 }>();
-const props = defineProps<{
-  comments: CommentItemData[];
-  onUpload: UploadFn;
-}>();
+const props = withDefaults(
+  defineProps<{
+    comments: CommentItemData[];
+    onUpload: UploadFn;
+    /** 主题色：默认使用网站品牌色，可传入任意 CSS 颜色自定义 */
+    themeColor?: string;
+  }>(),
+  {
+    themeColor: '',
+  },
+);
+
+/** 仅在显式传入时覆盖 CSS 变量，否则由样式里的品牌色兜底 */
+const themeStyle = computed(() =>
+  props.themeColor ? { '--ao-comment-theme': props.themeColor } : {},
+);
 
 if (props.onUpload) {
   provide('on-upload', props.onUpload);

@@ -1,4 +1,7 @@
 .ao-comment {
+  /* 主题色：默认品牌青，可通过 themeColor 参数覆盖，组件不依赖外部变量 */
+  --ao-comment-theme: #00b5b5;
+
   width: 100%;
   height: 100%;
   margin: 20px 0;
@@ -20,6 +23,10 @@
     padding-bottom: 20px;
 
     .label {
+      h3 {
+        color: var(--ao-comment-theme);
+      }
+
       span {
         font-weight: 500;
         font-size: 13px;
@@ -45,12 +52,12 @@
       font-size: 15px;
       border: none;
       background-color: transparent;
-      color: #1abbf6;
+      color: var(--ao-comment-theme);
       cursor: pointer;
       transition: all 0.2s ease-in-out;
 
       &:hover {
-        color: #1abbf6af;
+        opacity: 0.7;
       }
     }
   }
@@ -69,24 +76,29 @@
   }
 
   .comment-empty {
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    background-color: #f4f4f46c;
+    gap: 8px;
+    /* 由内容撑高，不再拉伸导致图标和文字上下错位 */
+    padding: 32px 0;
     margin-top: 20px;
+    background-color: #f4f4f46c;
 
     .empty-icon {
-      margin-bottom: 10px;
+      display: flex;
+      margin-bottom: 0;
+
       img {
         width: 70px;
         height: 70px;
-        object-fit: cover;
+        object-fit: contain;
       }
     }
 
-    p{
+    p {
+      margin: 0;
       color: #c0bcbc;
     }
   }
