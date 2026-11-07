@@ -1,34 +1,37 @@
 <template>
-  <AppDetailResponsive v-if="isResponsive" />
+  <!-- 默认：完整版详情；带 mode=classic 时回到原版（简版） -->
+  <AppDetailMain v-if="!isClassic" />
+  <AppDetailResponsive v-else-if="isResponsive" />
   <AppDetailDesktop v-else />
 </template>
 
 <script setup lang="ts">
 import {
+  computed,
   defineAsyncComponent,
   onBeforeUnmount,
   onMounted,
   ref,
 } from 'vue';
+import { useRoute } from 'vue-router';
 import AppDetailResponsive from './components/AppDetailResponsive.vue';
+import AppDetailMain from './components/AppDetailMain.vue';
 
 /**
  * 应用详情页双形态：
- * - 桌面：完整 GSAP / ScrollTrigger / Lenis 动效
- * - 响应式：纯静态布局，无动画
- *
- * 断点以 header 内容宽度（1200px）为准：
- * 可视宽度小于 1200px 时直接切换到响应式组件，避免窄屏下动效被压缩变形。
+ * - 默认：AppDetailMain 完整版（卡片 + Banner + 功能块 + 介绍 + 评论）
+ * - 带 ?mode=classic：回到原版详情页，桌面走 GSAP 动效版，窄屏走静态版
  */
+
+/** 断点以 header 内容宽度（1200px）为准 */
 const HEADER_CONTENT_WIDTH = 1200;
 
-/**
- * 响应式版同步加载，保证窄屏首屏立即出现；
- * 桌面版异步加载，避免移动端下载 GSAP / Lenis 等桌面动画依赖。
- */
 const AppDetailDesktop = defineAsyncComponent(
   () => import('./components/AppDetailDesktop.vue'),
 );
+
+const route = useRoute();
+const isClassic = computed(() => route.query.mode === 'classic');
 
 const getViewportWidth = () =>
   typeof document === 'undefined'
