@@ -19,47 +19,90 @@
         </span>
         <span v-for="tag in appTags" :key="tag" class="tag">{{ tag }}</span>
       </div>
-      <div class="actions">
-        <div ref="downloadRef" class="download-dropdown">
-          <button
-            type="button"
-            class="download-btn"
-            :style="{ backgroundColor: primaryColor }"
-            @click.stop="downloadOpen = !downloadOpen"
-          >
-            免费下载
+      <div class="actions" :style="{ '--primary-color': primaryColor }">
+        <div class="actions-main">
+          <div ref="downloadRef" class="download-dropdown">
+            <button
+              type="button"
+              class="download-btn"
+              :style="{ backgroundColor: primaryColor }"
+              @click.stop="downloadOpen = !downloadOpen"
+            >
+              免费下载
+            </button>
+            <ul v-if="downloadOpen" class="download-menu">
+              <li v-for="platform in downloadPlatforms" :key="platform">
+                <button
+                  type="button"
+                  class="download-menu__item"
+                  @click="handleDownload(platform)"
+                >
+                  <component
+                    :is="PLATFORM_ICONS[platform]"
+                    class="download-menu__icon"
+                    :style="{ color: primaryColor }"
+                  />
+                  {{ PLATFORM_LABELS[platform] }}版本
+                </button>
+              </li>
+            </ul>
+          </div>
+          <button type="button" class="quick-link" @click="openVideoModal">
+            快速了解
+            <span :style="{ color: primaryColor }">{{ data?.name }}</span>
           </button>
-          <ul v-if="downloadOpen" class="download-menu">
-            <li v-for="platform in downloadPlatforms" :key="platform">
-              <button
-                type="button"
-                class="download-menu__item"
-                @click="handleDownload(platform)"
-              >
-                <component
-                  :is="PLATFORM_ICONS[platform]"
-                  class="download-menu__icon"
-                  :style="{ color: primaryColor }"
-                />
-                {{ PLATFORM_LABELS[platform] }}版本
-              </button>
-            </li>
-          </ul>
         </div>
-        <button type="button" class="quick-link" @click="openVideoModal">
-          快速了解 <span :style="{ color: primaryColor }">{{ data?.name }}</span>
-        </button>
-        <RouterLink
-          class="mode-switch"
-          :to="{ path: route.path, query: { ...route.query, mode: undefined } }"
-        >
-          <component
-            :is="switchIcon"
-            class="mode-switch__icon"
-            :style="{ color: primaryColor }"
-          />
-          切换模式
-        </RouterLink>
+
+        <div class="actions-social">
+          <RouterLink
+            class="mode-switch"
+            :to="{ path: route.path, query: { ...route.query, mode: undefined } }"
+          >
+            <component
+              :is="switchIcon"
+              class="mode-switch__icon"
+              :style="{ color: primaryColor }"
+            />
+            切换模式
+          </RouterLink>
+
+          <AoTooltip
+            :content="likeTooltip"
+            placement="bottom"
+            :background="primaryColor"
+          >
+            <button
+              type="button"
+              class="reaction"
+              :class="{ 'is-active': liked }"
+              @click="liked = !liked"
+            >
+              <component :is="likeIcon" class="reaction__icon" />
+              {{ liked ? '已点赞' : '点赞' }}
+            </button>
+          </AoTooltip>
+
+          <AoTooltip
+            :content="favoriteTooltip"
+            placement="bottom"
+            :background="primaryColor"
+          >
+            <button
+              type="button"
+              class="reaction"
+              :class="{ 'is-active': favorited }"
+              @click="favorited = !favorited"
+            >
+              <component :is="favoriteIcon" class="reaction__icon" />
+              {{ favorited ? '已收藏' : '收藏' }}
+            </button>
+          </AoTooltip>
+
+          <button type="button" class="reaction" @click="handleShare">
+            <component :is="shareIcon" class="reaction__icon" />
+            分享
+          </button>
+        </div>
       </div>
     </section>
 
@@ -161,6 +204,10 @@ import windowsIcon from '@/assets/app-detail/icon_windows.svg';
 import macosIcon from '@/assets/app-detail/icon_macos.svg';
 import linuxIcon from '@/assets/app-detail/icon_linux.svg';
 import switchIcon from '@/assets/app-detail/icon_switch.svg';
+import likeIcon from '@/assets/app-detail/icon_like.svg';
+import favoriteIcon from '@/assets/app-detail/icon_favorite.svg';
+import shareIcon from '@/assets/app-detail/icon_share.svg';
+import AoTooltip from '@/components/ao-tooltip/index.vue';
 
 const route = useRoute();
 const previewId = 'app-detail-responsive-preview';
@@ -194,6 +241,49 @@ const appTags = computed(() =>
 
 const downloadOpen = ref(false);
 const downloadRef = ref<HTMLElement>();
+
+/** 点赞 / 收藏状态 */
+const liked = ref(false);
+const favorited = ref(false);
+
+/** 点赞、收藏数（切换状态时 +1 / -1） */
+const likeCount = computed(
+  () => (data.value?.likes ?? 0) + (liked.value ? 1 : 0),
+);
+const favoriteCount = computed(
+  () => (data.value?.favorites ?? 0) + (favorited.value ? 1 : 0),
+);
+const likeTooltip = computed(
+  () => `${liked.value ? '已点赞' : '点赞'} (${likeCount.value})`,
+);
+const favoriteTooltip = computed(
+  () => `${favorited.value ? '已收藏' : '收藏'} (${favoriteCount.value})`,
+);
+
+/** 分享：优先系统分享，不支持时复制链接 */
+const handleShare = async () => {
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: data.value?.name ?? '',
+        url: window.location.href,
+      });
+      return;
+    }
+    await navigator.clipboard.writeText(window.location.href);
+  } catch {
+    // 用户取消或不支持时静默处理
+  }
+};
+
+/** 切换应用时重置操作状态 */
+watch(
+  () => route.params.id,
+  () => {
+    liked.value = false;
+    favorited.value = false;
+  },
+);
 
 /** 图标主色：取不到时回退品牌色 */
 const iconRef = ref<HTMLImageElement>();
@@ -354,7 +444,7 @@ watch(
 }
 
 .hero h1 {
-  margin: 26px 0 10px;
+  margin: 24px 0 12px;
   font-size: clamp(20px, 3vw, 26px);
   line-height: 1.45;
   font-weight: var(--ao-font-weight-semibold);
@@ -363,7 +453,7 @@ watch(
 }
 
 .hero .sub {
-  margin: 0 0 20px;
+  margin: 0 0 18px;
   font-size: clamp(13px, 1.8vw, 15px);
   line-height: 1.7;
   color: var(--ao-color-text-secondary);
@@ -372,10 +462,22 @@ watch(
 
 .actions {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.actions-main,
+.actions-social {
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 16px;
+}
+
+.actions-social {
+  gap: 18px;
 }
 
 .tags {
@@ -383,7 +485,7 @@ watch(
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  margin: 0 0 20px;
+  margin: 0 0 24px;
 }
 
 .tag {
@@ -464,7 +566,43 @@ watch(
   }
 
   &:hover .mode-switch__icon {
-    transform: rotate(180deg);
+    transform: rotate(180deg) scale(1.15);
+  }
+}
+
+.reaction {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  font-size: 13px;
+  color: var(--ao-color-text-secondary);
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    color: var(--primary-color, #00b5b5);
+    opacity: 0.55;
+    transition:
+      opacity 0.2s,
+      transform 0.25s ease;
+  }
+
+  &:hover .reaction__icon {
+    opacity: 0.85;
+    transform: scale(1.15);
+  }
+
+  &.is-active {
+    color: var(--primary-color, #00b5b5);
+  }
+
+  &.is-active .reaction__icon {
+    opacity: 1;
   }
 }
 
@@ -717,6 +855,10 @@ watch(
     img {
       border-radius: 10px;
     }
+  }
+
+  .banner {
+    margin-top: 28px;
   }
 
   .banner h2 {

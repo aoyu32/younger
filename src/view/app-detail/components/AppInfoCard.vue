@@ -41,7 +41,7 @@
       </div>
     </article>
 
-    <div class="app-info-card__switch">
+    <div class="app-info-card__actions">
       <AoTooltip
         content="切换模式"
         placement="bottom"
@@ -49,12 +49,62 @@
         :offset="10"
       >
         <RouterLink
-          class="app-info-card__switch-btn"
+          class="app-info-card__action-btn app-info-card__action-btn--switch"
           :to="to"
           aria-label="切换模式"
         >
-          <component :is="switchIcon" class="app-info-card__switch-icon" />
+          <component :is="switchIcon" class="app-info-card__action-icon" />
         </RouterLink>
+      </AoTooltip>
+
+      <AoTooltip
+        :content="likeTooltip"
+        placement="bottom"
+        :background="`rgb(${mainRgb})`"
+        :offset="10"
+      >
+        <button
+          type="button"
+          class="app-info-card__action-btn"
+          :class="{ 'is-active': liked }"
+          :aria-label="liked ? '取消点赞' : '点赞'"
+          @click="liked = !liked"
+        >
+          <component :is="likeIcon" class="app-info-card__action-icon" />
+        </button>
+      </AoTooltip>
+
+      <AoTooltip
+        :content="favoriteTooltip"
+        placement="bottom"
+        :background="`rgb(${mainRgb})`"
+        :offset="10"
+      >
+        <button
+          type="button"
+          class="app-info-card__action-btn"
+          :class="{ 'is-active': favorited }"
+          :aria-label="favorited ? '取消收藏' : '收藏'"
+          @click="favorited = !favorited"
+        >
+          <component :is="favoriteIcon" class="app-info-card__action-icon" />
+        </button>
+      </AoTooltip>
+
+      <AoTooltip
+        content="分享"
+        placement="bottom"
+        :background="`rgb(${mainRgb})`"
+        :offset="10"
+      >
+        <button
+          type="button"
+          class="app-info-card__action-btn"
+          aria-label="分享"
+          @click="handleShare"
+        >
+          <component :is="shareIcon" class="app-info-card__action-icon" />
+        </button>
       </AoTooltip>
     </div>
   </div>
@@ -67,6 +117,9 @@ import { Vibrant } from 'node-vibrant/browser';
 import AppDownloadButtons from './AppDownloadButtons.vue';
 import AoTooltip from '@/components/ao-tooltip/index.vue';
 import switchIcon from '@/assets/app-detail/icon_switch.svg';
+import likeIcon from '@/assets/app-detail/icon_like.svg';
+import favoriteIcon from '@/assets/app-detail/icon_favorite.svg';
+import shareIcon from '@/assets/app-detail/icon_share.svg';
 import type { RouteLocationRaw } from 'vue-router';
 import type { AppDetailItem } from '../types';
 
@@ -82,6 +135,49 @@ const emit = defineEmits<{ palette: [rgb: string] }>();
 
 /** 当前图标主色（tooltip 背景用） */
 const mainRgb = ref('0, 181, 181');
+
+/** 点赞 / 收藏状态 */
+const liked = ref(false);
+const favorited = ref(false);
+
+/** 点赞、收藏数（状态切换时 +1 / -1） */
+const likeCount = computed(
+  () => (props.app.likes ?? 0) + (liked.value ? 1 : 0),
+);
+const favoriteCount = computed(
+  () => (props.app.favorites ?? 0) + (favorited.value ? 1 : 0),
+);
+const likeTooltip = computed(
+  () => `${liked.value ? '已点赞' : '点赞'} (${likeCount.value})`,
+);
+const favoriteTooltip = computed(
+  () => `${favorited.value ? '已收藏' : '收藏'} (${favoriteCount.value})`,
+);
+
+/** 分享：优先系统分享，不支持时复制链接 */
+const handleShare = async () => {
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: props.app.name,
+        url: window.location.href,
+      });
+      return;
+    }
+    await navigator.clipboard.writeText(window.location.href);
+  } catch {
+    // 用户取消或不支持时静默处理
+  }
+};
+
+/** 切换应用时重置操作状态 */
+watch(
+  () => props.app.id,
+  () => {
+    liked.value = false;
+    favorited.value = false;
+  },
+);
 
 /** 标签：排除已在名称下方展示过的分类 */
 const tags = computed(() =>
@@ -391,15 +487,14 @@ watch(() => props.app.icon, refresh);
     margin-top: 24px;
   }
 
-  /* 底部切换图标（无背景，hover 出现圆角方形底） */
-  &__switch {
+  /* 底部操作：切换模式 / 点赞 / 收藏 / 分享 */
+  &__actions {
     position: absolute;
     bottom: 20px;
     left: 50%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: rgba(var(--app-main-rgb, 0, 181, 181), 0.72);
+    gap: 2px;
     transform: translateX(-50%);
     z-index: 2;
 
@@ -411,7 +506,7 @@ watch(() => props.app.icon, refresh);
     }
   }
 
-  &__switch-btn {
+  &__action-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -421,16 +516,20 @@ watch(() => props.app.icon, refresh);
     border: none;
     border-radius: var(--ao-border-radius-sm);
     background-color: transparent;
-    color: inherit;
+    /* 默认浅主色，点赞/收藏后加深 */
+    color: rgba(var(--app-main-rgb, 0, 181, 181), 0.55);
     cursor: pointer;
-    transition: background-color var(--ao-duration-fast) var(--ao-ease-in-out);
+    transition:
+      background-color var(--ao-duration-fast) var(--ao-ease-in-out),
+      color var(--ao-duration-fast) var(--ao-ease-in-out);
 
     &:hover {
       background-color: rgba(var(--app-main-rgb, 0, 181, 181), 0.14);
+      color: rgba(var(--app-main-rgb, 0, 181, 181), 0.85);
     }
 
-    &:hover .app-info-card__switch-icon {
-      transform: rotate(180deg);
+    &.is-active {
+      color: rgb(var(--app-main-rgb, 0, 181, 181));
     }
 
     &:focus-visible {
@@ -439,12 +538,27 @@ watch(() => props.app.icon, refresh);
     }
   }
 
-  /* 切换图标完整展示 */
-  &__switch-icon {
+  /* 切换模式图标 hover 旋转 + 放大 */
+  &__action-btn--switch:hover .app-info-card__action-icon {
+    transform: rotate(180deg) scale(1.15);
+  }
+
+  /* 点赞 / 收藏 / 分享 hover 放大 */
+  &__action-btn:not(.app-info-card__action-btn--switch):hover
+    .app-info-card__action-icon {
+    transform: scale(1.15);
+  }
+
+  &__action-icon {
     display: block;
+    width: 18px;
+    height: 18px;
+    transition: transform 0.35s ease;
+  }
+
+  &__action-btn--switch &__action-icon {
     width: 20px;
     height: 20px;
-    transition: transform 0.35s ease;
   }
 }
 

@@ -196,7 +196,48 @@
     }
 
     &:hover .mode-switch__icon {
-      transform: rotate(180deg);
+      transform: rotate(180deg) scale(1.15);
+    }
+  }
+
+  .reaction {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    font-size: var(--ao-font-size-sm);
+    color: #7a7373;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &__icon {
+      width: 16px;
+      height: 16px;
+      color: var(--primary-color, #00b5b5);
+      opacity: 0.55;
+      transition:
+        opacity 0.2s,
+        transform 0.25s ease;
+    }
+
+    &:hover {
+      transform: none;
+      color: var(--primary-color, #00b5b5);
+    }
+
+    &:hover .reaction__icon {
+      opacity: 0.85;
+      transform: scale(1.15);
+    }
+
+    &.is-active {
+      color: var(--primary-color, #00b5b5);
+    }
+
+    &.is-active .reaction__icon {
+      opacity: 1;
     }
   }
 

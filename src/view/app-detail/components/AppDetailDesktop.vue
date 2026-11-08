@@ -36,7 +36,7 @@
             </span>
           </div>
         </div>
-        <div class="download">
+        <div class="download" :style="{ '--primary-color': primaryColor }">
           <div ref="downloadRef" class="download-dropdown">
             <button
               type="button"
@@ -81,6 +81,43 @@
             />
             切换模式
           </RouterLink>
+
+          <AoTooltip
+            :content="likeTooltip"
+            placement="bottom"
+            :background="primaryColor"
+          >
+            <button
+              type="button"
+              class="reaction"
+              :class="{ 'is-active': liked }"
+              @click="liked = !liked"
+            >
+              <component :is="likeIcon" class="reaction__icon" />
+              {{ liked ? '已点赞' : '点赞' }}
+            </button>
+          </AoTooltip>
+
+          <AoTooltip
+            :content="favoriteTooltip"
+            placement="bottom"
+            :background="primaryColor"
+          >
+            <button
+              type="button"
+              class="reaction"
+              :class="{ 'is-active': favorited }"
+              @click="favorited = !favorited"
+            >
+              <component :is="favoriteIcon" class="reaction__icon" />
+              {{ favorited ? '已收藏' : '收藏' }}
+            </button>
+          </AoTooltip>
+
+          <button type="button" class="reaction" @click="handleShare">
+            <component :is="shareIcon" class="reaction__icon" />
+            分享
+          </button>
         </div>
       </div>
     </div>
@@ -254,6 +291,10 @@ import windowsIcon from '@/assets/app-detail/icon_windows.svg';
 import macosIcon from '@/assets/app-detail/icon_macos.svg';
 import linuxIcon from '@/assets/app-detail/icon_linux.svg';
 import switchIcon from '@/assets/app-detail/icon_switch.svg';
+import likeIcon from '@/assets/app-detail/icon_like.svg';
+import favoriteIcon from '@/assets/app-detail/icon_favorite.svg';
+import shareIcon from '@/assets/app-detail/icon_share.svg';
+import AoTooltip from '@/components/ao-tooltip/index.vue';
 let lenis: Lenis | null = null;
 let isUnmounted = false;
 
@@ -290,6 +331,46 @@ const appTags = computed(() =>
 
 const downloadOpen = ref(false);
 const downloadRef = ref<HTMLElement>();
+
+/** 点赞 / 收藏状态 */
+const liked = ref(false);
+const favorited = ref(false);
+
+/** 点赞、收藏数（切换状态时 +1 / -1） */
+const likeCount = computed(
+  () => (data.value?.likes ?? 0) + (liked.value ? 1 : 0),
+);
+const favoriteCount = computed(
+  () => (data.value?.favorites ?? 0) + (favorited.value ? 1 : 0),
+);
+const likeTooltip = computed(
+  () => `${liked.value ? '已点赞' : '点赞'} (${likeCount.value})`,
+);
+const favoriteTooltip = computed(
+  () => `${favorited.value ? '已收藏' : '收藏'} (${favoriteCount.value})`,
+);
+
+/** 分享：优先系统分享，不支持时复制链接 */
+const handleShare = async () => {
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: data.value.name, url: window.location.href });
+      return;
+    }
+    await navigator.clipboard.writeText(window.location.href);
+  } catch {
+    // 用户取消或不支持时静默处理
+  }
+};
+
+/** 切换应用时重置操作状态 */
+watch(
+  () => route.params.id,
+  () => {
+    liked.value = false;
+    favorited.value = false;
+  },
+);
 
 const handleDownload = (_platform: DownloadPlatform) => {
   downloadOpen.value = false;

@@ -105,4 +105,7 @@ export const appDetailList = aiAppCatalog.map((app) => ({
   content: pickContent(app),
   tags: Array.from(new Set([app.category, ...app.tags])),
   pictorial: buildPictorial(app),
+  /** 点赞 / 收藏数（暂无接口，先按 id 生成稳定的 mock 值） */
+  likes: 86 + ((app.id * 37) % 720),
+  favorites: 24 + ((app.id * 53) % 260),
 }));
