@@ -308,12 +308,15 @@ const playRipple = () => {
   );
 
   // 四层同时从图标处向外扩散，放大到覆盖整张卡片后淡出，循环播放
+  // 单列（响应式）时横向扩散得更远，让波纹溢出到卡片左右两侧
+  const spreadX = window.matchMedia('(max-width: 992px)').matches ? 3.4 : 2.2;
   rings.forEach((ring, index) => {
     gsap.fromTo(
       ring,
-      { scale: 0.18, opacity: 0.32 },
+      { scaleX: 0.18, scaleY: 0.18, opacity: 0.32 },
       {
-        scale: 2.2,
+        scaleX: spreadX,
+        scaleY: 2.2,
         opacity: 0,
         duration: 4,
         delay: index * 1,
@@ -559,6 +562,11 @@ watch(() => props.app.icon, refresh);
   &__action-btn--switch &__action-icon {
     width: 20px;
     height: 20px;
+  }
+
+  /* 单列布局（卡片居中）时让波纹扩散到卡片左右两侧 */
+  @media (max-width: 992px) {
+    overflow: visible;
   }
 }
 
