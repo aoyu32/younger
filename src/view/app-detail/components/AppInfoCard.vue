@@ -429,6 +429,10 @@ watch(() => props.app.icon, refresh);
       background-color: rgba(var(--app-main-rgb, 0, 181, 181), 0.14);
     }
 
+    &:hover .app-info-card__switch-icon {
+      transform: rotate(180deg);
+    }
+
     &:focus-visible {
       outline: 2px solid var(--ao-color-primary-bg-hover);
       outline-offset: 2px;
@@ -440,6 +444,7 @@ watch(() => props.app.icon, refresh);
     display: block;
     width: 20px;
     height: 20px;
+    transition: transform 0.35s ease;
   }
 }
 

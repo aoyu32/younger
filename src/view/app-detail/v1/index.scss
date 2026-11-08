@@ -1,0 +1,303 @@
+.app-info {
+  align-items: center;
+  justify-content: center;
+  gap: 120px;
+  margin: 120px 0;
+  /* 整体右移：左侧让出空间给波纹扩散 */
+  padding-left: 160px;
+}
+
+.app-icon {
+  width: 250px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .glow-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    filter: blur(12px);
+    z-index: 1;
+  }
+
+  .icon {
+    position: relative;
+    border-radius: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    user-select: none;
+  }
+
+  .ripple-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 45%;
+    pointer-events: none;
+    will-change: transform, opacity;
+    opacity: 0;
+  }
+
+  img {
+    width: 75px;
+    height: 75px;
+    border-radius: var(--ao-border-radius-lg);
+    object-fit: cover;
+    position: relative;
+    filter: drop-shadow(0 0 7px rgba(251, 82, 82, 0.3));
+    z-index: 10;
+    cursor: pointer;
+  }
+}
+
+.info-content {
+  h2 {
+    font-size: 40px;
+    margin-bottom: var(--ao-spacing-md);
+    letter-spacing: 3px;
+    font-weight: var(--ao-font-weight-semibold);
+    color: var(--ao-gray-8);
+  }
+
+  p {
+    letter-spacing: 3px;
+    font-size: 26px;
+    margin-bottom: 29px;
+    color: var(--ao-gray-8);
+  }
+
+  .download {
+    display: flex;
+    gap: 21px;
+    align-items: center;
+  }
+
+  button {
+    padding: var(--ao-spacing-xs) 20px;
+    font-size: var(--ao-font-size-base);
+    border: none;
+    color: var(--ao-gray-0);
+    border-radius: var(--ao-border-radius-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  a {
+    font-size: var(--ao-font-size-base);
+    color: #7a7373;
+  }
+}
+
+.app-swiper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  h2 {
+    font-size: var(--ao-font-size-xxl);
+    padding: 42px;
+    font-weight: 300;
+  }
+}
+
+.app-pictorial {
+  margin-top: 42px;
+
+  .pictorial-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ao-spacing-xl);
+    margin-top: 108px;
+    font-family: var(--ao-font-family-ali);
+
+    h2 {
+      font-size: 27px;
+      font-weight: 300;
+    }
+
+    p {
+      font-size: var(--ao-font-size-base);
+      color: #7a7373;
+    }
+
+    img {
+      width: 100%;
+      object-fit: cover;
+      border-radius: 17px;
+    }
+  }
+}
+
+.svg-path {
+  position: relative;
+  .svg-wrapper {
+    font-size: var(--ao-font-size-xxl);
+    font-family: var(--ao-font-family-ali);
+  }
+  .svg-label-1,
+  .svg-label-2 {
+    position: absolute;
+    p {
+      max-width: 350px;
+    }
+  }
+}
+
+.intro-card {
+  border-radius: 20px;
+  padding: 20px 50px;
+  position: absolute;
+  background-color: #ffffff38;
+  transform: translate(0, 0);
+  /* 预提升合成层：避免 pin 动画各阶段启动时首次提升图层造成的卡帧 */
+  will-change: transform;
+  .name {
+    font-size: 56px;
+    font-weight: var(--ao-font-weight-semibold);
+    color: var(--ao-gray-0);
+    white-space: nowrap;
+  }
+}
+
+.scroll-tip {
+  position: absolute;
+  bottom: 30px;
+  color: #ffffff5d;
+
+  .line {
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :deep(.ao-icon) {
+    background-color: transparent;
+  }
+
+  span {
+    width: 5px;
+    height: 5px;
+    background-color: #ffffff5d;
+    border-radius: var(--ao-border-radius-circle);
+  }
+
+  .tip-text {
+    margin-top: 10px;
+  }
+}
+
+.intro-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  border-radius: 20px;
+  padding: 20px 30px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  transform: translateX(120%);
+  background-color: #ffffff38;
+  .btn-item {
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+}
+
+.app-intro-md {
+  width: 60%;
+  height: 100%;
+  /* 文档滚动由 GSAP transform 驱动，关闭原生滚动条避免双重滚动冲突 */
+  overflow-y: hidden;
+  will-change: transform;
+}
+
+.md-scroll-inner {
+  will-change: transform;
+}
+
+:deep(.md-editor) {
+  height: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #ffffff4b;
+  backdrop-filter: blur(10px);
+}
+
+.next-app {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  position: relative;
+
+  .icon {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  button {
+    border-radius: var(--ao-border-radius-circle);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  svg {
+    width: var(--ao-size-icon-lg);
+    height: var(--ao-size-icon-lg);
+  }
+
+  p {
+    color: #999999;
+    font-size: var(--ao-font-size-xs);
+  }
+}
+
+.intro-wrapper {
+  padding: 20px 0;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - var(--ao-header-height-lg));
+}
+
+.video-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  pointer-events: auto;
+}
+
+.video-modal-container {
+  width: 50%;
+  .video-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+  }
+}

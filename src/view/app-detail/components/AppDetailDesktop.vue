@@ -1,5 +1,5 @@
 <template>
-  <div class="app-detail">
+  <div class="app-detail" :style="appThemeStyle">
     <div class="app-info flex-center">
       <div class="app-icon">
         <div class="icon" @click="triggerRippleAnimation">
@@ -21,13 +21,66 @@
         <div class="desc">
           <h2>{{ data?.desc }}</h2>
           <p>{{ data?.sub }}</p>
+          <div class="tags">
+            <span
+              class="tag tag--category"
+              :style="{
+                color: primaryColor,
+                backgroundColor: `color-mix(in srgb, ${primaryColor} 12%, transparent)`,
+              }"
+            >
+              {{ data?.category }}
+            </span>
+            <span v-for="tag in appTags" :key="tag" class="tag">
+              {{ tag }}
+            </span>
+          </div>
         </div>
         <div class="download">
-          <button :style="{ backgroundColor: primaryColor }">免费下载</button>
+          <div ref="downloadRef" class="download-dropdown">
+            <button
+              type="button"
+              class="download-trigger"
+              :style="{ backgroundColor: primaryColor }"
+              @click.stop="downloadOpen = !downloadOpen"
+            >
+              免费下载
+            </button>
+
+            <ul v-if="downloadOpen" class="download-menu">
+              <li v-for="platform in downloadPlatforms" :key="platform">
+                <button
+                  type="button"
+                  class="download-menu__item"
+                  @click="handleDownload(platform)"
+                >
+                  <component
+                    :is="PLATFORM_ICONS[platform]"
+                    class="download-menu__icon"
+                    :style="{ color: primaryColor }"
+                  />
+                  {{ PLATFORM_LABELS[platform] }}版本
+                </button>
+              </li>
+            </ul>
+          </div>
+
           <a href="javascript:void(0)" @click.prevent="openVideoModal">
             快速了解
             <span :style="{ color: primaryColor }">{{ data?.name }}</span>
           </a>
+
+          <RouterLink
+            class="mode-switch"
+            :to="{ path: route.path, query: { ...route.query, mode: undefined } }"
+          >
+            <component
+              :is="switchIcon"
+              class="mode-switch__icon"
+              :style="{ color: primaryColor }"
+            />
+            切换模式
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -70,10 +123,10 @@
     <div class="svg-path flex-center" ref="svgPathRef">
       <div class="svg-wrapper">
         <div class="svg-label-1" :style="{ color: primaryColor }">
-          <p>向下滚动，立马快速上手APP</p>
+          <p>继续滚动，了解更多相关信息</p>
         </div>
         <div class="svg-label-2" :style="{ color: primaryColor }">
-          <p>查看{{ data?.name }}文档，了解更多</p>
+          <p>查看{{ data?.name }}详细介绍，了解更多</p>
         </div>
         <svg
           width="318"
@@ -107,55 +160,40 @@
       </div>
     </div>
 
-    <div class="intro-section">
-      <div class="intro-wrapper flex-center" ref="introWrapperRef">
-        <div class="intro-docs"></div>
-        <div class="intro-card">
-          <div class="name">{{ data?.name }}文档</div>
+    <!-- 应用介绍 + 相关帖子：进入时逐行从左滑入、帖子从右滑入 -->
+    <div class="intro-section" ref="introSectionRef">
+      <div class="intro-grid">
+        <div class="intro-content">
+          <h2 class="intro-content__title" :style="{ color: primaryColor }">
+            应用介绍
+          </h2>
+          <MdPreview id="classic-doc" :modelValue="data?.content" />
         </div>
-        <div class="scroll-tip">
-          <div class="line flex-col">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <div class="flex-center">
-              <AoIcon :icon="arrowDownIcon" color="#ffffff5d" />
-            </div>
-          </div>
-          <div class="tip-text">向下滚动</div>
-        </div>
-        <div class="app-intro-md">
-          <div class="md-scroll-inner" ref="mdScrollInnerRef">
-            <MdPreview :id="id" :modelValue="data?.content" />
-          </div>
-        </div>
-        <div class="intro-btns">
-          <div class="download btn-item">
-            <AoImage
-              src="@/assets/app-detail/icon_download.svg"
-              width="24px"
-              height="24px"
-            />
-          </div>
-          <div class="share btn-item">
-            <AoImage
-              src="@/assets/app-detail/icon_share.svg"
-              width="24px"
-              height="24px"
-            />
-          </div>
-          <div class="github btn-item">
-            <AoImage
-              src="@/assets/app-detail/icon_github.svg"
-              width="24px"
-              height="24px"
-            />
-          </div>
-        </div>
+        <aside class="intro-related">
+          <h3 class="intro-related__title" :style="{ color: primaryColor }">
+            相关帖子
+          </h3>
+          <AppRelatedNews />
+        </aside>
       </div>
     </div>
+
+    <!-- 相关视频：跟随滚动从右侧横向出现 -->
+    <div class="classic-extra classic-extra--videos" ref="videosSectionRef">
+      <h2 class="classic-extra__title" :style="{ color: primaryColor }">
+        相关视频
+      </h2>
+      <AppRelatedVideos />
+    </div>
+
+    <!-- 相关课程：跟随滚动从左侧横向出现 -->
+    <div class="classic-extra classic-extra--courses" ref="coursesSectionRef">
+      <h2 class="classic-extra__title" :style="{ color: primaryColor }">
+        相关课程
+      </h2>
+      <AppRelatedCourses />
+    </div>
+
     <div class="next-app flex-center">
       <div
         class="icon flex-center"
@@ -209,8 +247,13 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { Flip } from 'gsap/Flip';
 import { MdPreview } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import AoImage from '@/components/ao-image/index.vue';
-import arrowDownIcon from '@/assets/app-detail/icon_arrow_down.svg';
+import AppRelatedNews from './AppRelatedNews.vue';
+import AppRelatedVideos from './AppRelatedVideos.vue';
+import AppRelatedCourses from './AppRelatedCourses.vue';
+import windowsIcon from '@/assets/app-detail/icon_windows.svg';
+import macosIcon from '@/assets/app-detail/icon_macos.svg';
+import linuxIcon from '@/assets/app-detail/icon_linux.svg';
+import switchIcon from '@/assets/app-detail/icon_switch.svg';
 let lenis: Lenis | null = null;
 let isUnmounted = false;
 
@@ -221,18 +264,57 @@ const data = computed(() => {
   return appDetailList.find((appDetail) => appDetail.id === id)!;
 });
 
-const id = 'preview-only';
+type DownloadPlatform = 'windows' | 'macos' | 'linux';
+
+const PLATFORM_LABELS: Record<DownloadPlatform, string> = {
+  windows: 'Windows',
+  macos: 'MacOS',
+  linux: 'Linux',
+};
+
+const PLATFORM_ICONS: Record<DownloadPlatform, unknown> = {
+  windows: windowsIcon,
+  macos: macosIcon,
+  linux: linuxIcon,
+};
+
+/** 当前应用支持的下载平台 */
+const downloadPlatforms = computed(
+  () => data.value.platforms as DownloadPlatform[],
+);
+
+/** 应用标签（去掉重复的分类标签） */
+const appTags = computed(() =>
+  data.value.tags.filter((tag) => tag !== data.value.category),
+);
+
+const downloadOpen = ref(false);
+const downloadRef = ref<HTMLElement>();
+
+const handleDownload = (_platform: DownloadPlatform) => {
+  downloadOpen.value = false;
+};
+
+const handleDocumentClick = (event: MouseEvent) => {
+  if (!downloadOpen.value) return;
+  if (!downloadRef.value?.contains(event.target as Node)) {
+    downloadOpen.value = false;
+  }
+};
+
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 gsap.registerPlugin(SplitText);
 gsap.registerPlugin(Flip);
-const gradientStyle = ref('');
 const iconRef = ref<HTMLImageElement>();
 const primaryColor = ref('');
 const detailSwiperRef = ref();
-const introWrapperRef = ref();
 const svgPathRef = ref<HTMLElement>();
 const motionPathRef = ref<SVGPathElement>();
-const mdScrollInnerRef = ref<HTMLElement>();
+const introSectionRef = ref<HTMLElement>();
+const videosSectionRef = ref<HTMLElement>();
+const coursesSectionRef = ref<HTMLElement>();
+let introSplit: SplitText | null = null;
+let extrasTriggers: ScrollTrigger[] = [];
 const showVideoModal = ref(false);
 // 视频地址
 const videoSrc = ref(
@@ -240,11 +322,6 @@ const videoSrc = ref(
 );
 
 const arrowRef = ref<SVGGElement>();
-const getMaxScroll = () => {
-  if (!mdScrollInnerRef.value) return 0;
-  const parent = mdScrollInnerRef.value.parentElement!;
-  return Math.max(mdScrollInnerRef.value.scrollHeight - parent.clientHeight, 0);
-};
 const setupPathScrollAnimation = () => {
   if (!svgPathRef.value || !motionPathRef.value || !arrowRef.value) return;
 
@@ -326,6 +403,152 @@ const setupPathScrollAnimation = () => {
     );
 };
 
+/** 应用介绍逐行从左滑入，相关帖子从右滑入 */
+let introTrigger: ScrollTrigger | null = null;
+const setupIntroAnimation = () => {
+  const section = introSectionRef.value;
+  if (!section) return;
+
+  const preview = section.querySelector<HTMLElement>('.md-editor-preview');
+  const posts = section.querySelectorAll<HTMLElement>('.related-news__item');
+  const introTitle = section.querySelector<HTMLElement>(
+    '.intro-content__title',
+  );
+  const relatedTitle = section.querySelector<HTMLElement>(
+    '.intro-related__title',
+  );
+  if (!preview) return;
+
+  introSplit?.revert();
+  introTrigger?.kill();
+
+  introSplit = new SplitText(preview, {
+    type: 'lines',
+    linesClass: 'doc-line',
+  });
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: section,
+      start: 'top 85%',
+      end: 'bottom 70%',
+      scrub: 1,
+    },
+  });
+  introTrigger = tl.scrollTrigger ?? null;
+
+  if (introTitle) {
+    tl.from(introTitle, {
+      x: () => -(window.innerWidth / 2 + 200),
+      opacity: 0,
+      duration: 1,
+      ease: 'power2.out',
+    }, 0);
+  }
+
+  tl.from(
+    introSplit.lines,
+    {
+      x: () => -(window.innerWidth / 2 + 200),
+      opacity: 0,
+      duration: 1,
+      stagger: 0.12,
+      ease: 'power2.out',
+    },
+    0.15,
+  );
+
+  if (relatedTitle) {
+    tl.from(relatedTitle, {
+      x: () => window.innerWidth / 2 + 200,
+      opacity: 0,
+      duration: 1,
+      ease: 'power2.out',
+    }, 0.2);
+  }
+
+  if (posts.length) {
+    tl.from(
+      posts,
+      {
+        x: () => window.innerWidth / 2 + 200,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.15,
+        ease: 'power2.out',
+      },
+      0.3,
+    );
+  }
+};
+
+/** 相关视频从右、相关课程从左，跟随滚动逐张横向出现 */
+const setupExtrasAnimation = () => {
+  extrasTriggers.forEach((trigger) => trigger.kill());
+  extrasTriggers = [];
+
+  const build = (
+    section: HTMLElement | undefined,
+    selector: string,
+    direction: 1 | -1,
+  ) => {
+    if (!section) return;
+
+    const items = Array.from(section.querySelectorAll<HTMLElement>(selector));
+    const title = section.querySelector<HTMLElement>('.classic-extra__title');
+    if (!items.length) return;
+
+    // 先归位，按每张卡片最终位置算出它自己的屏幕外起点，
+    // 这样所有卡片都从屏幕同一侧边缘依次滑出，而不是整体平移导致叠在一起
+    gsap.set(items, { clearProps: 'transform' });
+    const vw = window.innerWidth;
+    const starts = items.map((el) => {
+      const rect = el.getBoundingClientRect();
+      return direction === 1 ? vw - rect.left + 60 : -(rect.right + 60);
+    });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 90%',
+        end: 'top 35%',
+        scrub: 1,
+      },
+    });
+    if (tl.scrollTrigger) extrasTriggers.push(tl.scrollTrigger);
+
+    if (title) {
+      tl.fromTo(
+        title,
+        { x: direction * 300, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1, ease: 'power2.out' },
+        0,
+      );
+    }
+
+    tl.fromTo(
+      items,
+      {
+        x: (index: number) => starts[index],
+        opacity: 0,
+      },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 0.8,
+        /* 从左出场时按倒序播放：最右侧的卡片先从左边滑到目标位，避免压到已落位的卡片 */
+        stagger:
+          direction === 1 ? 0.35 : { each: 0.35, from: 'end' as const },
+        ease: 'power2.out',
+      },
+      0.1,
+    );
+  };
+
+  build(videosSectionRef.value, '.related-videos__item', 1);
+  build(coursesSectionRef.value, '.related-courses__item', -1);
+};
+
 // 打开视频模态窗口
 const openVideoModal = () => {
   showVideoModal.value = true;
@@ -352,118 +575,37 @@ const iconFilterStyle = computed(() => {
     filter: `drop-shadow(0 0 0.56vw ${toRGBA(color, 0.3)})`,
   };
 });
+
+/** 主色拆成 r, g, b，供复用组件里的 rgba(var(--app-main-rgb), x) 使用 */
+const primaryRgb = computed(() => {
+  const match = primaryColor.value.match(/\d+,\s*\d+,\s*\d+/);
+  return match ? match[0] : '';
+});
+const appThemeStyle = computed(() =>
+  primaryRgb.value ? { '--app-main-rgb': primaryRgb.value } : {},
+);
 const toRGBA = (rgb: string, alpha: number) =>
   rgb.replace(/rgb\(/i, 'rgba(').replace(')', `,${alpha})`);
 
 const generateFromVibrant = async () => {
-  console.log('iconref:', iconRef.value);
-
   if (!iconRef.value || isUnmounted) return;
 
   try {
     const palette = await Vibrant.from(iconRef.value).getPalette();
-    // 图片解析可能晚于组件卸载（例如切换到响应式形态），此时不要再建动画
-    if (isUnmounted || !introWrapperRef.value) return;
+    // 图片解析可能晚于组件卸载（例如切换到响应式形态）
+    if (isUnmounted) return;
     const vibrant = palette.Vibrant;
-    const muted = palette.Muted;
-    const darkVibrant = palette.DarkVibrant;
-    const lightVibrant = palette.LightVibrant;
-
-    const main = vibrant ? `rgb(${vibrant.rgb.join(',')})` : '#ffa0cf';
-    const sub1 = muted ? `rgb(${muted.rgb.join(',')})` : '#ffc8b4';
-    const sub2 = lightVibrant
-      ? `rgb(${lightVibrant.rgb.join(',')})`
-      : '#ffdcc8';
-    gsap.set(introWrapperRef.value, {
-      background: `linear-gradient(135deg, ${toRGBA(main, 0.8)}, ${toRGBA(sub1, 0.6)}, ${toRGBA(sub2, 0.4)})`,
-    });
-
-    gsap
-      .timeline({
-        repeat: -1,
-        defaults: {
-          duration: 2,
-          ease: 'none',
-        },
-      })
-      .to(introWrapperRef.value, {
-        background: `linear-gradient(135deg, ${toRGBA(main, 0.6)}, ${toRGBA(sub1, 0.6)}, ${toRGBA(sub2, 0.4)})`,
-      })
-      .to(introWrapperRef.value, {
-        background: `linear-gradient(135deg, ${toRGBA(sub1, 0.6)}, ${toRGBA(sub2, 0.4)}, ${toRGBA(main, 0.8)})`,
-      })
-      .to(introWrapperRef.value, {
-        background: `linear-gradient(135deg, ${toRGBA(sub1, 0.8)}, ${toRGBA(sub2, 0.4)}, ${toRGBA(main, 0.8)})`,
-      })
-      .to(introWrapperRef.value, {
-        background: `linear-gradient(135deg, ${toRGBA(sub2, 0.4)}, ${toRGBA(main, 0.8)}, ${toRGBA(sub1, 0.6)})`,
-      })
-      .to(introWrapperRef.value, {
-        background: `linear-gradient(135deg, ${toRGBA(sub2, 0.6)}, ${toRGBA(main, 0.8)}, ${toRGBA(sub1, 0.6)})`,
-      })
-      .to(introWrapperRef.value, {
-        background: `linear-gradient(135deg, ${toRGBA(main, 0.8)}, ${toRGBA(sub1, 0.6)}, ${toRGBA(sub2, 0.4)})`,
-      });
-    primaryColor.value = `rgb(${vibrant?.rgb.join(',')})`;
-    console.log(primaryColor.value);
-    const lightShadow = `0 0 15px ${toRGBA(primaryColor.value, 0.6)}`;
-    document.documentElement.style.setProperty('--primary-shadow', lightShadow);
-    console.log('颜色：', vibrant, muted, darkVibrant, lightVibrant);
-    document.documentElement.style.setProperty(
-      '--fill-color',
-      primaryColor.value,
-    );
-    const colorA = vibrant;
-    const colorB = muted;
-    const colorC = lightVibrant;
-
-    const a = `rgba(${colorA?.rgb.join(',')},0.8)`;
-    const b = `rgba(${colorB?.rgb.join(',')},0.3)`;
-    const c = `rgba(${colorC?.rgb.join(',')},0.1)`;
-    console.log(a);
-
-    const colorStops = [
-      `${a} 0%`,
-      `${b} 50%`,
-      `${c} 80%`,
-      `transparent 90%`,
-    ].join(', ');
-
-    gradientStyle.value = `radial-gradient(circle at center, ${colorStops})`;
-    console.log('渐变样式:', gradientStyle.value);
+    primaryColor.value = vibrant ? `rgb(${vibrant.rgb.join(',')})` : '#ffa0cf';
   } catch (error) {
     console.error('Vibrant 提取颜色失败:', error);
-    gradientStyle.value = `radial-gradient(circle at center, rgba(255,160,207,0.7) 0%, rgba(255,200,180,0.4) 30%, rgba(255,220,200,0.15) 70%, transparent 100%)`;
     primaryColor.value = '#ffa0cf';
   }
-};
-
-const setupScrollTipAnimation = () => {
-  const dots = gsap.utils.toArray<HTMLElement>('.scroll-tip .line span');
-  const arrow = document.querySelector('.scroll-tip .ao-icon') as HTMLElement;
-
-  if (!dots.length || !arrow) return;
-
-  const items = [...dots, arrow];
-  const MOVE = 5;
-  const CYCLE = 1.5;
-  const STAGGER = 0.2;
-
-  items.forEach((el, i) => {
-    gsap.to(el, {
-      y: MOVE,
-      duration: CYCLE / 2,
-      ease: 'sine.inOut',
-      yoyo: true,
-      repeat: -1,
-      delay: i * STAGGER,
-    });
-  });
 };
 
 const rippleAnimation = () => {
   const desc = document.querySelector('.desc h2');
   const sub = document.querySelector('.desc p');
+  const tags = document.querySelector('.desc .tags');
   const download = document.querySelector('.download');
   triggerRippleAnimation();
 
@@ -498,6 +640,22 @@ const rippleAnimation = () => {
         delay: 0.2,
         repeat: 0,
         ease: 'bounce.out(0.6)',
+      },
+      '<',
+    )
+    .fromTo(
+      tags,
+      {
+        opacity: 0,
+        x: '100%',
+      },
+      {
+        opacity: 1,
+        x: '0%',
+        duration: 1.15,
+        delay: 0.25,
+        repeat: 0,
+        ease: 'bounce.out(0.55)',
       },
       '<',
     )
@@ -552,11 +710,6 @@ const triggerRippleAnimation = () => {
 };
 
 let scrollTriggers: ScrollTrigger[] = [];
-// 监听文档内容高度变化，触发 ScrollTrigger 重算
-let mdResizeObserver: ResizeObserver | null = null;
-let mdResizeTimer = 0;
-// setupDownloadPin 里被滚动动画改写过内联样式的全局头部，卸载时要还原
-let pinnedHeaderEl: HTMLElement | null = null;
 
 const scrollAnimation = () => {
   scrollTriggers.forEach((trigger) => trigger.kill());
@@ -583,182 +736,6 @@ const scrollAnimation = () => {
   });
 };
 
-const setupDownloadPin = () => {
-  const introSectionEl = document.querySelector('.intro-section');
-  const innerWrapperEl = document.querySelector('.intro-wrapper');
-  const headerEl = document.querySelector('.header') as HTMLElement;
-  const mdEl = document.querySelector('.app-intro-md') as HTMLElement;
-  const mdInner = mdScrollInnerRef.value as HTMLElement;
-  const introBtns = document.querySelector('.intro-btns') as HTMLElement;
-  const introCard = document.querySelector('.intro-card') as HTMLElement;
-
-  const scrollTip = document.querySelector('.scroll-tip') as HTMLElement;
-  const svgLabel1 = document.querySelector('.svg-label-1') as HTMLElement;
-
-  if (!introSectionEl || !innerWrapperEl || !headerEl || !mdEl || !mdInner) {
-    console.warn('setupDownloadPin: 缺少必要元素，跳过');
-    return;
-  }
-
-  // 记录被改写内联样式的头部（注意 querySelector('.header') 命中的是布局全局头部），
-  // 离开页面时在 onBeforeUnmount 里还原，避免返回其他页面后宽度被内联样式卡死
-  pinnedHeaderEl = headerEl;
-
-  gsap.set(mdInner, { y: 0 });
-  gsap.set(innerWrapperEl, {
-    position: 'relative',
-    left: '50%',
-    xPercent: -50,
-  });
-
-  const tl = gsap
-    .timeline()
-    .fromTo(
-      headerEl,
-      { width: '1200px' },
-      { width: '100vw', padding: '0 20px', duration: 1, ease: 'power2.inOut' },
-      0,
-    )
-    .fromTo(
-      innerWrapperEl,
-      { width: '1200px', borderRadius: '24px' },
-      {
-        width: '100vw',
-        padding: '20px',
-        borderRadius: 0,
-        duration: 1,
-        ease: 'power2.inOut',
-      },
-      0,
-    )
-    .addLabel('enter', 1)
-
-    .to(
-      introCard,
-      {
-        scale: 0.5,
-        x: () =>
-          -(
-            innerWrapperEl.getBoundingClientRect().width -
-            mdInner.getBoundingClientRect().width
-          ),
-        y: () =>
-          -(
-            innerWrapperEl.getBoundingClientRect().height -
-            introCard.getBoundingClientRect().height +
-            20
-          ) / 2,
-        duration: 1,
-        ease: 'power2.out',
-      },
-      'enter',
-    )
-    .to(
-      [scrollTip, svgLabel1].filter(Boolean),
-      {
-        opacity: 0,
-        duration: 0.5,
-        ease: 'ease.out',
-      },
-      'enter',
-    )
-    .fromTo(
-      mdEl,
-      { x: '150%' },
-      { x: '0%', duration: 1, ease: 'power2.out' },
-      'enter',
-    )
-
-    .to(
-      introBtns,
-      {
-        x: '0',
-        y: '0',
-        opacity: 1,
-        duration: 0.5,
-        delay: 0.5,
-        ease: 'power2.out',
-      },
-      '<',
-    )
-    .addLabel('scrollStart', 2);
-
-  // 文档内部滚动段：目标值用函数式写法，配合 invalidateOnRefresh 在每次
-  // refresh 时按最新布局重新计算滚动距离，避免创建时测量为 0 而跳过该阶段
-  tl.to(
-    mdInner,
-    {
-      y: () => -getMaxScroll(),
-      ease: 'none',
-      duration: 2,
-    },
-    'scrollStart',
-  ).addLabel('scrollEnd', 'scrollStart+=2');
-
-  tl.addLabel('leave', 'scrollEnd')
-    .to(mdEl, { x: '-150%', duration: 1, ease: 'power2.in' }, 'leave')
-    .addLabel('shrink', 'leave+=1')
-    // 收缩阶段统一使用线性缓动：卡片回归与头部栏/容器宽度收窄的速度曲线
-    // 完全一致，避免 scrub 模式下多个元素节奏不同步产生的顿挫感
-    .to(
-      headerEl,
-      { width: '1200px', padding: '0px', duration: 1, ease: 'none' },
-      'shrink',
-    )
-    .to(
-      '.intro-card',
-      {
-        x: '0',
-        y: '0',
-        scale: '1',
-        duration: 1,
-        ease: 'none',
-      },
-      'shrink',
-    )
-    .to(
-      innerWrapperEl,
-      {
-        width: '1200px',
-        padding: '20px 0',
-        borderRadius: '24px',
-        duration: 1,
-        ease: 'none',
-      },
-      'shrink',
-    );
-
-  // 头部栏实际高度（--ao-header-height-lg = 64px）：pin 偏移与头部栏底边对齐，
-  // 消除头部栏与固定区块之间的空隙，且区块底部正好贴住视口底边
-  const headerOffset =
-    parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue(
-        '--ao-header-height-lg',
-      ),
-    ) || 0;
-
-  const st = ScrollTrigger.create({
-    trigger: introSectionEl,
-    start: () => `top top+=${headerOffset}px`,
-    end: '+=6000',
-    scrub: 1,
-    pin: true,
-    animation: tl,
-    invalidateOnRefresh: true,
-  });
-
-  scrollTriggers.push(st);
-
-  // 文档内容尺寸变化后防抖刷新 ScrollTrigger（重算内部滚动距离）。
-  // 必须防抖：展开/收缩动画期间宽度逐帧变化，若每帧 refresh 会让时间线
-  // 反复失效重录并强制同步布局，表现为段落起步处的明显卡顿
-  mdResizeObserver?.disconnect();
-  mdResizeObserver = new ResizeObserver(() => {
-    window.clearTimeout(mdResizeTimer);
-    mdResizeTimer = window.setTimeout(() => ScrollTrigger.refresh(), 200);
-  });
-  mdResizeObserver.observe(mdInner);
-};
 const bannerAnimation = () => {
   const swiperEl = detailSwiperRef.value?.$el;
   gsap
@@ -944,17 +921,15 @@ const killPageAnimations = () => {
       '.ripple-bg',
       '.desc h2',
       '.desc p',
+      '.desc .tags',
       '.download',
       '.app-swiper h2',
       '.swiper-container',
-      '.scroll-tip .line span',
-      '.scroll-tip .ao-icon',
       '.next-app .icon svg',
       '.next-app .icon svg path',
     ].join(', '),
   );
   if (iconRef.value) gsap.killTweensOf(iconRef.value);
-  if (introWrapperRef.value) gsap.killTweensOf(introWrapperRef.value);
 };
 
 onMounted(async () => {
@@ -964,8 +939,8 @@ onMounted(async () => {
     scrollAnimation();
     lineBgAnimation();
     setupPathScrollAnimation();
-    setupDownloadPin();
-    setupScrollTipAnimation();
+    setupIntroAnimation();
+    setupExtrasAnimation();
     ScrollTrigger.refresh();
     initLenis();
   }, 300);
@@ -977,6 +952,7 @@ onMounted(async () => {
   }
 
   document.addEventListener('keydown', handleKeydown);
+  document.addEventListener('click', handleDocumentClick);
 });
 
 onBeforeUnmount(() => {
@@ -985,24 +961,18 @@ onBeforeUnmount(() => {
   cancelAnimationFrame(lenisRaf);
   lenis?.destroy();
   lenis = null;
-  window.clearTimeout(mdResizeTimer);
-  mdResizeObserver?.disconnect();
-  mdResizeObserver = null;
   killPageAnimations();
+  introTrigger?.kill();
+  introSplit?.revert();
+  extrasTriggers.forEach((trigger) => trigger.kill());
+  extrasTriggers = [];
   scrollTriggers.forEach((trigger) => trigger.kill());
   scrollTriggers = [];
 
   document.removeEventListener('keydown', handleKeydown);
+  document.removeEventListener('click', handleDocumentClick);
 
   document.body.style.overflow = '';
-
-  // 还原滚动动画改写过的全局头部内联样式（width / padding），
-  // 否则返回视频详情等页面后头部宽度被 1200px 卡住，盖掉宽屏变量
-  if (pinnedHeaderEl) {
-    gsap.killTweensOf(pinnedHeaderEl);
-    gsap.set(pinnedHeaderEl, { clearProps: 'width,padding' });
-    pinnedHeaderEl = null;
-  }
 });
 
 watch(
@@ -1011,6 +981,16 @@ watch(
     document.title = data.value.name;
   },
   { immediate: true },
+);
+
+/** 切换应用后重新拆分文档行，重放进入动画 */
+watch(
+  () => data.value?.content,
+  () =>
+    nextTick(() => {
+      setupIntroAnimation();
+      ScrollTrigger.refresh();
+    }),
 );
 </script>
 

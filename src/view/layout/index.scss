@@ -5,9 +5,8 @@
   justify-content: center;
   position: relative;
   gap: var(--ao-spacing-md);
+  overflow-x: clip;
 
-  /* 宽屏页面（视频详情页）：头部内容与主内容一起加宽；
-     窄屏时按窗口自适应，左右各留 50px 边距，避免出现横向滚动 */
   &.layout--wide {
     --ao-container-max-width: min(
       var(--ao-container-max-width-wide),
@@ -51,8 +50,6 @@
     justify-content: center;
   }
 
-  /* 窄屏（≤1200）：非宽屏页面容器由固定 1200px 变为流式，
-     头部栏与主内容区共用该变量，一并消除横向滚动；桌面端（>1200）不受影响 */
   @media (max-width: 1200px) {
     &:not(.layout--wide) {
       --ao-container-max-width: calc(100% - 32px);
@@ -65,7 +62,6 @@
     }
   }
 
-  /* 宽屏页面在手机上收窄原本 100px 的左右边距 */
   @media (max-width: 768px) {
     &.layout--wide {
       --ao-container-max-width: calc(100% - 32px);

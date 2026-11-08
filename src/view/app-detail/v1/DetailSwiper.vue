@@ -1,0 +1,116 @@
+<template>
+  <div class="swiper-container" :class="{ 'is-compact': responsive }">
+    <swiper
+      :effect="responsive ? 'slide' : 'coverflow'"
+      :grabCursor="true"
+      :centeredSlides="true"
+      :slidesPerView="'auto'"
+      :spaceBetween="responsive ? 12 : 0"
+      :loop="true"
+      :coverflowEffect="{
+        rotate: 0,
+        stretch: 100,
+        depth: 100,
+        modifier: 1,
+        slideShadows: false,
+        scale: 0.9,
+      }"
+      :pagination="{
+        el: '.custom-pagination',
+        clickable: true,
+      }"
+      :modules="modules"
+      class="mySwiper"
+    >
+      <swiper-slide><img :src="img1" /></swiper-slide>
+      <swiper-slide><img :src="img2" /></swiper-slide>
+      <swiper-slide><img :src="img3" /></swiper-slide>
+      <swiper-slide><img :src="img4" /></swiper-slide>
+    </swiper>
+    <div class="custom-pagination"></div>
+  </div>
+</template>
+<script setup lang="ts">
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import img1 from '@/assets/ai/ai-dashboard.jpg';
+import img2 from '@/assets/ai/robot-assistant.jpg';
+import img3 from '@/assets/ai/ai-chip.jpg';
+import img4 from '@/assets/ai/generative-art.jpg';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import { EffectCoverflow, Pagination } from 'swiper/modules';
+
+defineProps<{
+  /** 响应式形态：使用普通滑动、流式尺寸，可拖拽/触摸滚动 */
+  responsive?: boolean;
+}>();
+
+const modules = [EffectCoverflow, Pagination];
+</script>
+<style lang="scss" scoped>
+.swiper-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  filter: drop-shadow(0px 0px 5px rgba(48, 44, 44, 0.275));
+}
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+  border: 1px solid var(--app-border-color);
+  border-radius: 10px;
+  width: 800px;
+  height: 500px;
+  box-shadow:
+    5px 0 5px -5px rgba(0, 0, 0, 0.3),
+    -5px 0 5px -5px rgba(0, 0, 0, 0.3);
+}
+
+.custom-pagination {
+  padding: 30px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swiper-slide img {
+  border-radius: 10px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 响应式：普通滑动 + 流式尺寸，保留 Swiper 的鼠标拖拽和触屏滑动 */
+.swiper-container.is-compact {
+  overflow: hidden;
+  padding: 0 16px;
+
+  .swiper-slide {
+    width: min(86vw, 800px);
+    height: auto;
+    aspect-ratio: 16 / 10;
+    box-sizing: border-box;
+  }
+
+  .custom-pagination {
+    padding: 16px 0 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .swiper-container.is-compact {
+    padding: 0 12px;
+
+    .swiper-slide {
+      width: 88vw;
+      border-radius: 12px;
+    }
+
+    .swiper-slide img {
+      border-radius: 12px;
+    }
+  }
+}
+</style>

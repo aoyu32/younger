@@ -1,17 +1,65 @@
 <template>
-  <div class="app-detail-responsive">
+  <div class="app-detail-responsive" :style="appThemeStyle">
     <!-- 应用信息 -->
     <section class="hero">
       <div class="app-icon">
-        <img :src="data?.icon" alt="" />
+        <img ref="iconRef" :src="data?.icon" alt="" />
       </div>
       <h1>{{ data?.desc }}</h1>
       <p class="sub">{{ data?.sub }}</p>
+      <div class="tags">
+        <span
+          class="tag tag--category"
+          :style="{
+            color: primaryColor,
+            backgroundColor: `color-mix(in srgb, ${primaryColor} 12%, transparent)`,
+          }"
+        >
+          {{ data?.category }}
+        </span>
+        <span v-for="tag in appTags" :key="tag" class="tag">{{ tag }}</span>
+      </div>
       <div class="actions">
-        <button type="button" class="download-btn">免费下载</button>
+        <div ref="downloadRef" class="download-dropdown">
+          <button
+            type="button"
+            class="download-btn"
+            :style="{ backgroundColor: primaryColor }"
+            @click.stop="downloadOpen = !downloadOpen"
+          >
+            免费下载
+          </button>
+          <ul v-if="downloadOpen" class="download-menu">
+            <li v-for="platform in downloadPlatforms" :key="platform">
+              <button
+                type="button"
+                class="download-menu__item"
+                @click="handleDownload(platform)"
+              >
+                <component
+                  :is="PLATFORM_ICONS[platform]"
+                  class="download-menu__icon"
+                  :style="{ color: primaryColor }"
+                />
+                {{ PLATFORM_LABELS[platform] }}版本
+              </button>
+            </li>
+          </ul>
+        </div>
         <button type="button" class="quick-link" @click="openVideoModal">
-          快速了解 <span>{{ data?.name }}</span>
+          快速了解 <span :style="{ color: primaryColor }">{{ data?.name }}</span>
         </button>
+        <RouterLink
+          class="mode-switch"
+          :to="{ path: route.path, query: { ...route.query, mode: undefined } }"
+        >
+          <component
+            :is="switchIcon"
+            class="mode-switch__icon"
+            :style="{ color: primaryColor }"
+          />
+          切换模式
+        </RouterLink>
       </div>
     </section>
 
@@ -43,37 +91,30 @@
       </article>
     </section>
 
-    <!-- 文档 + 操作按钮 -->
+    <!-- 应用介绍 -->
     <section class="intro">
-      <div class="intro-card">
-        <div class="name">{{ data?.name }}文档</div>
-      </div>
+      <h2 class="section-title" :style="{ color: primaryColor }">应用介绍</h2>
       <div class="intro-md">
         <MdPreview :id="previewId" :modelValue="data?.content || ''" />
       </div>
-      <div class="intro-btns">
-        <button type="button" class="btn-item" aria-label="下载">
-          <AoImage
-            src="@/assets/app-detail/icon_download.svg"
-            width="20px"
-            height="20px"
-          />
-        </button>
-        <button type="button" class="btn-item" aria-label="分享">
-          <AoImage
-            src="@/assets/app-detail/icon_share.svg"
-            width="20px"
-            height="20px"
-          />
-        </button>
-        <button type="button" class="btn-item" aria-label="GitHub">
-          <AoImage
-            src="@/assets/app-detail/icon_github.svg"
-            width="20px"
-            height="20px"
-          />
-        </button>
-      </div>
+    </section>
+
+    <!-- 相关帖子 -->
+    <section class="related">
+      <h2 class="section-title" :style="{ color: primaryColor }">相关帖子</h2>
+      <AppRelatedNews />
+    </section>
+
+    <!-- 相关视频 -->
+    <section class="related">
+      <h2 class="section-title" :style="{ color: primaryColor }">相关视频</h2>
+      <AppRelatedVideos />
+    </section>
+
+    <!-- 相关课程 -->
+    <section class="related">
+      <h2 class="section-title" :style="{ color: primaryColor }">相关课程</h2>
+      <AppRelatedCourses />
     </section>
 
     <!-- 返回顶部：原生即时滚动，不做动画 -->
@@ -107,11 +148,19 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { MdPreview } from 'md-editor-v3';
+import { Vibrant } from 'node-vibrant/browser';
 import 'md-editor-v3/lib/style.css';
 import VideoPlayer from '@/components/video-player/index.vue';
 import AoImage from '@/components/ao-image/index.vue';
 import DetailSwiper from './DetailSwiper.vue';
+import AppRelatedNews from './AppRelatedNews.vue';
+import AppRelatedVideos from './AppRelatedVideos.vue';
+import AppRelatedCourses from './AppRelatedCourses.vue';
 import { appDetailList } from '@/mock/app-detail';
+import windowsIcon from '@/assets/app-detail/icon_windows.svg';
+import macosIcon from '@/assets/app-detail/icon_macos.svg';
+import linuxIcon from '@/assets/app-detail/icon_linux.svg';
+import switchIcon from '@/assets/app-detail/icon_switch.svg';
 
 const route = useRoute();
 const previewId = 'app-detail-responsive-preview';
@@ -120,6 +169,67 @@ const data = computed(() => {
   const id = Number(route.params.id);
   return appDetailList.find((appDetail) => appDetail.id === id);
 });
+
+type DownloadPlatform = 'windows' | 'macos' | 'linux';
+
+const PLATFORM_LABELS: Record<DownloadPlatform, string> = {
+  windows: 'Windows',
+  macos: 'MacOS',
+  linux: 'Linux',
+};
+
+const PLATFORM_ICONS: Record<DownloadPlatform, unknown> = {
+  windows: windowsIcon,
+  macos: macosIcon,
+  linux: linuxIcon,
+};
+
+const downloadPlatforms = computed(
+  () => (data.value?.platforms ?? []) as DownloadPlatform[],
+);
+
+const appTags = computed(() =>
+  (data.value?.tags ?? []).filter((tag) => tag !== data.value?.category),
+);
+
+const downloadOpen = ref(false);
+const downloadRef = ref<HTMLElement>();
+
+/** 图标主色：取不到时回退品牌色 */
+const iconRef = ref<HTMLImageElement>();
+const primaryColor = ref('#00b5b5');
+
+const generateFromVibrant = async () => {
+  if (!iconRef.value || !iconRef.value.src) return;
+  try {
+    const palette = await Vibrant.from(iconRef.value).getPalette();
+    const vibrant = palette.Vibrant;
+    primaryColor.value = vibrant ? `rgb(${vibrant.rgb.join(',')})` : '#00b5b5';
+  } catch (error) {
+    console.error('Vibrant 提取颜色失败:', error);
+    primaryColor.value = '#00b5b5';
+  }
+};
+
+/** 主色拆成 r,g,b，供相关推荐组件里的 rgba(var(--app-main-rgb), x) 使用 */
+const primaryRgb = computed(() => {
+  const match = primaryColor.value.match(/\d+,\s*\d+,\s*\d+/);
+  return match ? match[0] : '';
+});
+const appThemeStyle = computed(() =>
+  primaryRgb.value ? { '--app-main-rgb': primaryRgb.value } : {},
+);
+
+const handleDownload = (_platform: DownloadPlatform) => {
+  downloadOpen.value = false;
+};
+
+const handleDocumentClick = (event: MouseEvent) => {
+  if (!downloadOpen.value) return;
+  if (!downloadRef.value?.contains(event.target as Node)) {
+    downloadOpen.value = false;
+  }
+};
 
 const videoSrc = ref(
   'https://gsap.com/community/uploads/monthly_2026_04/easereverseUI.mp4.d8211e8be205c4f869da1eea439903e9.mp4',
@@ -148,12 +258,36 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown);
+  document.addEventListener('click', handleDocumentClick);
+
+  if (iconRef.value?.complete) {
+    generateFromVibrant();
+  } else {
+    iconRef.value?.addEventListener('load', generateFromVibrant);
+  }
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', handleKeydown);
+  document.removeEventListener('click', handleDocumentClick);
+  iconRef.value?.removeEventListener('load', generateFromVibrant);
   document.body.style.overflow = '';
 });
+
+/** 切换应用后重新取图标主色 */
+watch(
+  () => data.value?.icon,
+  () => {
+    const img = iconRef.value;
+    if (!img) return;
+    img.removeEventListener('load', generateFromVibrant);
+    if (img.complete) {
+      generateFromVibrant();
+    } else {
+      img.addEventListener('load', generateFromVibrant);
+    }
+  },
+);
 
 watch(
   () => route.path,
@@ -244,15 +378,123 @@ watch(
   gap: 16px;
 }
 
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+
+.tag {
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--ao-color-text-secondary);
+  background-color: rgba(0, 0, 0, 0.04);
+
+  &--category {
+    color: var(--ao-color-primary);
+    background-color: color-mix(
+      in srgb,
+      var(--ao-color-primary) 12%,
+      transparent
+    );
+  }
+}
+
+.download-dropdown {
+  position: relative;
+}
+
+.download-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 20;
+  min-width: 168px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateX(-50%);
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: transparent;
+    font-size: 14px;
+    color: var(--ao-color-text-base);
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    color: var(--ao-color-primary);
+  }
+}
+
+.mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ao-color-text-secondary);
+  text-decoration: none;
+
+  &__icon {
+    width: 15px;
+    height: 15px;
+    color: var(--ao-color-primary);
+    transition: transform 0.35s ease;
+  }
+
+  &:hover .mode-switch__icon {
+    transform: rotate(180deg);
+  }
+}
+
 .download-btn {
-  padding: 10px 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
   border: none;
-  border-radius: 999px;
-  background: var(--ao-color-primary);
+  border-radius: var(--ao-border-radius-lg);
+  background-color: var(--ao-color-primary);
   color: #fff;
-  font-size: 15px;
+  font-size: var(--ao-font-size-sm);
   font-weight: var(--ao-font-weight-medium);
   cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* 下拉箭头，和非响应式版本保持一致 */
+  &::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
 .quick-link {
@@ -334,37 +576,37 @@ watch(
   }
 }
 
-/* ================= 文档区 ================= */
+/* ================= 应用介绍 / 相关推荐 ================= */
 .intro {
-  margin: 36px 16px 0;
-  padding: 18px 14px;
-  border: 1px solid var(--ao-color-border);
-  border-radius: 16px;
-  background: color-mix(
-    in srgb,
-    var(--ao-color-primary) 4%,
-    var(--ao-color-bg-container)
-  );
+  margin: 32px 16px 0;
 }
 
-.intro-card {
+.section-title {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
 
-  .name {
-    font-size: clamp(18px, 2.2vw, 21px);
-    line-height: 1.4;
-    font-weight: var(--ao-font-weight-semibold);
-    word-break: break-word;
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    margin-bottom: 5px;
+    opacity: 0.8;
+    background-image: linear-gradient(90deg, currentColor, transparent);
   }
+}
+
+.related {
+  margin: 32px 16px 0;
 }
 
 .intro-md {
   width: 100%;
   max-width: 100%;
-  margin-top: 12px;
   overflow: hidden;
 
   :deep(.md-editor) {
@@ -412,29 +654,6 @@ watch(
   :deep(.md-editor-preview pre) {
     overflow-x: auto;
   }
-}
-
-.intro-btns {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--ao-color-border);
-}
-
-.btn-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: var(--ao-color-primary);
-  cursor: pointer;
 }
 
 /* ================= 返回顶部 ================= */
@@ -522,12 +741,10 @@ watch(
 
   .intro {
     margin: 30px 12px 0;
-    padding: 16px 12px;
-    border-radius: 14px;
   }
 
-  .intro-btns {
-    gap: 18px;
+  .related {
+    margin: 26px 12px 0;
   }
 }
 
